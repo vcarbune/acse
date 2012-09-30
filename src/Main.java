@@ -1,5 +1,4 @@
 
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
@@ -12,7 +11,8 @@ public class Main {
         // TODO: Dynamic statistics for each query.
     }
 
-    public void main(String args[]) throws IOException {
+
+    public static void main(String args[]) {
 
         if (args.length < 1) {
             System.out.println("Usage: Main <document_folder>");

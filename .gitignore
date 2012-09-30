@@ -3,3 +3,6 @@
 /build.xml
 /manifest.mf
 /build/
+.project
+.classpath
+bin/*
