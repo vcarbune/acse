@@ -1,4 +1,5 @@
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
@@ -11,7 +12,7 @@ public class Main {
         // TODO: Dynamic statistics for each query.
     }
 
-    public void main(String args[]) {
+    public void main(String args[]) throws IOException {
 
         if (args.length < 1) {
             System.out.println("Usage: Main <document_folder>");
@@ -24,8 +25,8 @@ public class Main {
          * return; }
          */
 
-        Crawler crawler = new Crawler();
-        DataSet dataSet = crawler.readDocuments(args[1]);
+        Crawler crawler = new Crawler(args[0]);
+        DataSet dataSet = crawler.readDocuments();
 
         Scanner in = new Scanner(System.in);
 

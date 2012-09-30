@@ -1,9 +1,45 @@
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Crawler {
+    private DataSet dataSet;
+    private String folderName;
 
-    public DataSet readDocuments(String folder) {
-        // TODO():
-
-        return null;
+    public Crawler(String folderName) {
+        this.folderName = folderName;
+        dataSet = new DataSet();
     }
+
+    public DataSet readDocuments() throws IOException {
+        File folder = new File(folderName);
+        File[] listOfFiles = folder.listFiles();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+
+            FileInputStream inputStream = new FileInputStream(listOfFiles[i]);
+            DataInputStream dataInput = new DataInputStream(inputStream);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    dataInput));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.replaceAll("[^a-zA-Z0-9]","");
+                StringTokenizer tokens = new StringTokenizer(line);
+
+                while (tokens.hasMoreElements()) {
+                    dataSet.addPair(tokens.nextToken(),
+                            listOfFiles[i].getName());
+
+                }
+            }
+        }
+
+        return dataSet;
+    }
+
 }
