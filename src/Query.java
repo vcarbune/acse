@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Query {
 
@@ -12,11 +13,31 @@ public class Query {
     private Type type;
     private ArrayList<String> terms;
 
+    public Query(String query) {
+        Scanner scanner = new Scanner(query);
+
+        String token = scanner.next();
+
+        try {
+            type = Type.valueOf(token);
+        } catch (IllegalArgumentException e) {
+            terms.add(token);
+            token = scanner.next();
+            type = Type.valueOf(token);
+        }
+        
+        while (scanner.hasNext()) {
+            token = scanner.next();
+            terms.add(token);
+            scanner.next();
+        }
+    }
+
     public Type getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    private void setType(Type type) {
         this.type = type;
     }
 
@@ -24,7 +45,7 @@ public class Query {
         return terms.get(i);
     }
 
-    public void addTerms(String term) {
+    private void addTerms(String term) {
         terms.add(term);
     }
 }
