@@ -20,14 +20,15 @@ public class Main {
             return;
         }
 
-        /*
-         * File folder = new File(args[1]); if (!folder.isDirectory()) {
-         * System.out.println("The argument supplied is not a valid directory");
-         * return; }
-         */
-
         Crawler crawler = new Crawler(args[0]);
-        DataSet dataSet = crawler.readDocuments();
+        
+        try {
+            DataSet dataSet = crawler.readDocuments();
+        }
+        catch (IOException e) {
+            System.out.println("Could not read the documents. Exiting...");
+            return;
+        }
 
         Scanner in = new Scanner(System.in);
 
