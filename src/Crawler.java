@@ -28,13 +28,15 @@ public class Crawler {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                line = line.replaceAll("[^a-zA-Z0-9]","");
                 StringTokenizer tokens = new StringTokenizer(line);
 
                 while (tokens.hasMoreElements()) {
-                    dataSet.addPair(tokens.nextToken(),
-                            listOfFiles[i].getName());
-
+                    String s = tokens.nextToken().replaceAll("[^a-zA-Z0-9]","");
+                    if(s.isEmpty() == false){
+                    //    System.out.println(s  + " " + listOfFiles[i].getName());
+                        dataSet.addPair(s,
+                                listOfFiles[i].getName());
+                    }
                 }
             }
         }
