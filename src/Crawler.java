@@ -4,15 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 
 public class Crawler {
     private DataSet dataSet;
     private String folderName;
+    private HashSet<String> documents;
 
     public Crawler(String folderName) {
         this.folderName = folderName;
         dataSet = new DataSet();
+        documents = new HashSet<String>();
     }
 
     public DataSet readDocuments() throws IOException {
@@ -20,11 +23,12 @@ public class Crawler {
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {
+            documents.add(listOfFiles[i].getName());
 
             FileInputStream inputStream = new FileInputStream(listOfFiles[i]);
             DataInputStream dataInput = new DataInputStream(inputStream);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    dataInput));
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(dataInput));
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -42,6 +46,10 @@ public class Crawler {
         }
 
         return dataSet;
+    }
+
+    public HashSet<String> getDocumentIDs(){
+        return documents;
     }
 
 }

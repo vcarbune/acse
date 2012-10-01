@@ -25,7 +25,7 @@ public class Query {
             token = scanner.next();
             type = Type.valueOf(token);
         }
-        
+
         while (scanner.hasNext()) {
             token = scanner.next();
             terms.add(token);
@@ -44,6 +44,8 @@ public class Query {
     public String getTerm(int i) {
         return terms.get(i);
     }
+
+    //TODO: add getTerms() method or at least getNumberOfTerms() method
 
     private void addTerms(String term) {
         terms.add(term);
