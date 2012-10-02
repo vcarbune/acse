@@ -23,7 +23,7 @@ public class Main {
 
         Crawler crawler = new Crawler(args[0]);
         DataSet dataSet;
-        
+
         try {
             dataSet = crawler.readDocuments();
         }
@@ -31,9 +31,9 @@ public class Main {
             System.out.println("Could not read the documents. Exiting...");
             return;
         }
-        
+
         dataSet.logStaticStats(); // Where is the log file created?
-        
+
         QueryHandler handler = new QueryHandler(crawler.getDocumentIDs(), dataSet);
 
         Scanner in = new Scanner(System.in);
@@ -46,25 +46,25 @@ public class Main {
                 break;
             } else {
                 //TODO: log everything
-                
+
                 long startTime = System.currentTimeMillis();
-                
+
                 Query query = new Query(queryString);
                 ArrayList<String> docs = handler.retrieveDocumentsForQuery(query);
-                
+
                 long endTime = System.currentTimeMillis();
-                
-                System.out.println("The query was processed in " + (endTime-startTime) 
+
+                System.out.println("The query was processed in " + (endTime-startTime)
                         + " milliseconds.");
-                
+
                 System.out.println("Results:");
-                
+
                 for (String s: docs) {
-                    System.out.print(s + " ");
+                    System.out.println(s);
                 }
-                
+
                 System.out.println();
-                
+
             }
         }
     }
