@@ -18,20 +18,23 @@ public class Query {
         terms = new ArrayList<String>();
         
         Scanner scanner = new Scanner(query);
-        String token = scanner.next();
+        String token = scanner.next().toUpperCase();
        
-        
-
         try {
             type = Type.valueOf(token);
         } catch (IllegalArgumentException e) {
             terms.add(token);
-            token = scanner.next();
-            type = Type.valueOf(token);
+            if (!scanner.hasNext()) { // If we have only one term
+                type = Type.AND;
+            }
+            else {
+                token = scanner.next().toUpperCase();
+                type = Type.valueOf(token);
+            }
         }
 
         while (scanner.hasNext()) {
-            token = scanner.next();
+            token = scanner.next().toUpperCase();
             terms.add(token);
             if (scanner.hasNext()) {
                 scanner.next();

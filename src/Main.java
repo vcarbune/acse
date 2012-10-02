@@ -32,6 +32,8 @@ public class Main {
             return;
         }
         
+        dataSet.logStaticStats(); // Where is the log file created?
+        
         QueryHandler handler = new QueryHandler(crawler.getDocumentIDs(), dataSet);
 
         Scanner in = new Scanner(System.in);
@@ -43,8 +45,17 @@ public class Main {
             if (queryString.equals("quit")) {
                 break;
             } else {
+                //TODO: log everything
+                
+                long startTime = System.currentTimeMillis();
+                
                 Query query = new Query(queryString);
                 ArrayList<String> docs = handler.retrieveDocumentsForQuery(query);
+                
+                long endTime = System.currentTimeMillis();
+                
+                System.out.println("The query was processed in " + (endTime-startTime) 
+                        + " milliseconds.");
                 
                 System.out.println("Results:");
                 

@@ -14,7 +14,7 @@ public class DataSet {
      * @param term The term for which to return the doc id list.
      * @return The list of document ids.
      */
-    public TreeSet<String> getDocIdList(String term) {
+    public TreeSet<String> getDocIdSet(String term) {
         return data.get(term);
     }
 
