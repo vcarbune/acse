@@ -34,19 +34,33 @@ public class QueryHandler {
     /**
      * It answers queries that contain only NOT operators
      *
+     * Queries can be of form: A NOT B. The result returned
+     * is of all documents containing A and that do not contain B.
+     * In case the query is: NOT A. The method returns
+     * all documents that do not contain A.
+     *
      * @param query - The NOT Query that needs to be answered
      * @return A list of documents that map the query
      */
     public ArrayList<String> handleNOTQuery(Query query){
 
         TreeSet<String> matchingDocs = new TreeSet<String>();
-        matchingDocs.addAll(docIDs);
 
         ArrayList<String> terms = query.getTerms();
         for(String term:terms){
             TreeSet<String> matchedDocs = dataSet.getDocIdSet(term);
-            matchingDocs.removeAll(matchedDocs);
+            matchingDocs.addAll(matchedDocs);
         }
+
+        if(matchingDocs.isEmpty()){
+            matchingDocs = docIDs;
+        }
+
+        ArrayList<String> notTerms = query.getNotTerms();
+        for(String notTerm : notTerms){
+            matchingDocs.removeAll(dataSet.getDocIdSet(notTerm));
+        }
+
 
         return new ArrayList<String>(matchingDocs);
     }
