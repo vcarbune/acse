@@ -1,6 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.TreeSet;
 
 
@@ -26,9 +25,9 @@ public class QueryHandler {
         case OR:
             return handleORQuery(query);
         }
-        
+
         //TODO: logging?
-        
+
         return null;
     }
 
@@ -39,59 +38,60 @@ public class QueryHandler {
      * @return A list of documents that map the query
      */
     public ArrayList<String> handleNOTQuery(Query query){
-        TreeSet<String> matchingFiles = new TreeSet<String>();
-        matchingFiles.addAll(docIDs);
-     /* TODO: change the line to  ArrayList<String> terms = query.getTerms();
-      *       when Query is changed
-       */
-        String term = query.getTerm(0);
-        TreeSet<String> matchedDocs = dataSet.getDocIdSet(term);
-        matchingFiles.removeAll(matchedDocs);
 
-        return new ArrayList<String>(matchingFiles);
+        TreeSet<String> matchingDocs = new TreeSet<String>();
+        matchingDocs.addAll(docIDs);
+
+        ArrayList<String> terms = query.getTerms();
+        for(String term:terms){
+            TreeSet<String> matchedDocs = dataSet.getDocIdSet(term);
+            matchingDocs.removeAll(matchedDocs);
+        }
+
+        return new ArrayList<String>(matchingDocs);
     }
-    
+
     /**
      * Answers queries that contain only AND operators
-     * 
+     *
      * @param query
      * @return A list of documents that map the query
      */
     public ArrayList<String> handleANDQuery(Query query) {
-        
+
         // TODO: We could define different orders. For each permutation, we could have an order.
         // We first add the list for the first term, and then intersect with the others.
-        
-        TreeSet<String> matchingDocs = 
-                new TreeSet<String>(dataSet.getDocIdSet(query.getTerm(0)));
-        
+
+        TreeSet<String> matchingDocs =
+            new TreeSet<String>(dataSet.getDocIdSet(query.getTerm(0)));
+
         for (String term: query.getTerms()) {
             matchingDocs.retainAll(dataSet.getDocIdSet(term));
         }
 
         return new ArrayList<String>(matchingDocs);
     }
-    
+
     /**
      * Answers queries that contain only OR operators
-     * 
+     *
      * @param query
      * @return A list of documents that map the query
      */
     public ArrayList<String> handleORQuery(Query query) {
-        
+
         // TODO: We could define different orders. For each permutation, we could have an order.
         // We first add the list for the first term, and then union with the others.
-        
+
         TreeSet<String> matchingDocs = new TreeSet<String>();
-        
+
         for (String term: query.getTerms()) {
             matchingDocs.addAll(dataSet.getDocIdSet(term));
         }
-        
+
         return new ArrayList<String>(matchingDocs);
     }
-    
+
     public void setDocuments(TreeSet<String> docs) {
         this.docIDs = docs;
     }
