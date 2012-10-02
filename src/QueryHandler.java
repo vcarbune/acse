@@ -6,16 +6,12 @@ import java.util.logging.Logger;
 public class QueryHandler {
 
     /** Remembers the documents IDs used to create the index.**/
-    private TreeSet<String> docIDs;
     private DataSet dataSet;
     private Logger logger = Logger.getLogger(QueryHandler.class.getName());
 
-
-    public QueryHandler(TreeSet<String> docs, DataSet postingLists){
-        this.docIDs = docs;
-        this.dataSet = postingLists;
+    public QueryHandler(DataSet dataSet){
+        this.dataSet = dataSet;
     }
-
 
     public ArrayList<String> retrieveDocumentsForQuery(Query query) {
         switch(query.getType()){
@@ -54,7 +50,7 @@ public class QueryHandler {
         }
 
         if(matchingDocs.isEmpty()){
-            matchingDocs = docIDs;
+            matchingDocs = dataSet.getDocSet();
         }
 
         ArrayList<String> notTerms = query.getNotTerms();
@@ -106,9 +102,4 @@ public class QueryHandler {
 
         return new ArrayList<String>(matchingDocs);
     }
-
-    public void setDocuments(TreeSet<String> docs) {
-        this.docIDs = docs;
-    }
-
 }

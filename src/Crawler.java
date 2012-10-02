@@ -45,6 +45,8 @@ public class Crawler {
                     }
                 }
             }
+            
+            dataSet.setDocSet(documents);
         }
 
         return dataSet;

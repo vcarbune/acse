@@ -7,3 +7,5 @@
 .classpath
 bin/*
 documents/*
+static_stats.log
+dynamic_stats.log

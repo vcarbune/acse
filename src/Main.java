@@ -45,9 +45,9 @@ public class Main {
             return;
         }
 
-        dataSet.logStaticStats(); // Where is the log file created?
+        dataSet.logStaticStats();
 
-        QueryHandler handler = new QueryHandler(crawler.getDocumentIDs(), dataSet);
+        QueryHandler handler = new QueryHandler(dataSet);
 
         Scanner in = new Scanner(System.in);
 
@@ -58,7 +58,7 @@ public class Main {
             if (queryString.equals("quit")) {
                 break;
             } else {
-                //TODO: log everything
+                //TODO: log dynamic stats
 
                 long startTime = System.currentTimeMillis();
 
