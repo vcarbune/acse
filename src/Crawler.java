@@ -5,14 +5,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 public class Crawler {
     private DataSet dataSet;
     private String folderName;
+    private TreeSet<String> documents;
 
     public Crawler(String folderName) {
         this.folderName = folderName;
         dataSet = new DataSet();
+        documents = new TreeSet<String>();
     }
 
     public DataSet readDocuments() throws IOException {
@@ -21,10 +24,15 @@ public class Crawler {
 
         for (int i = 0; i < listOfFiles.length; i++) {
 
+            String fileName = listOfFiles[i].getName();
+            int dotIndex = fileName.indexOf(".");
+            String nameWithoutType = fileName.substring(0, dotIndex);
+            documents.add(nameWithoutType);
+
             FileInputStream inputStream = new FileInputStream(listOfFiles[i]);
             DataInputStream dataInput = new DataInputStream(inputStream);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    dataInput));
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(dataInput));
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -33,9 +41,7 @@ public class Crawler {
                 while (tokens.hasMoreElements()) {
                     String s = tokens.nextToken().replaceAll("[^a-zA-Z0-9]","");
                     if(s.isEmpty() == false){
-                    //    System.out.println(s  + " " + listOfFiles[i].getName());
-                        dataSet.addPair(s,
-                                listOfFiles[i].getName());
+                        dataSet.addPair(s, nameWithoutType);
                     }
                 }
             }
@@ -43,4 +49,9 @@ public class Crawler {
 
         return dataSet;
     }
+
+    public TreeSet<String> getDocumentIDs(){
+        return documents;
+    }
+
 }
