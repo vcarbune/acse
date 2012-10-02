@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.logging.FileHandler;
@@ -11,7 +10,7 @@ public class DataSet {
     private void initializeLogging() {
         try {
             FileHandler handler =
-                    new FileHandler(Config.LOG_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
+                    new FileHandler(Config.STATIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
             logger.addHandler(handler);
         } catch (Exception e) {
             e.printStackTrace();
@@ -20,6 +19,7 @@ public class DataSet {
 
     public DataSet() {
         initializeLogging();
+        logStaticStats();
     }
     
     /**

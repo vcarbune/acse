@@ -1,6 +1,9 @@
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
-import java.util.logging.Logger;
+import java.util.logging.LogManager;
 
 public class Main {
 
@@ -12,21 +15,33 @@ public class Main {
         // TODO: Dynamic statistics for each query.
     }
 
-    public static void main(String args[]) {
+    public static void initializeLogging() {
+        try {
+            InputStream inputStream = new FileInputStream("logging.properties");
+            LogManager.getLogManager().readConfiguration(inputStream);
+        } catch (Exception e) {
+            // Just ignore configuration if file does not exist.
+        }
+    }
+    
+    public static void main(String args[]) throws IOException, FileNotFoundException {
 
         if (args.length < 1) {
             System.out.println("Usage: Main <document_folder>");
             return;
         }
+        
+        initializeLogging();
 
-        /*
-         * File folder = new File(args[1]); if (!folder.isDirectory()) {
-         * System.out.println("The argument supplied is not a valid directory");
-         * return; }
-         */
-
-        Crawler crawler = new Crawler();
-        DataSet dataSet = crawler.readDocuments(args[0]);
+        Crawler crawler = new Crawler(args[0]);
+        
+        try {
+            DataSet dataSet = crawler.readDocuments();
+        }
+        catch (IOException e) {
+            System.out.println("Could not read the documents. Exiting...");
+            return;
+        }
 
         Scanner in = new Scanner(System.in);
 

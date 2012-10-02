@@ -1,6 +1,9 @@
-public class QueryHandler {
-    // TODO(uvictor): Implement query processing
-    public void setQuery(String query) {
+import java.util.ArrayList;
 
+public class QueryHandler {
+
+    public ArrayList<String> retriveDocumentsForQuery(String query) {
+
+        return null;
     }
 }
