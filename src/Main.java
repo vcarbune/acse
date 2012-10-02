@@ -52,7 +52,7 @@ public class Main {
         Scanner in = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Enter new query (or \"quit\" to quit.): ");
+            System.out.println("Enter new query (or \"quit\" to quit): ");
             String queryString = in.nextLine();
 
             if (queryString.equals("quit")) {
@@ -69,6 +69,8 @@ public class Main {
 
                 System.out.println("The query was processed in " + (endTime-startTime)
                         + " milliseconds.");
+                
+                System.out.println("Number of documents: " + docs.size());
 
                 System.out.println("Results:");
 

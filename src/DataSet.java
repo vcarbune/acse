@@ -82,12 +82,10 @@ public class DataSet {
             if (minTerm == null || data.get(minTerm).size() > numDocs) {
                 minTerm = term;
             }
-            
         }
         
         logger.log(Config.LOG_LEVEL, "The size of the term-doc matrix: " + data.size() + 
                 " terms, " + docSet.size() + " documents.\n");
-        
         logger.log(Config.LOG_LEVEL, "The number of ones in the matrix: " + totalOnes + "\n");
         logger.log(Config.LOG_LEVEL, "The longest posting list: " + maxTerm + " - " +
                 data.get(maxTerm).size() + "\n");

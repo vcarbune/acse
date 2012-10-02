@@ -14,6 +14,9 @@ public class QueryHandler {
     }
 
     public ArrayList<String> retrieveDocumentsForQuery(Query query) {
+        
+        // TODO: dynamic logging before returning the docs
+        
         switch(query.getType()){
         case NOT:
             return handleNOTQuery(query);
