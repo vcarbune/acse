@@ -12,14 +12,17 @@ public class Query {
     };
     private Type type;
     private ArrayList<String> terms;
+    private ArrayList<String> NotTerms;
 
     public Query(String query) {
-        
+
         terms = new ArrayList<String>();
-        
+        NotTerms = new ArrayList<String>();
+
         Scanner scanner = new Scanner(query);
         String token = scanner.next().toUpperCase();
-       
+        Type lastOperator = null;
+
         try {
             type = Type.valueOf(token);
         } catch (IllegalArgumentException e) {
@@ -33,11 +36,18 @@ public class Query {
             }
         }
 
+        lastOperator = type;
         while (scanner.hasNext()) {
             token = scanner.next().toUpperCase();
-            terms.add(token);
+
+            if(lastOperator == Type.NOT){
+                NotTerms.add(token);
+            }else{
+                terms.add(token);
+            }
+
             if (scanner.hasNext()) {
-                scanner.next();
+               lastOperator = Type.valueOf(scanner.next().toUpperCase());
             }
         }
     }
@@ -53,9 +63,13 @@ public class Query {
     public String getTerm(int i) {
         return terms.get(i);
     }
-    
+
     public ArrayList<String> getTerms() {
         return terms;
+    }
+
+    public ArrayList<String> getNotTerms(){
+        return NotTerms;
     }
 
     private void addTerms(String term) {
