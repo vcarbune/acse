@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -54,6 +55,7 @@ public class DataSet {
      * Logs the statistics related to the corpus.
      */
     public void logStaticStats() {
-        logger.log(Config.LOG_LEVEL, "Generating Statistics from the Document Corpus");
+        logger.log(Config.LOG_LEVEL, "Generating Statistics from the Document Corpus\n");
+        logger.log(Config.LOG_LEVEL, "The Document Corpus: " + data.keySet().toString() + "\n");
     }
 }

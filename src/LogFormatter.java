@@ -5,6 +5,6 @@ public class LogFormatter extends SimpleFormatter {
 
     @Override
     public String format (LogRecord record) {
-        return record.getLoggerName() + ": " + record.getMessage() + "\n";
+        return record.getLoggerName() + ": " + record.getMessage();
     }
 }

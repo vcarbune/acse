@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 
 public class QueryHandler {
@@ -7,6 +8,7 @@ public class QueryHandler {
     /** Remembers the documents IDs used to create the index.**/
     private TreeSet<String> docIDs;
     private DataSet dataSet;
+    private Logger logger = Logger.getLogger(QueryHandler.class.getName());
 
 
     public QueryHandler(TreeSet<String> docs, DataSet postingLists){
@@ -25,7 +27,7 @@ public class QueryHandler {
             return handleORQuery(query);
         }
 
-        //TODO: logging?
+        logger.log(Config.LOG_LEVEL, "Query type not recognized!");
 
         return null;
     }

@@ -41,7 +41,7 @@ public class Crawler {
                 while (tokens.hasMoreElements()) {
                     String s = tokens.nextToken().replaceAll("[^a-zA-Z0-9]","");
                     if(s.isEmpty() == false){
-                        dataSet.addPair(s, nameWithoutType);
+                        dataSet.addPair(s.toUpperCase(), nameWithoutType);
                     }
                 }
             }
