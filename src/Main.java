@@ -1,5 +1,6 @@
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -21,25 +22,38 @@ public class Main {
         }
 
         Crawler crawler = new Crawler(args[0]);
+        DataSet dataSet;
         
         try {
-            DataSet dataSet = crawler.readDocuments();
+            dataSet = crawler.readDocuments();
         }
         catch (IOException e) {
             System.out.println("Could not read the documents. Exiting...");
             return;
         }
+        
+        QueryHandler handler = new QueryHandler(crawler.getDocumentIDs(), dataSet);
 
         Scanner in = new Scanner(System.in);
 
         while (true) {
             System.out.println("Enter new query (or \"quit\" to quit.): ");
-            String query = in.nextLine();
+            String queryString = in.nextLine();
 
-            if (query.equals("quit")) {
+            if (queryString.equals("quit")) {
                 break;
             } else {
-                // TODO: Process query
+                Query query = new Query(queryString);
+                ArrayList<String> docs = handler.retrieveDocumentsForQuery(query);
+                
+                System.out.println("Results:");
+                
+                for (String s: docs) {
+                    System.out.print(s + " ");
+                }
+                
+                System.out.println();
+                
             }
         }
     }

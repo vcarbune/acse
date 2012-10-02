@@ -14,9 +14,13 @@ public class Query {
     private ArrayList<String> terms;
 
     public Query(String query) {
+        
+        terms = new ArrayList<String>();
+        
         Scanner scanner = new Scanner(query);
-
         String token = scanner.next();
+       
+        
 
         try {
             type = Type.valueOf(token);
@@ -29,7 +33,9 @@ public class Query {
         while (scanner.hasNext()) {
             token = scanner.next();
             terms.add(token);
-            scanner.next();
+            if (scanner.hasNext()) {
+                scanner.next();
+            }
         }
     }
 
@@ -44,8 +50,10 @@ public class Query {
     public String getTerm(int i) {
         return terms.get(i);
     }
-
-    //TODO: add getTerms() method or at least getNumberOfTerms() method
+    
+    public ArrayList<String> getTerms() {
+        return terms;
+    }
 
     private void addTerms(String term) {
         terms.add(term);

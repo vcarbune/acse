@@ -7,17 +7,17 @@ import java.util.TreeSet;
 public class QueryHandler {
 
     /** Remembers the documents IDs used to create the index.**/
-    private HashSet<String> docIDs;
+    private TreeSet<String> docIDs;
     private DataSet dataSet;
 
 
-    public QueryHandler(HashSet<String> docs, DataSet postingLists){
+    public QueryHandler(TreeSet<String> docs, DataSet postingLists){
         this.docIDs = docs;
         this.dataSet = postingLists;
     }
 
 
-    public ArrayList<String> retriveDocumentsForQuery(Query query) {
+    public ArrayList<String> retrieveDocumentsForQuery(Query query) {
         if(query.getType() == Query.Type.NOT){
             return handleNOTQuery(query);
         }
@@ -31,7 +31,7 @@ public class QueryHandler {
      * @return A list of documents that map the query
      */
     public ArrayList<String> handleNOTQuery(Query query){
-        HashSet<String> matchingFiles = new HashSet<String>();
+        TreeSet<String> matchingFiles = new TreeSet<String>();
         matchingFiles.addAll(docIDs);
      /* TODO: change the line to  ArrayList<String> terms = query.getTerms();
       *       when Query is changed
@@ -44,7 +44,7 @@ public class QueryHandler {
     }
 
 
-    public void setDocuments(HashSet<String> docs) {
+    public void setDocuments(TreeSet<String> docs) {
         this.docIDs = docs;
     }
 

@@ -6,16 +6,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 public class Crawler {
     private DataSet dataSet;
     private String folderName;
-    private HashSet<String> documents;
+    private TreeSet<String> documents;
 
     public Crawler(String folderName) {
         this.folderName = folderName;
         dataSet = new DataSet();
-        documents = new HashSet<String>();
+        documents = new TreeSet<String>();
     }
 
     public DataSet readDocuments() throws IOException {
@@ -48,7 +49,7 @@ public class Crawler {
         return dataSet;
     }
 
-    public HashSet<String> getDocumentIDs(){
+    public TreeSet<String> getDocumentIDs(){
         return documents;
     }
 
