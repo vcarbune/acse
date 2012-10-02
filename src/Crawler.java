@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
@@ -24,7 +23,11 @@ public class Crawler {
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {
-            documents.add(listOfFiles[i].getName());
+
+            String fileName = listOfFiles[i].getName();
+            int dotIndex = fileName.indexOf(".");
+            String nameWithoutType = fileName.substring(0, dotIndex);
+            documents.add(nameWithoutType);
 
             FileInputStream inputStream = new FileInputStream(listOfFiles[i]);
             DataInputStream dataInput = new DataInputStream(inputStream);
@@ -38,9 +41,7 @@ public class Crawler {
                 while (tokens.hasMoreElements()) {
                     String s = tokens.nextToken().replaceAll("[^a-zA-Z0-9]","");
                     if(s.isEmpty() == false){
-                    //    System.out.println(s  + " " + listOfFiles[i].getName());
-                        dataSet.addPair(s,
-                                listOfFiles[i].getName());
+                        dataSet.addPair(s, nameWithoutType);
                     }
                 }
             }
