@@ -26,7 +26,7 @@ public class QueryHandler {
             return handleORQuery(query);
         }
 
-        logger.log(Config.LOG_LEVEL, "Query type not recognized!");
+        logger.log(Config.LOG_LEVEL, "Query type " + query.getType() + " not recognized!");
 
         return null;
     }
