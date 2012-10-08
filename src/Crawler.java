@@ -39,7 +39,8 @@ public class Crawler {
      */
     public void readStopWords() {
         this.stopWordsFlag = true;
-
+        stopWords = new HashSet<String>();
+        
         FileInputStream inputStream;
         try {
             inputStream = new FileInputStream(stopWordsFile);
@@ -78,14 +79,15 @@ public class Crawler {
         String line;
         int countPos = 0;
         while ((line = reader.readLine()) != null) {
+            line = line.replaceAll("-", " ");
             StringTokenizer tokens = new StringTokenizer(line);
 
             while (tokens.hasMoreElements()) {
-
                 String token = tokens.nextToken();
                 if (stopWords.contains(token) == false) {
                     countPos++;
                     String formatted = token.replaceAll("[^a-zA-Z0-9]", "");
+                  //  System.out.println(formatted + " " + docID);
                     if (formatted.isEmpty() == false) {
                         dataSet.addPair(formatted.toUpperCase(), docID,
                                 countPos);
@@ -99,6 +101,7 @@ public class Crawler {
     throws IOException {
         String line;
         while ((line = reader.readLine()) != null) {
+            line = line.replaceAll("-", " ");
             StringTokenizer tokens = new StringTokenizer(line);
 
             while (tokens.hasMoreElements()) {
@@ -148,5 +151,11 @@ public class Crawler {
     public HashSet<String> getStopWords() {
         return stopWords;
     }
+
+    public void setStopWordsFile(String stopWordsFile) {
+        this.stopWordsFile = stopWordsFile;
+    }
+    
+    
 
 }
