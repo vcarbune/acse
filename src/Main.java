@@ -25,14 +25,30 @@ public class Main {
         }
     }
     
+    public static void initializeFlags(String args[]) {
+        for (int i = 1; i < args.length; ++i) {
+            if (args[i].equals(Config.PARAM_STOPWORD)) {
+                Config.enableStopwordElimination = true;
+            } else if (args[i].equals(Config.PARAM_STEMMING)) {
+                Config.enableStemming = true;
+            }
+        }
+    }
+    
     public static void main(String args[]) throws IOException, FileNotFoundException {
 
         if (args.length < 1) {
-            System.out.println("Usage: Main <document_folder>");
+            System.out.println("Usage: Main <document_folder>" +
+            		"[" + Config.PARAM_STOPWORD + "]" +
+            		"[" + Config.PARAM_STEMMING + "]");
+            
             return;
         }
         
         initializeLogging();
+        
+        if (args.length >= 2)
+            initializeFlags(args);
 
         Crawler crawler = new Crawler(args[0]);
         DataSet dataSet;
