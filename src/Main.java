@@ -78,17 +78,17 @@ public class Main {
             if(Config.enableStopwordElimination == true){
                 if(stopWordFile == null){
                     System.out.println("The stop word file was not given as parameter!" +
-                    		" When the stopWord flag is set also the file of stop words" +
-                    		" needs to be given as parameter!");
+                            " When the stopWord flag is set also the file of stop words" +
+                    " needs to be given as parameter!");
                     return;
                 }
-                
+
                 crawler.setStopWordsFile(stopWordFile);
                 crawler.readStopWords();
             }
             System.out.println("Stop Words Elimination Selected...");
             dataSet = crawler.readDocuments();
-            
+
         }
         catch (IOException e) {
             System.out.println("Could not read the documents. Exiting...");
