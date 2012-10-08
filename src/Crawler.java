@@ -3,7 +3,6 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
@@ -89,7 +88,7 @@ public class Crawler {
 					countPos ++;
 					String formatted = token.replaceAll("[^a-zA-Z0-9]","");
 					if(formatted.isEmpty() == false){
-						//dataSet.addPair(formatted.toUpperCase(), nameWithoutType, countPos);
+						dataSet.addPair(formatted.toUpperCase(), docID, countPos);
 					}
 				}
 			}
@@ -105,7 +104,7 @@ public class Crawler {
 				String token = tokens.nextToken();
 				String formatted = token.replaceAll("[^a-zA-Z0-9]","");
 				if(formatted.isEmpty() == false){
-					dataSet.addPair(formatted.toUpperCase(), docID);
+					dataSet.addPair(formatted.toUpperCase(), docID, 0);
 				}
 			}
 		}

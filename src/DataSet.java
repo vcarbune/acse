@@ -45,8 +45,9 @@ public class DataSet {
      * 
      * @param term The term discovered.
      * @param docId The document id in which it appears.
+     * @param position The position within the document.
      */
-    public void addPair(String term, String docId) {
+    public void addPair(String term, String docId, int position) {
         TreeSet<String> docIdList = data.get(term);
 
         docSet.add(docId);
