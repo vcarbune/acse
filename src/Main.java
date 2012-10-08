@@ -83,7 +83,10 @@ public class Main {
 
         while (true) {
             System.out.println("Enter new query (or \"quit\" to quit): ");
-            String queryString = in.nextLine();
+            String queryString = null;
+            do {
+                queryString = in.nextLine();
+            } while (queryString.isEmpty());
 
             if (queryString.equals("quit")) {
                 break;
