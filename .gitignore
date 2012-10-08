@@ -9,3 +9,4 @@ bin/*
 documents/*
 static_stats.*
 dynamic_stats.*
+.DS_Store
