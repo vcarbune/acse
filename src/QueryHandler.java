@@ -15,8 +15,6 @@ public class QueryHandler {
 
     public ArrayList<String> retrieveDocumentsForQuery(Query query) {
         
-        // TODO: dynamic logging before returning the docs
-        
         switch(query.getType()){
         case NOT:
             return handleNOTQuery(query);
@@ -24,10 +22,36 @@ public class QueryHandler {
             return handleANDQuery(query);
         case OR:
             return handleORQuery(query);
+        case PHRASE:
+            return handlePhraseQuery(query);
+        case PROXIMITY:
+            return handleProximityQuery(query);
         }
 
         logger.log(Config.LOG_LEVEL, "Query type " + query.getType() + " not recognized!");
 
+        return null;
+    }
+
+    /**
+     * Answers proximity queries
+     *
+     * @param query
+     * @return A list of documents that map the query
+     */
+    private ArrayList<String> handleProximityQuery(Query query) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * Answers phrase queries
+     *
+     * @param query
+     * @return A list of documents that map the query
+     */
+    private ArrayList<String> handlePhraseQuery(Query query) {
+        // TODO Auto-generated method stub
         return null;
     }
 
