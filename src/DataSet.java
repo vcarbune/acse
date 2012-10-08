@@ -4,7 +4,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 public class DataSet {
-    private HashMap<String, TreeSet<String>> data = new HashMap<String, TreeSet<String>>();
+    private HashMap<String, TreeSet<DocIdEntry>> data = new HashMap<String, TreeSet<DocIdEntry>>();
     private TreeSet<String> docSet = new TreeSet<String>();
     private Logger logger = Logger.getLogger(DataSet.class.getName());
 
@@ -36,8 +36,17 @@ public class DataSet {
      * @param term The term for which to return the doc id list.
      * @return The list of document ids.
      */
+    @Deprecated
     public TreeSet<String> getDocIdSet(String term) {
-        return data.get(term);
+        // TODO(vcarbune): This method should be changed immediately.
+        TreeSet<DocIdEntry> entryList = data.get(term);
+
+        TreeSet<String> result = new TreeSet<String>();
+        for (DocIdEntry entry : entryList) {
+            result.add(entry.getDocId());
+        }
+        
+        return result;
     }
 
     /**
@@ -48,18 +57,23 @@ public class DataSet {
      * @param position The position within the document.
      */
     public void addPair(String term, String docId, int position) {
-        TreeSet<String> docIdList = data.get(term);
-
+        TreeSet<DocIdEntry> docIdList = data.get(term);
         docSet.add(docId);
         
         if (docIdList == null) {
-            docIdList = new TreeSet<String>();
+            docIdList = new TreeSet<DocIdEntry>();
             data.put(term, docIdList);
         }
 
-        if (!docIdList.contains(docId)) {
-            docIdList.add(docId);
+        DocIdEntry docIdEntry = new DocIdEntry(docId);
+        DocIdEntry lowerDocIdEntry = docIdList.lower(docIdEntry);
+        
+        if (lowerDocIdEntry != null && !lowerDocIdEntry.equals(docIdEntry)) {
+            docIdEntry = lowerDocIdEntry;
+        } else {
+            docIdList.add(docIdEntry);
         }
+        docIdEntry.addPosition(position);
     }
 
     /**
