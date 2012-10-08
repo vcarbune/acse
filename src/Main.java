@@ -35,6 +35,7 @@ public class Main {
             logger.addHandler(handler);
         } catch (Exception e) {
             // Just ignore configuration if file does not exist.
+            System.out.println("Exception?");
         }
     }
     
