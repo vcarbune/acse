@@ -4,22 +4,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class Main {
 
-    void printStaticStats(DataSet ds) {
-        // TODO: Static statistics for the whole dataset.
-    }
-
-    void printDynamicStats(String query) {
-        // TODO: Dynamic statistics for each query.
+    public static void printDynamicStats(String query, ArrayList<String> docs, long time) {
+        Logger logger = Logger.getLogger(Main.class.getName());
+        
+        logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
+        logger.log(Config.LOG_LEVEL, "Response time: " + time + "\n");
+        logger.log(Config.LOG_LEVEL, "Number of results: " + docs.size() + "\n");
+        logger.log(Config.LOG_LEVEL, "Results:\n");
+        
+        for (String doc: docs) {
+            logger.log(Config.LOG_LEVEL, doc + "\n");
+        }
+        
     }
 
     public static void initializeLogging() {
         try {
             InputStream inputStream = new FileInputStream("logging.properties");
             LogManager.getLogManager().readConfiguration(inputStream);
+            
+            FileHandler handler =
+                    new FileHandler(Config.DYNAMIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
+            Logger logger = Logger.getLogger(Main.class.getName());
+            logger.addHandler(handler);
         } catch (Exception e) {
             // Just ignore configuration if file does not exist.
         }
@@ -74,25 +87,25 @@ public class Main {
             if (queryString.equals("quit")) {
                 break;
             } else {
-                //TODO: log dynamic stats
-
                 long startTime = System.currentTimeMillis();
 
                 Query query = new Query(queryString);
                 ArrayList<String> docs = handler.retrieveDocumentsForQuery(query);
 
-                long endTime = System.currentTimeMillis();
-
-                System.out.println("The query was processed in " + (endTime-startTime)
-                        + " milliseconds.");
+                long time = System.currentTimeMillis() - startTime;
                 
+                printDynamicStats(queryString, docs, time);
+                
+                /*
+                System.out.println("The query was processed in " + time
+                        + " milliseconds.");
                 System.out.println("Number of documents: " + docs.size());
-
                 System.out.println("Results:");
-
+                
                 for (String s: docs) {
                     System.out.println(s);
                 }
+                */
 
                 System.out.println();
 
