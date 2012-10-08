@@ -9,10 +9,11 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Main {
+    
+    private static Logger logger;
 
     public static void printDynamicStats(String query, ArrayList<String> docs, long time) {
-        Logger logger = Logger.getLogger(Main.class.getName());
-        
+
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
         logger.log(Config.LOG_LEVEL, "Response time: " + time + "\n");
         logger.log(Config.LOG_LEVEL, "Number of results: " + docs.size() + "\n");
@@ -31,11 +32,10 @@ public class Main {
             
             FileHandler handler =
                     new FileHandler(Config.DYNAMIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
-            Logger logger = Logger.getLogger(Main.class.getName());
+            logger = Logger.getLogger(Main.class.getName());
             logger.addHandler(handler);
         } catch (Exception e) {
-            // Just ignore configuration if file does not exist.
-            System.out.println("Exception?");
+            e.printStackTrace();
         }
     }
     
