@@ -14,15 +14,18 @@ public class Query {
     };
     private static String PHRASE_DELIMITER = "\"";
     private static String PROXIMITY_DELIMITER = "\\";
+    private Crawler crawler;
     private Type type;
     private int proximity_window;
     private ArrayList<String> terms;
-    private ArrayList<String> NotTerms;
+    private ArrayList<String> notTerms;
 
-    public Query(String query) {
+    public Query(Crawler crawler, String query) {
+        this.crawler = crawler;
+
         proximity_window = Integer.MAX_VALUE;
         terms = new ArrayList<String>();
-        NotTerms = new ArrayList<String>();
+        notTerms = new ArrayList<String>();
 
         Scanner scanner = new Scanner(query);
         String token = scanner.next().toUpperCase();
@@ -38,7 +41,7 @@ public class Query {
     private boolean maybeSetPhrase(String token) {
         if (token.startsWith(PHRASE_DELIMITER)) {
             type = Type.PHRASE;
-            terms.add(token.substring(1));
+            addTerm(token.substring(1), true);
 
             return true;
         }
@@ -70,7 +73,7 @@ public class Query {
                 throw new IllegalArgumentException("HACK for" + token);
             }
         } catch (IllegalArgumentException e) {
-            terms.add(token);
+            addTerm(token, true);
             if (!scanner.hasNext()) { // If we have only one term
                 type = Type.AND;
             } else {
@@ -83,7 +86,7 @@ public class Query {
     private void parseImplicitAndTerms(Scanner scanner) {
         while (scanner.hasNext()) {
             String token = scanner.next().toUpperCase();
-            terms.add(token);
+            addTerm(token, true);
         }
 
         if (type == Type.PHRASE) {
@@ -91,7 +94,7 @@ public class Query {
             if (token.endsWith(PHRASE_DELIMITER)) {
                 token = token.substring(0, token.length() - 1);
             }
-            terms.add(token);
+            addTerm(token, true);
         }
     }
 
@@ -101,9 +104,9 @@ public class Query {
             String token = scanner.next().toUpperCase();
 
             if (lastOperator == Type.NOT) {
-                NotTerms.add(token);
+                addTerm(token, false);
             } else {
-                terms.add(token);
+                addTerm(token, true);
             }
 
             if (scanner.hasNext()) {
@@ -115,9 +118,21 @@ public class Query {
     public Type getType() {
         return type;
     }
-    
+
     public int getProximityWindow() {
         return proximity_window;
+    }
+
+    private void addTerm(String token, boolean positiveTerm) {
+        if (crawler.getStopWords().contains(token)) {
+            return;
+        }
+
+        if (positiveTerm) {
+            terms.add(token);
+        } else {
+            notTerms.add(token);
+        }
     }
 
     public String getTerm(int i) {
@@ -129,6 +144,6 @@ public class Query {
     }
 
     public ArrayList<String> getNotTerms() {
-        return NotTerms;
+        return notTerms;
     }
 }

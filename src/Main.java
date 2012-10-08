@@ -93,7 +93,7 @@ public class Main {
             } else {
                 long startTime = System.currentTimeMillis();
 
-                Query query = new Query(queryString);
+                Query query = new Query(crawler, queryString);
                 ArrayList<String> docs = handler.retrieveDocumentsForQuery(query);
 
                 long time = System.currentTimeMillis() - startTime;
