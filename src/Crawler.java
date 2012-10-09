@@ -76,16 +76,17 @@ public class Crawler {
         int countPos = 0;
         while ((line = reader.readLine()) != null) {
             line = line.replaceAll("-", " ");
+            line = line.replaceAll("[^a-zA-Z0-9]", " ");
+
             StringTokenizer tokens = new StringTokenizer(line);
 
             while (tokens.hasMoreElements()) {
                 String token = tokens.nextToken();
                 if (stopWords.contains(token) == false) {
                     countPos++;
-                    String formatted = token.replaceAll("[^a-zA-Z0-9]", "");
-                    //  System.out.println(formatted + " " + docID);
-                    if (formatted.isEmpty() == false) {
-                        dataSet.addPair(formatted.toUpperCase(), docID,
+
+                    if (token.isEmpty() == false) {
+                        dataSet.addPair(token.toUpperCase(), docID,
                                 countPos);
                     }
                 }
@@ -121,6 +122,7 @@ public class Crawler {
         }
     }
     
+    // TODO(anyone?): This should be integrated in processFile and method removed.
     private void processFileStemmingOn(BufferedReader reader,
             String docID) throws IOException{
         String line;
@@ -128,18 +130,19 @@ public class Crawler {
         int count = 0;
         while ((line = reader.readLine()) != null) {
             line = line.replaceAll("-", " ");
+            line = line.replaceAll("[^a-zA-Z0-9]", " ");
+
             StringTokenizer tokens = new StringTokenizer(line);
             while(tokens.hasMoreElements()){
                 String token = tokens.nextToken();
-                String formatted = token.replaceAll("[^a-zA-Z0-9]", "");
-                if (formatted.isEmpty() == false) {
+                if (token.isEmpty() == false) {
                     count++;
                  //   System.out.println("init: " + formatted );
                     Stemmer stemmer = new Stemmer();
-                    stemmer.add(formatted.toLowerCase().toCharArray(), formatted.length());
+                    stemmer.add(token.toLowerCase().toCharArray(), token.length());
                     stemmer.stem();
                     String stemmed = stemmer.toString().toUpperCase();
-                   // System.out.println("Stemmed: " + stemmed);
+                 // System.out.println("Stemmed: " + stemmed);
                     
                     dataSet.addPair(stemmed, docID, count);
                 }
