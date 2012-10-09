@@ -222,7 +222,7 @@ public class QueryHandler {
         for (String documentId : commonDocumentEntries.keySet()) {
             TreeSet<Integer> positions = 
                 commonDocumentEntries.get(documentId).get(query.getTerm(0));
-            // System.out.println("Term0: " + query.getTerm(0) + " " + positions.toString());
+
             for (int i = 1; i < query.getTerms().size(); i++) {
                 ArrayList<Integer> incrementedPositions = new ArrayList<Integer>();
 

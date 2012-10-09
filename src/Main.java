@@ -48,9 +48,11 @@ public class Main {
                 Config.enableStopwordElimination = true;
             } else if (args[i].equals(Config.PARAM_STEMMING)) {
                 Config.enableStemming = true;
-            } else if (args[i].contains(Config.PARAM_STOPWORDFILE)) {
+            } else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
                 int eqPos = args[i].indexOf("=");
                 stopWordFile = args[i].substring(eqPos + 1, args[i].length());
+            } else if (args[i].equals(Config.PARAM_ORDERED_PROXIMITY)) {
+                Config.orderedProximity = true;
             }
         }
     }
@@ -60,7 +62,8 @@ public class Main {
             System.out.println("Usage: Main <document_folder>"
                     + " [" + Config.PARAM_STOPWORD + "]"
                     + " [" + Config.PARAM_STOPWORDFILE + "]"
-                    + " [" + Config.PARAM_STEMMING + "]");
+                    + " [" + Config.PARAM_STEMMING + "]"
+                    + " [" + Config.PARAM_ORDERED_PROXIMITY + "]");
 
             return;
         }
