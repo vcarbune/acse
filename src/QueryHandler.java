@@ -1,4 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -14,7 +17,7 @@ public class QueryHandler {
     }
 
     public ArrayList<String> retrieveDocumentsForQuery(Query query) {
-        
+
         switch(query.getType()){
         case NOT:
             return handleNOTQuery(query);
@@ -33,6 +36,35 @@ public class QueryHandler {
         return null;
     }
 
+
+    private HashMap<String, HashMap<String, TreeSet<Integer> > > 
+    getDocIdsMatchingPhrase(Query query){
+        ArrayList<String> terms = query.getTerms();
+        HashMap<String, HashMap<String, TreeSet<Integer>>> intersect 
+        = new HashMap<String, HashMap<String, TreeSet<Integer>>>();
+
+        for(String term:terms){
+            TreeSet<DocIdEntry> docIDs = dataSet.getDocIdEntrySet(term);
+            Iterator<DocIdEntry> iterator = docIDs.iterator();
+
+            while(iterator.hasNext()){
+                DocIdEntry currEntry = iterator.next();
+                if(intersect.containsKey(currEntry.getDocId()) == false){
+                    HashMap<String, TreeSet<Integer>> termToPos 
+                    = new HashMap<String, TreeSet<Integer>>();
+                    termToPos.put(term, currEntry.getPositions());
+                    intersect.put(currEntry.getDocId(), termToPos);
+                }else{
+                    HashMap<String, TreeSet<Integer>> termToPos 
+                    = intersect.get(currEntry.getDocId());
+                    termToPos.put(term, currEntry.getPositions());
+                }
+            }
+        }
+        return intersect;
+    }
+
+
     /**
      * Answers proximity queries
      *
@@ -40,7 +72,12 @@ public class QueryHandler {
      * @return A list of documents that map the query
      */
     private ArrayList<String> handleProximityQuery(Query query) {
-        // TODO Auto-generated method stub
+
+        int distance = query.getProximityWindow();    
+        HashMap<String, HashMap<String, TreeSet<Integer>>>
+        intersect = getDocIdsMatchingPhrase(query);
+
+
         return null;
     }
 
@@ -99,6 +136,7 @@ public class QueryHandler {
 
         // TODO: We could define different orders. For each permutation, we could have an order.
         // We first add the list for the first term, and then intersect with the others.
+
 
         TreeSet<String> matchingDocs =
             new TreeSet<String>(dataSet.getDocIdSet(query.getTerm(0)));
