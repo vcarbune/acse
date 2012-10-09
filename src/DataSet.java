@@ -40,7 +40,7 @@ public class DataSet {
     public TreeSet<String> getDocIdSet(String term) {
         // TODO(vcarbune): This method should be changed immediately.
         TreeSet<DocIdEntry> entryList = data.get(term);
-        System.out.println(entryList.size());
+
         TreeSet<String> result = new TreeSet<String>();
         if(entryList != null){
             for (DocIdEntry entry : entryList) {
