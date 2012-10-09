@@ -33,6 +33,24 @@ public class QueryHandler {
         return null;
     }
 
+    private TreeSet<DocIdEntry> retrieveDocumentEntriesForQuery(Query query)
+    {
+        // Note: This behaves exactly as handleANDQuery, but returns a DocIdEntry.
+        // This is not useful for NOT and OR queries.
+        if (query.getType() == Query.Type.NOT || query.getType() == Query.Type.OR) {
+            return null;
+        }
+        
+        TreeSet<DocIdEntry> matchingDocs =
+                new TreeSet<DocIdEntry>(dataSet.getDocIdEntry(query.getTerm(0)));
+
+        for (String term: query.getTerms()) {
+            matchingDocs.retainAll(dataSet.getDocIdEntry(term));
+        }
+
+        return matchingDocs;
+    }
+
     /**
      * Answers proximity queries
      *
@@ -51,7 +69,37 @@ public class QueryHandler {
      * @return A list of documents that map the query
      */
     private ArrayList<String> handlePhraseQuery(Query query) {
-        // TODO Auto-generated method stub
+        ArrayList<String> terms = query.getTerms();
+        TreeSet<DocIdEntry> documents = new TreeSet<DocIdEntry>();
+        
+        // Iterate through all the documents of each terms, increase
+        // artificially the appearance positions by 1. In the end,
+        // retains the documents from followings terms only if they
+        // match at least one artificially increased position.
+        
+        /*
+        TreeSet<DocIdEntry> docIdEntries = dataSet.getDocIdEntry(terms.get(0));
+        for (DocIdEntry entry : docIdEntries) {
+            TreeSet<Integer> positions = new TreeSet<Integer>();
+            for (Integer position : entry.getPositions()) {
+                positions.add(position + 1);
+            }
+            
+            documents.add(new DocIdEntry(entry.getDocId(), positions));
+        }
+        
+        for (int i = 1; i < terms.size(); ++i) {
+            String term = terms.get(i);
+            docIdEntries = dataSet.getDocIdEntry(term);
+            
+            for (DocIdEntry entry : docIdEntries) {
+                DocIdEntry existingEntry = documents.lower(entry);
+                if (existingEntry == null || !existingEntry.getDocId().equals(entry.getDocId())) {
+                    continue;
+                }
+            }
+        }
+        */      
         return null;
     }
 

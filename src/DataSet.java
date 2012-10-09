@@ -32,6 +32,7 @@ public class DataSet {
 
     /**
      * Returns the list of documents ids in which a specific term appears.
+     * Deprecated: use getDocIdEntry instead.
      * 
      * @param term The term for which to return the doc id list.
      * @return The list of document ids.
@@ -49,6 +50,16 @@ public class DataSet {
         return result;
     }
 
+    /**
+     * Returns the list of document entries in which a specific term appears.
+     * 
+     * @param term The term for which to return the doc entry list.
+     * @return The list of document entries.
+     */
+    public TreeSet<DocIdEntry> getDocIdEntry(String term) {
+        return data.get(term);
+    }
+    
     /**
      * Marks the appearance of a term in a docId.
      * 

@@ -12,8 +12,17 @@ public class DocIdEntry implements Comparable {
         this.docId = docId;
     }
     
+    public DocIdEntry(String docId, TreeSet<Integer> positions) {
+        this.docId = docId;
+        this.positions = positions;
+    }
+    
     public String getDocId() {
         return docId;
+    }
+    
+    public TreeSet<Integer> getPositions() {
+        return positions;
     }
 
     public void addPosition(int pos) {
