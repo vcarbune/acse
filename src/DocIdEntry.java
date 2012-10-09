@@ -31,9 +31,17 @@ public class DocIdEntry implements Comparable {
 
     @Override
     public int compareTo(Object entry) {
-        if (!entry.getClass().equals(DocIdEntry.class))
+        if (!entry.getClass().getName().equals(DocIdEntry.class.getName()))
             return -1;
         
         return docId.compareTo(((DocIdEntry) entry).getDocId());
+    }
+    
+    @Override
+    public boolean equals(Object entry) {
+        if (!entry.getClass().equals(DocIdEntry.class))
+            return false;
+        
+        return docId.equals(((DocIdEntry) entry).getDocId());
     }
 }

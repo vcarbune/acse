@@ -168,7 +168,7 @@ public class QueryHandler {
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -194,9 +194,9 @@ public class QueryHandler {
             System.out.println("Document: " + documentId);
             for(String term: termsPos.keySet()){
                 termsPosList.put(term, new ArrayList<Integer>(termsPos.get(term)));
-          //      for(Integer p : termsPos.get(term)){
-           //     System.out.println("Term: " + term + " " +termsPos.get(term).size());
-            //    }
+                //      for(Integer p : termsPos.get(term)){
+                //     System.out.println("Term: " + term + " " +termsPos.get(term).size());
+                //    }
             }
             if(checkProximity(termsPosList, query, distance)){
                 matchingDocs.add(documentId);
@@ -220,10 +220,9 @@ public class QueryHandler {
 
         // Filters the documents that contain the whole phrase.
         for (String documentId : commonDocumentEntries.keySet()) {
-            TreeSet<Integer> positions =
+            TreeSet<Integer> positions = 
                 commonDocumentEntries.get(documentId).get(query.getTerm(0));
             // System.out.println("Term0: " + query.getTerm(0) + " " + positions.toString());
-
             for (int i = 1; i < query.getTerms().size(); i++) {
                 ArrayList<Integer> incrementedPositions = new ArrayList<Integer>();
 
@@ -232,10 +231,7 @@ public class QueryHandler {
                     incrementedPositions.add(it.next() + 1);
                 }
                 positions = commonDocumentEntries.get(documentId).get(query.getTerm(i));
-                // System.out.println("Term" + i + ": " + query.getTerm(i) + " " + positions.toString());
-
                 positions.retainAll(incrementedPositions);
-                // System.out.println("After Term" + i + ": " + query.getTerm(i) + " " + positions.toString());
             }
 
             if (!positions.isEmpty()) {

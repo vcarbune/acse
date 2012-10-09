@@ -73,13 +73,14 @@ public class DataSet {
         }
         
         DocIdEntry docIdEntry = new DocIdEntry(docId);
-        DocIdEntry lowerDocIdEntry = docIdList.lower(docIdEntry);
-
+        
+        DocIdEntry lowerDocIdEntry = docIdList.floor(docIdEntry);
         if (lowerDocIdEntry != null && lowerDocIdEntry.getDocId().equals(docIdEntry.getDocId())) {
             docIdEntry = lowerDocIdEntry;
         } else {
             docIdList.add(docIdEntry);
         }
+        
         docIdEntry.addPosition(position);
     }
 
