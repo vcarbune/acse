@@ -11,6 +11,9 @@ public class Config {
     public static final int LOG_FILE_COUNT = 1;
     public static final int LOG_FILE_SIZE = 102400;
     
+    //Stop Word file param
+    public static final String PARAM_STOPWORDFILE = "--stopfile=";
+    
     // Offline configuration flags
     public static final String PARAM_STOPWORD = "--stopword";
     public static boolean enableStopwordElimination = false;

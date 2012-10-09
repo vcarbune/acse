@@ -1,4 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -14,7 +17,7 @@ public class QueryHandler {
     }
 
     public ArrayList<String> retrieveDocumentsForQuery(Query query) {
-        
+
         switch(query.getType()){
         case NOT:
             return handleNOTQuery(query);
@@ -33,23 +36,39 @@ public class QueryHandler {
         return null;
     }
 
-    private TreeSet<DocIdEntry> retrieveDocumentEntriesForQuery(Query query)
-    {
-        // Note: This behaves exactly as handleANDQuery, but returns a DocIdEntry.
-        // This is not useful for NOT and OR queries.
-        if (query.getType() == Query.Type.NOT || query.getType() == Query.Type.OR) {
-            return null;
-        }
-        
-        TreeSet<DocIdEntry> matchingDocs =
-                new TreeSet<DocIdEntry>(dataSet.getDocIdEntry(query.getTerm(0)));
 
-        for (String term: query.getTerms()) {
-            matchingDocs.retainAll(dataSet.getDocIdEntry(term));
-        }
+    /**
+     * It searches from every term given in the query and for each matched document
+     * and term it creates a  map from DocIds to another Map<Term, Positions>. 
+     * 
+     * @param query The query object
+     * @return a Map from DocIds to another map of terms to positions. 
+     */
+    private HashMap<String, HashMap<String, TreeSet<Integer>>>
+            getDocIdsMatchingPhrase(Query query) {
+        ArrayList<String> terms = query.getTerms();
+        HashMap<String, HashMap<String, TreeSet<Integer>>> intersect =
+                new HashMap<String, HashMap<String, TreeSet<Integer>>>();
 
-        return matchingDocs;
+        for(String term : terms){
+            TreeSet<DocIdEntry> docIDs = dataSet.getDocIdEntrySet(term);
+            Iterator<DocIdEntry> iterator = docIDs.iterator();
+
+            while(iterator.hasNext()){
+                DocIdEntry currEntry = iterator.next();
+                
+                HashMap<String, TreeSet<Integer>> termToPos = intersect.get(currEntry.getDocId());
+                if(termToPos == null) {
+                    termToPos = new HashMap<String, TreeSet<Integer>>();
+                    intersect.put(currEntry.getDocId(), termToPos);
+                }
+
+                termToPos.put(term, currEntry.getPositions());
+            }
+        }
+        return intersect;
     }
+
 
     /**
      * Answers proximity queries
@@ -58,49 +77,48 @@ public class QueryHandler {
      * @return A list of documents that map the query
      */
     private ArrayList<String> handleProximityQuery(Query query) {
-        // TODO Auto-generated method stub
+
+        int distance = query.getProximityWindow();    
+        HashMap<String, HashMap<String, TreeSet<Integer>>>
+        intersect = getDocIdsMatchingPhrase(query);
+
+
         return null;
     }
 
     /**
      * Answers phrase queries
      *
-     * @param query
-     * @return A list of documents that map the query
+     * @param query The PHRASE query that needs to be answered.
+     * @return The list of documents that correspond to the query.
      */
     private ArrayList<String> handlePhraseQuery(Query query) {
-        ArrayList<String> terms = query.getTerms();
-        TreeSet<DocIdEntry> documents = new TreeSet<DocIdEntry>();
+        HashMap<String, HashMap<String, TreeSet<Integer>>> commonDocumentEntries =
+                getDocIdsMatchingPhrase(query);
+        ArrayList<String> matchingDocs = new ArrayList<String>();
         
-        // Iterate through all the documents of each terms, increase
-        // artificially the appearance positions by 1. In the end,
-        // retains the documents from followings terms only if they
-        // match at least one artificially increased position.
-        
-        /*
-        TreeSet<DocIdEntry> docIdEntries = dataSet.getDocIdEntry(terms.get(0));
-        for (DocIdEntry entry : docIdEntries) {
-            TreeSet<Integer> positions = new TreeSet<Integer>();
-            for (Integer position : entry.getPositions()) {
-                positions.add(position + 1);
-            }
+        // Filters the documents that contain the whole phrase.
+        for (String documentId : commonDocumentEntries.keySet()) {
+            TreeSet<Integer> positions =
+                    commonDocumentEntries.get(documentId).get(query.getTerm(0));
             
-            documents.add(new DocIdEntry(entry.getDocId(), positions));
-        }
-        
-        for (int i = 1; i < terms.size(); ++i) {
-            String term = terms.get(i);
-            docIdEntries = dataSet.getDocIdEntry(term);
-            
-            for (DocIdEntry entry : docIdEntries) {
-                DocIdEntry existingEntry = documents.lower(entry);
-                if (existingEntry == null || !existingEntry.getDocId().equals(entry.getDocId())) {
-                    continue;
+            for (int i = 1; i < query.getTerms().size(); i++) {
+                ArrayList<Integer> incrementedPositions = new ArrayList<Integer>();
+                
+                // Increment the positions from the previous term.
+                for (Iterator<Integer> it = positions.iterator(); it.hasNext(); ) {
+                    incrementedPositions.add(it.next() + 1);
                 }
+                positions = commonDocumentEntries.get(documentId).get(query.getTerm(i));
+                positions.retainAll(incrementedPositions);
+            }
+            
+            if (!positions.isEmpty()) {
+                matchingDocs.add(documentId);
             }
         }
-        */      
-        return null;
+        
+        return matchingDocs;
     }
 
     /**
@@ -111,7 +129,7 @@ public class QueryHandler {
      * In case the query is: NOT A. The method returns
      * all documents that do not contain A.
      *
-     * @param query - The NOT Query that needs to be answered
+     * @param query The NOT Query that needs to be answered
      * @return A list of documents that map the query
      */
     public ArrayList<String> handleNOTQuery(Query query){
@@ -147,6 +165,7 @@ public class QueryHandler {
 
         // TODO: We could define different orders. For each permutation, we could have an order.
         // We first add the list for the first term, and then intersect with the others.
+
 
         TreeSet<String> matchingDocs =
             new TreeSet<String>(dataSet.getDocIdSet(query.getTerm(0)));

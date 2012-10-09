@@ -20,13 +20,13 @@ public class DocIdEntry implements Comparable {
     public String getDocId() {
         return docId;
     }
-    
-    public TreeSet<Integer> getPositions() {
-        return positions;
-    }
 
     public void addPosition(int pos) {
         positions.add(pos);
+    }
+
+    public TreeSet<Integer> getPositions() {
+        return positions;
     }
 
     @Override
