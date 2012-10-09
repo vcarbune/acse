@@ -21,6 +21,7 @@ public class Crawler {
         this.folderName = folderName;
         dataSet = new DataSet();
         documents = new TreeSet<String>();
+        stopWords = new HashSet<String>();
     }
 
     public Crawler(String folderName, String stopWordsFile) {
@@ -29,7 +30,6 @@ public class Crawler {
 
         dataSet = new DataSet();
         documents = new TreeSet<String>();
-        stopWords = new HashSet<String>();
     }
 
     /**
@@ -39,7 +39,6 @@ public class Crawler {
      */
     public void readStopWords() {
         this.stopWordsFlag = true;
-        stopWords = new HashSet<String>();
 
         FileInputStream inputStream;
         try {
@@ -71,8 +70,8 @@ public class Crawler {
      * @param docID The name of the file.
      * @throws IOException Exception thrown in case the file can not be read
      */
-    private void processFileStopWordOn(BufferedReader reader, String docID)
-    throws IOException {
+    private void processFile(BufferedReader reader, String docID)
+            throws IOException {
         String line;
         int countPos = 0;
         while ((line = reader.readLine()) != null) {
@@ -95,15 +94,15 @@ public class Crawler {
     }
 
     /**
-     * Handles reading from a corpus file in case no flag is set. 
+     * Handles reading from a corpus file in case no flag is set.
      * 
      * @param reader The BufferedReader object that is connected to a corpus file
      * @param docID  The ID of the document currently reading from.
      * @throws IOException Exception thrown in case the file can not be read.
      */
-
+    @Deprecated
     private void processLine(BufferedReader reader, String docID)
-    throws IOException {
+            throws IOException {
         String line;
         int count = 0;
         
@@ -175,12 +174,10 @@ public class Crawler {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     dataInput));
 
-            if (stopWordsFlag == true) {
-                processFileStopWordOn(reader, nameWithoutType);
-            } else if(Config.enableStemming == true){
+            if(Config.enableStemming == true){
                 processFileStemmingOn(reader, nameWithoutType);
             } else {
-                processLine(reader, nameWithoutType);
+                processFile(reader, nameWithoutType);
             }
 
 
