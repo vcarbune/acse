@@ -87,6 +87,7 @@ public class QueryHandler {
 
     private boolean checkProximity(HashMap<String, ArrayList<Integer>> positions, Query query, int dist){
         ArrayList<String> terms = query.getTerms();
+
         HashMap<String, Integer> lastSeen = new HashMap<String, Integer>();
         HashMap<String, Integer> lastIndexSeen = new HashMap<String, Integer>();
         HashMap<String, Integer> nrSameTerm = new HashMap<String, Integer>();
@@ -154,8 +155,34 @@ public class QueryHandler {
             }
 
             if(allTermsMatched == true){
-                if(max - min <= dist)
-                    return true;
+                if(max - min <= dist){
+                    if(Config.orderedProximity){
+                        int last = -1;
+                        boolean flagOrdered = true;
+                        for(String ordTerms: terms){
+                            if(last < lastSeen.get(ordTerms)){
+                                last = lastSeen.get(ordTerms);
+                            }else{
+                                //System.out.println(ordTerms + " " + lastSeen.get(ordTerms));   
+                                flagOrdered = false;
+                            }
+                        }
+
+                        if(flagOrdered)
+                            return true;
+                        else{
+                            Iterator<Integer> it = mapIt.get(minTerm);
+                            if(it.hasNext() == false)
+                                return false;
+                            int nextIndx = it.next();
+                            int last2 = lastIndexSeen.get(minTerm);
+                            last2 ++;
+                            lastIndexSeen.put(minTerm, last2);
+                            lastSeen.put(minTerm, nextIndx);
+                        }
+                    } else
+                        return true;
+                }
                 else{
                     Iterator<Integer> it = mapIt.get(minTerm);
                     if(it.hasNext() == false)
@@ -191,12 +218,12 @@ public class QueryHandler {
             HashMap<String, ArrayList<Integer>> termsPosList = 
                 new HashMap<String, ArrayList<Integer>>();
 
-            System.out.println("Document: " + documentId);
+//            System.out.println("Document: " + documentId);
             for(String term: termsPos.keySet()){
                 termsPosList.put(term, new ArrayList<Integer>(termsPos.get(term)));
-                //      for(Integer p : termsPos.get(term)){
-                //     System.out.println("Term: " + term + " " +termsPos.get(term).size());
-                //    }
+                //for(Integer p : termsPos.get(term)){
+                 //   System.out.println("Term: " + term + " " + p);
+                //}
             }
             if(checkProximity(termsPosList, query, distance)){
                 matchingDocs.add(documentId);
