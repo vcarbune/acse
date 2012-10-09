@@ -20,4 +20,7 @@ public class Config {
     
     public static final String PARAM_STEMMING = "--stemming";
     public static boolean enableStemming = false;
+    
+    public static final String PARAM_ORDERED = "--ordered";
+    public static boolean orderedProximity = false;
 }
