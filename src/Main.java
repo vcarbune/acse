@@ -33,7 +33,7 @@ public class Main {
             LogManager.getLogManager().readConfiguration(inputStream);
 
             FileHandler handler =
-                    new FileHandler(Config.DYNAMIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
+                new FileHandler(Config.DYNAMIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
             logger = Logger.getLogger(Main.class.getName());
             logger.addHandler(handler);
         } catch (Exception e) {
@@ -120,16 +120,16 @@ public class Main {
 
                 printDynamicStats(queryString, docs, time);
 
-                /*
-                 System.out.println("The query was processed in " + time
-                 + " milliseconds.");
-                 System.out.println("Number of documents: " + docs.size());
-                 System.out.println("Results:");
-                
-                 for (String s: docs) {
-                 System.out.println(s);
-                 }
-                 */
+
+                System.out.println("The query was processed in " + time
+                        + " milliseconds.");
+                System.out.println("Number of documents: " + docs.size());
+                System.out.println("Results:");
+
+                for (String s: docs) {
+                    System.out.println(s);
+                }
+
 
                 System.out.println();
 
