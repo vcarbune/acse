@@ -82,13 +82,21 @@ public class Crawler {
 
             while (tokens.hasMoreElements()) {
                 String token = tokens.nextToken();
-                if (stopWords.contains(token) == false) {
-                    countPos++;
+                if (Config.enableStopwordElimination && stopWords.contains(token) == true) {
+                    continue;
+                }
+                if (Config.enableStemming) {
+                    Stemmer stemmer = new Stemmer();
+                    stemmer.add(token.toLowerCase().toCharArray(), token.length());
+                    stemmer.stem();
+                
+                    token = stemmer.toString().toUpperCase();
+                }
 
-                    if (token.isEmpty() == false) {
-                        dataSet.addPair(token.toUpperCase(), docID,
-                                countPos);
-                    }
+                countPos++;
+
+                if (token.isEmpty() == false) {
+                    dataSet.addPair(token.toUpperCase(), docID, countPos);
                 }
             }
         }
@@ -123,6 +131,7 @@ public class Crawler {
     }
     
     // TODO(anyone?): This should be integrated in processFile and method removed.
+    @Deprecated
     private void processFileStemmingOn(BufferedReader reader,
             String docID) throws IOException{
         String line;
@@ -177,13 +186,14 @@ public class Crawler {
             DataInputStream dataInput = new DataInputStream(inputStream);
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     dataInput));
-
+/*
             if(Config.enableStemming == true){
                 processFileStemmingOn(reader, nameWithoutType);
             } else {
                 processFile(reader, nameWithoutType);
             }
-
+*/
+            processFile(reader, nameWithoutType);
 
             inputStream.close();
         }
