@@ -20,6 +20,10 @@ public class DocIdEntry implements Comparable {
         positions.add(pos);
     }
 
+    public TreeSet<Integer> getPositions() {
+        return positions;
+    }
+
     @Override
     public int compareTo(Object entry) {
         if (!entry.getClass().equals(DocIdEntry.class))
