@@ -11,7 +11,7 @@ public class DataSet {
     private void initializeLogging() {
         try {
             FileHandler handler =
-                    new FileHandler(Config.STATIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
+                new FileHandler(Config.STATIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
             logger.addHandler(handler);
         } catch (Exception e) {
             e.printStackTrace();
@@ -21,7 +21,7 @@ public class DataSet {
     public DataSet() {
         initializeLogging();
     }
-    
+
     public TreeSet<String> getDocSet() {
         return docSet;
     }
@@ -40,16 +40,17 @@ public class DataSet {
     public TreeSet<String> getDocIdSet(String term) {
         // TODO(vcarbune): This method should be changed immediately.
         TreeSet<DocIdEntry> entryList = data.get(term);
-
         TreeSet<String> result = new TreeSet<String>();
-        for (DocIdEntry entry : entryList) {
-            result.add(entry.getDocId());
+        if(entryList != null){
+            for (DocIdEntry entry : entryList) {
+                result.add(entry.getDocId());
+            }
         }
-        
+
         return result;
     }
-    
-    
+
+
     public TreeSet<DocIdEntry> getDocIdEntrySet(String term){
         return data.get(term);
     }
@@ -64,7 +65,7 @@ public class DataSet {
     public void addPair(String term, String docId, int position) {
         TreeSet<DocIdEntry> docIdList = data.get(term);
         docSet.add(docId);
-        
+
         if (docIdList == null) {
             docIdList = new TreeSet<DocIdEntry>();
             data.put(term, docIdList);
@@ -72,7 +73,7 @@ public class DataSet {
 
         DocIdEntry docIdEntry = new DocIdEntry(docId);
         DocIdEntry lowerDocIdEntry = docIdList.lower(docIdEntry);
-        
+
         if (lowerDocIdEntry != null && !lowerDocIdEntry.equals(docIdEntry)) {
             docIdEntry = lowerDocIdEntry;
         } else {
@@ -87,15 +88,15 @@ public class DataSet {
     public void logStaticStats() {
         logger.log(Config.LOG_LEVEL, "Generating Statistics from the Document Corpus\n");
         logger.log(Config.LOG_LEVEL, "The Document Corpus: " + data.keySet().toString() + "\n");
-        
+
         String maxTerm = null;
         String minTerm = null;
         int totalOnes = 0;
-        
+
         for (String term: data.keySet()) {
             int numDocs = data.get(term).size();
             totalOnes += numDocs;
-            
+
             if (maxTerm == null || data.get(maxTerm).size() < numDocs) {
                 maxTerm = term;
             }
@@ -103,7 +104,7 @@ public class DataSet {
                 minTerm = term;
             }
         }
-        
+
         logger.log(Config.LOG_LEVEL, "The size of the term-doc matrix: " + data.size() + 
                 " terms, " + docSet.size() + " documents.\n");
         logger.log(Config.LOG_LEVEL, "The number of ones in the matrix: " + totalOnes + "\n");
@@ -111,8 +112,8 @@ public class DataSet {
                 data.get(maxTerm).size() + "\n");
         logger.log(Config.LOG_LEVEL, "The shortest posting list: " + minTerm + " - " +
                 data.get(minTerm).size() + "\n");
-        
+
     }
 
-    
+
 }
