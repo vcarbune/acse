@@ -183,7 +183,7 @@ public class QueryHandler {
         int distance = query.getProximityWindow();    
         HashMap<String, HashMap<String, TreeSet<Integer>>> intersect =
             getDocIdsMatchingPhrase(query);
-        ArrayList<String> matchingDocs = new ArrayList<String>();
+        TreeSet<String> matchingDocs = new TreeSet<String>();
 
         // Filters the documents that contain the whole phrase.
         for (String documentId : intersect.keySet()) {
@@ -204,7 +204,7 @@ public class QueryHandler {
         }            
 
 
-        return matchingDocs;
+        return new ArrayList<String>(matchingDocs);
     }
 
     /**
