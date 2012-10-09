@@ -15,7 +15,6 @@ public class Main {
     private static String stopWordFile = null;
 
     public static void printDynamicStats(String query, ArrayList<String> docs, long time) {
-
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
         logger.log(Config.LOG_LEVEL, "Response time: " + time + "\n");
         logger.log(Config.LOG_LEVEL, "Number of results: " + docs.size() + "\n");
@@ -42,7 +41,6 @@ public class Main {
     }
 
     public static void initializeFlags(String args[]) {
-
         for (int i = 0; i < args.length; ++i) {
             if (args[i].equals(Config.PARAM_STOPWORD)) {
                 Config.enableStopwordElimination = true;
@@ -120,9 +118,7 @@ public class Main {
                 ArrayList<String> docs = handler.retrieveDocumentsForQuery(query);
 
                 long time = System.currentTimeMillis() - startTime;
-
                 printDynamicStats(queryString, docs, time);
-
 
                 System.out.println("The query was processed in " + time
                         + " milliseconds.");

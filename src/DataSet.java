@@ -36,9 +36,7 @@ public class DataSet {
      * @param term The term for which to return the doc id list.
      * @return The list of document ids.
      */
-    @Deprecated
     public TreeSet<String> getDocIdSet(String term) {
-        // TODO(vcarbune): This method should be changed immediately.
         TreeSet<DocIdEntry> entryList = data.get(term);
 
         TreeSet<String> result = new TreeSet<String>();
