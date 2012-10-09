@@ -48,6 +48,11 @@ public class DataSet {
         
         return result;
     }
+    
+    
+    public TreeSet<DocIdEntry> getDocIdEntrySet(String term){
+        return data.get(term);
+    }
 
     /**
      * Marks the appearance of a term in a docId.
