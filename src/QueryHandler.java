@@ -37,6 +37,13 @@ public class QueryHandler {
     }
 
 
+    /**
+     * It searches from every term given in the query and for each matched document
+     * and term it creates a  map from DocIds to another Map<Term, Positions>. 
+     * 
+     * @param query The query object
+     * @return a Map from DocIds to another map of terms to positions. 
+     */
     private HashMap<String, HashMap<String, TreeSet<Integer> > > 
     getDocIdsMatchingPhrase(Query query){
         ArrayList<String> terms = query.getTerms();
