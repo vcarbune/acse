@@ -124,7 +124,7 @@ public class Query {
     }
 
     private void addTerm(String token, boolean positiveTerm) {
-        if (crawler.getStopWords().contains(token)) {
+        if (crawler.getStopWords() != null && crawler.getStopWords().contains(token)) {
             return;
         }
 
