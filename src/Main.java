@@ -15,7 +15,6 @@ public class Main {
     private static String stopWordFile = null;
 
     public static void printDynamicStats(String query, ArrayList<String> docs, long time) {
-
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
         logger.log(Config.LOG_LEVEL, "Response time: " + time + "\n");
         logger.log(Config.LOG_LEVEL, "Number of results: " + docs.size() + "\n");
@@ -42,15 +41,16 @@ public class Main {
     }
 
     public static void initializeFlags(String args[]) {
-
         for (int i = 0; i < args.length; ++i) {
             if (args[i].equals(Config.PARAM_STOPWORD)) {
                 Config.enableStopwordElimination = true;
             } else if (args[i].equals(Config.PARAM_STEMMING)) {
                 Config.enableStemming = true;
-            } else if (args[i].contains(Config.PARAM_STOPWORDFILE)) {
+            } else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
                 int eqPos = args[i].indexOf("=");
                 stopWordFile = args[i].substring(eqPos + 1, args[i].length());
+            } else if (args[i].equals(Config.PARAM_ORDERED_PROXIMITY)) {
+                Config.orderedProximity = true;
             }
         }
     }
@@ -60,7 +60,8 @@ public class Main {
             System.out.println("Usage: Main <document_folder>"
                     + " [" + Config.PARAM_STOPWORD + "]"
                     + " [" + Config.PARAM_STOPWORDFILE + "]"
-                    + " [" + Config.PARAM_STEMMING + "]");
+                    + " [" + Config.PARAM_STEMMING + "]"
+                    + " [" + Config.PARAM_ORDERED_PROXIMITY + "]");
 
             return;
         }
@@ -117,9 +118,7 @@ public class Main {
                 ArrayList<String> docs = handler.retrieveDocumentsForQuery(query);
 
                 long time = System.currentTimeMillis() - startTime;
-
                 printDynamicStats(queryString, docs, time);
-
 
                 System.out.println("The query was processed in " + time
                         + " milliseconds.");

@@ -4,7 +4,7 @@ import java.util.TreeSet;
  * Wrapper to easily represent and sort pairs of type
  * (docId, appearanceIndex) within the DataSet.
  */
-public class DocIdEntry implements Comparable {
+public class DocIdEntry implements Comparable<DocIdEntry> {
     private String docId;
     private TreeSet<Integer> positions = new TreeSet<Integer>();
 
@@ -30,11 +30,8 @@ public class DocIdEntry implements Comparable {
     }
 
     @Override
-    public int compareTo(Object entry) {
-        if (!entry.getClass().getName().equals(DocIdEntry.class.getName()))
-            return -1;
-        
-        return docId.compareTo(((DocIdEntry) entry).getDocId());
+    public int compareTo(DocIdEntry entry) {
+        return docId.compareTo(entry.getDocId());
     }
     
     @Override

@@ -19,8 +19,10 @@ public class Config {
     public static boolean enableStopwordElimination = false;
     
     public static final String PARAM_STEMMING = "--stemming";
+
     public static boolean enableStemming = false;
-    
-    public static final String PARAM_ORDERED = "--ordered";
+  
+    // Ordered proximity (due to ambiguity in the requirements)
+    public static final String PARAM_ORDERED_PROXIMITY = "--ordered_proximity";
     public static boolean orderedProximity = false;
 }

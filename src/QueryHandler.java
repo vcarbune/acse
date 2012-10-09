@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -17,7 +16,6 @@ public class QueryHandler {
     }
 
     public ArrayList<String> retrieveDocumentsForQuery(Query query) {
-
         switch(query.getType()){
         case NOT:
             return handleNOTQuery(query);
@@ -76,7 +74,6 @@ public class QueryHandler {
         for (String documentId : documents.keySet()) {
             if (documents.get(documentId).keySet().size() == query.getTerms().size()) {
                 result.put(documentId, documents.get(documentId));
-                // System.out.println(documentId);
             }
         }
 
@@ -206,7 +203,6 @@ public class QueryHandler {
      * @return A list of documents that map the query
      */
     private ArrayList<String> handleProximityQuery(Query query) {
-
         int distance = query.getProximityWindow();    
         HashMap<String, HashMap<String, TreeSet<Integer>>> intersect =
             getDocIdsMatchingPhrase(query);
@@ -249,7 +245,7 @@ public class QueryHandler {
         for (String documentId : commonDocumentEntries.keySet()) {
             TreeSet<Integer> positions = 
                 commonDocumentEntries.get(documentId).get(query.getTerm(0));
-            // System.out.println("Term0: " + query.getTerm(0) + " " + positions.toString());
+
             for (int i = 1; i < query.getTerms().size(); i++) {
                 ArrayList<Integer> incrementedPositions = new ArrayList<Integer>();
 
@@ -310,10 +306,6 @@ public class QueryHandler {
      * @return A list of documents that map the query
      */
     public ArrayList<String> handleANDQuery(Query query) {
-
-        // TODO: We could define different orders. For each permutation, we could have an order.
-        // We first add the list for the first term, and then intersect with the others.
-
         TreeSet<String> matchingDocs =
             new TreeSet<String>(dataSet.getDocIdSet(query.getTerm(0)));
 
@@ -331,10 +323,6 @@ public class QueryHandler {
      * @return A list of documents that map the query
      */
     public ArrayList<String> handleORQuery(Query query) {
-
-        // TODO: We could define different orders. For each permutation, we could have an order.
-        // We first add the list for the first term, and then union with the others.
-
         TreeSet<String> matchingDocs = new TreeSet<String>();
 
         for (String term : query.getTerms()) {
