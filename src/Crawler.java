@@ -137,12 +137,13 @@ public class Crawler {
                 String token = tokens.nextToken();
                 if (token.isEmpty() == false) {
                     count++;
-                 //   System.out.println("init: " + formatted );
+                    //System.out.println("init: " + token );
                     Stemmer stemmer = new Stemmer();
                     stemmer.add(token.toLowerCase().toCharArray(), token.length());
                     stemmer.stem();
+                    
                     String stemmed = stemmer.toString().toUpperCase();
-                 // System.out.println("Stemmed: " + stemmed);
+                    //System.out.println("Stemmed: " + stemmed);
                     
                     dataSet.addPair(stemmed, docID, count);
                 }

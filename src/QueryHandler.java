@@ -47,26 +47,38 @@ public class QueryHandler {
     private HashMap<String, HashMap<String, TreeSet<Integer>>>
             getDocIdsMatchingPhrase(Query query) {
         ArrayList<String> terms = query.getTerms();
-        HashMap<String, HashMap<String, TreeSet<Integer>>> intersect =
+        HashMap<String, HashMap<String, TreeSet<Integer>>> documents =
                 new HashMap<String, HashMap<String, TreeSet<Integer>>>();
 
-        for(String term : terms){
+        for(String term : terms) {
             TreeSet<DocIdEntry> docIDs = dataSet.getDocIdEntrySet(term);
             Iterator<DocIdEntry> iterator = docIDs.iterator();
 
             while(iterator.hasNext()){
                 DocIdEntry currEntry = iterator.next();
                 
-                HashMap<String, TreeSet<Integer>> termToPos = intersect.get(currEntry.getDocId());
+                HashMap<String, TreeSet<Integer>> termToPos = documents.get(currEntry.getDocId());
                 if(termToPos == null) {
                     termToPos = new HashMap<String, TreeSet<Integer>>();
-                    intersect.put(currEntry.getDocId(), termToPos);
+                    documents.put(currEntry.getDocId(), termToPos);
                 }
 
                 termToPos.put(term, currEntry.getPositions());
             }
         }
-        return intersect;
+        
+        // Ensure all the documents have all the terms. Removes the invalid documents.
+        HashMap<String, HashMap<String, TreeSet<Integer>>> result =
+                new HashMap<String, HashMap<String, TreeSet<Integer>>>();
+        
+        for (String documentId : documents.keySet()) {
+            if (documents.get(documentId).keySet().size() == query.getTerms().size()) {
+                result.put(documentId, documents.get(documentId));
+                // System.out.println(documentId);
+            }
+        }
+        
+        return result;
     }
 
 
@@ -101,7 +113,8 @@ public class QueryHandler {
         for (String documentId : commonDocumentEntries.keySet()) {
             TreeSet<Integer> positions =
                     commonDocumentEntries.get(documentId).get(query.getTerm(0));
-            
+            // System.out.println("Term0: " + query.getTerm(0) + " " + positions.toString());
+
             for (int i = 1; i < query.getTerms().size(); i++) {
                 ArrayList<Integer> incrementedPositions = new ArrayList<Integer>();
                 
@@ -110,7 +123,10 @@ public class QueryHandler {
                     incrementedPositions.add(it.next() + 1);
                 }
                 positions = commonDocumentEntries.get(documentId).get(query.getTerm(i));
+                // System.out.println("Term" + i + ": " + query.getTerm(i) + " " + positions.toString());
+
                 positions.retainAll(incrementedPositions);
+                // System.out.println("After Term" + i + ": " + query.getTerm(i) + " " + positions.toString());
             }
             
             if (!positions.isEmpty()) {
@@ -189,7 +205,7 @@ public class QueryHandler {
 
         TreeSet<String> matchingDocs = new TreeSet<String>();
 
-        for (String term: query.getTerms()) {
+        for (String term : query.getTerms()) {
             matchingDocs.addAll(dataSet.getDocIdSet(term));
         }
 
