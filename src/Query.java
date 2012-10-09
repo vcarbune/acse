@@ -19,10 +19,15 @@ public class Query {
     private int proximity_window;
     private ArrayList<String> terms;
     private ArrayList<String> notTerms;
+    private Stemmer stemmer;
 
     public Query(Crawler crawler, String query) {
         this.crawler = crawler;
 
+        if (Config.enableStemming) {
+            stemmer = new Stemmer();
+        }
+        
         proximity_window = Integer.MAX_VALUE;
         terms = new ArrayList<String>();
         notTerms = new ArrayList<String>();
@@ -126,6 +131,12 @@ public class Query {
     private void addTerm(String token, boolean positiveTerm) {
         if (crawler.getStopWords() != null && crawler.getStopWords().contains(token)) {
             return;
+        }
+        
+        if (Config.enableStemming) {
+            stemmer.add(token.toLowerCase().toCharArray(), token.length());
+            stemmer.stem();
+            token = stemmer.toString().toUpperCase();
         }
 
         if (positiveTerm) {
