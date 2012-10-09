@@ -61,7 +61,7 @@ public class Crawler {
     }
 
     /**
-     * Handles the reading of the terms from the corpus files in case the
+     * Handles reading of the terms from the corpus files in case the
      * stopWordsFlag is on. It removes the stop words from the corpus and counts
      * the position of the filtered words into the file after the stop words
      * were deleted. It adds the term plus the document Id and the position of
@@ -95,7 +95,7 @@ public class Crawler {
     }
 
     /**
-     * Process reading from a corpus file in case no flag is set. 
+     * Handles reading from a corpus file in case no flag is set. 
      * 
      * @param reader The BufferedReader object that is connected to a corpus file
      * @param docID  The ID of the document currently reading from.
@@ -117,6 +117,33 @@ public class Crawler {
                 }
             }
         }
+    }
+    
+    private void processFileStemmingOn(BufferedReader reader,
+            String docID) throws IOException{
+        String line;
+       
+        int count = 0;
+        while ((line = reader.readLine()) != null) {
+            line = line.replaceAll("-", " ");
+            StringTokenizer tokens = new StringTokenizer(line);
+            while(tokens.hasMoreElements()){
+                String token = tokens.nextToken();
+                String formatted = token.replaceAll("[^a-zA-Z0-9]", "");
+                if (formatted.isEmpty() == false) {
+                    count++;
+                 //   System.out.println("init: " + formatted );
+                    Stemmer stemmer = new Stemmer();
+                    stemmer.add(formatted.toLowerCase().toCharArray(), formatted.length());
+                    stemmer.stem();
+                    String stemmed = stemmer.toString().toUpperCase();
+                   // System.out.println("Stemmed: " + stemmed);
+                    
+                    dataSet.addPair(stemmed, docID, count);
+                }
+            }
+        }
+        
     }
 
     /**
@@ -147,9 +174,12 @@ public class Crawler {
 
             if (stopWordsFlag == true) {
                 processFileStopWordOn(reader, nameWithoutType);
+            } else if(Config.enableStemming == true){
+                processFileStemmingOn(reader, nameWithoutType);
             } else {
                 processLine(reader, nameWithoutType);
             }
+
 
             inputStream.close();
         }
@@ -175,7 +205,7 @@ public class Crawler {
     public HashSet<String> getStopWords() {
         return stopWords;
     }
-    
+
 
     /**
      * Sets the file where the stop words are stored. 
