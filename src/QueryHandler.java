@@ -166,7 +166,6 @@ public class QueryHandler {
         // TODO: We could define different orders. For each permutation, we could have an order.
         // We first add the list for the first term, and then intersect with the others.
 
-
         TreeSet<String> matchingDocs =
             new TreeSet<String>(dataSet.getDocIdSet(query.getTerm(0)));
 

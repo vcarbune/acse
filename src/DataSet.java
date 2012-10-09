@@ -40,6 +40,7 @@ public class DataSet {
     public TreeSet<String> getDocIdSet(String term) {
         // TODO(vcarbune): This method should be changed immediately.
         TreeSet<DocIdEntry> entryList = data.get(term);
+        System.out.println(entryList.size());
         TreeSet<String> result = new TreeSet<String>();
         if(entryList != null){
             for (DocIdEntry entry : entryList) {
@@ -70,11 +71,11 @@ public class DataSet {
             docIdList = new TreeSet<DocIdEntry>();
             data.put(term, docIdList);
         }
-
+        
         DocIdEntry docIdEntry = new DocIdEntry(docId);
         DocIdEntry lowerDocIdEntry = docIdList.lower(docIdEntry);
 
-        if (lowerDocIdEntry != null && !lowerDocIdEntry.equals(docIdEntry)) {
+        if (lowerDocIdEntry != null && lowerDocIdEntry.getDocId().equals(docIdEntry.getDocId())) {
             docIdEntry = lowerDocIdEntry;
         } else {
             docIdList.add(docIdEntry);
