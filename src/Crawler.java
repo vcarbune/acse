@@ -76,7 +76,7 @@ public class Crawler {
         int countPos = 0;
         while ((line = reader.readLine()) != null) {
             line = line.replaceAll("-", " ");
-            line = line.replaceAll("[^a-zA-Z0-9]", " ");
+            line = line.replaceAll("[^a-zA-Z", " ");
 
             StringTokenizer tokens = new StringTokenizer(line);
 
