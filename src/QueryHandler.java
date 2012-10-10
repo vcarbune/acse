@@ -16,6 +16,11 @@ public class QueryHandler {
     }
 
     public ArrayList<String> retrieveDocumentsForQuery(Query query) {
+        
+        if (query.getTerms().isEmpty()) {
+            return new ArrayList<String>();
+        }
+        
         switch(query.getType()){
         case NOT:
             return handleNOTQuery(query);
