@@ -73,7 +73,6 @@ public class Crawler {
     private void processFile(BufferedReader reader, String docID)
             throws IOException {
         String line;
-        int countPos = 0;
         while ((line = reader.readLine()) != null) {
             line = line.replaceAll("-", " ");
             line = line.replaceAll("[^a-zA-Z]", " ");
@@ -93,10 +92,8 @@ public class Crawler {
                     token = stemmer.toString().toUpperCase();
                 }
 
-                countPos++;
-
                 if (token.isEmpty() == false) {
-                    dataSet.addPair(token.toUpperCase(), docID, countPos);
+                    dataSet.addPair(token.toUpperCase(), docID);
                 }
             }
         }
@@ -153,7 +150,6 @@ public class Crawler {
         return stopWords;
     }
 
-
     /**
      * Sets the file where the stop words are stored. 
      * @param stopWordsFile The name of the file.
@@ -161,6 +157,4 @@ public class Crawler {
     public void setStopWordsFile(String stopWordsFile) {
         this.stopWordsFile = stopWordsFile;
     }
-
-    //TODO: a method for parsing a query into keywords that the Query class can handle.
 }

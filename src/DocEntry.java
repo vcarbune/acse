@@ -1,7 +1,7 @@
 
 /**
  * Wrapper to easily represent and sort pairs of type
- * (docId, appearanceIndex) within the DataSet.
+ * (docId, frequency) within the DataSet.
  */
 public class DocEntry implements Comparable<DocEntry> {
     private String docId;

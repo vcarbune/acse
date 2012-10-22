@@ -42,13 +42,13 @@ public class QueryHandler {
             new HashMap<String, HashMap<String, TreeSet<Integer>>>();
 
         for(String term : terms) {
-            TreeSet<DocIdEntry> docIDs = dataSet.getDocIdEntrySet(term);
+            TreeSet<DocEntry> docIDs = dataSet.getDocIdEntrySet(term);
             if(docIDs == null)
                 return  documents;
-            Iterator<DocIdEntry> iterator = docIDs.iterator();
+            Iterator<DocEntry> iterator = docIDs.iterator();
 
             while(iterator.hasNext()){
-                DocIdEntry currEntry = iterator.next();
+                DocEntry currEntry = iterator.next();
 
                 HashMap<String, TreeSet<Integer>> termToPos = documents.get(currEntry.getDocId());
                 if(termToPos == null) {
@@ -56,7 +56,7 @@ public class QueryHandler {
                     documents.put(currEntry.getDocId(), termToPos);
                 }
 
-                termToPos.put(term, currEntry.getPositions());
+                //termToPos.put(term, currEntry.getPositions());
             }
         }
 
