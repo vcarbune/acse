@@ -85,8 +85,6 @@ public class QueryHandler {
         return result;
     }
 
-
-
     private boolean checkProximity(HashMap<String, ArrayList<Integer>> positions, Query query, int dist){
         ArrayList<String> terms = query.getTerms();
 
@@ -165,7 +163,6 @@ public class QueryHandler {
                             if(last < lastSeen.get(ordTerms)){
                                 last = lastSeen.get(ordTerms);
                             }else{
-                                //System.out.println(ordTerms + " " + lastSeen.get(ordTerms));   
                                 flagOrdered = false;
                             }
                         }
@@ -219,13 +216,10 @@ public class QueryHandler {
             HashMap<String, ArrayList<Integer>> termsPosList = 
                 new HashMap<String, ArrayList<Integer>>();
 
-//            System.out.println("Document: " + documentId);
             for(String term: termsPos.keySet()){
                 termsPosList.put(term, new ArrayList<Integer>(termsPos.get(term)));
-                //for(Integer p : termsPos.get(term)){
-                 //   System.out.println("Term: " + term + " " + p);
-                //}
             }
+
             if(checkProximity(termsPosList, query, distance)){
                 matchingDocs.add(documentId);
             }
