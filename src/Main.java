@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.TreeSet;
 import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -20,13 +21,13 @@ public class Main {
     private static String queryFile = null;
     private static String queryFolder = null;
 
-    public static void printDynamicStats(String query, ArrayList<String> docs, long time) {
+    public static void printDynamicStats(String query, TreeSet<QueryResult> docs, long time) {
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
         logger.log(Config.LOG_LEVEL, "Response time: " + time + "\n");
         logger.log(Config.LOG_LEVEL, "Number of results: " + docs.size() + "\n");
         logger.log(Config.LOG_LEVEL, "Results:\n");
 
-        for (String doc : docs) {
+        for (QueryResult doc : docs) {
             logger.log(Config.LOG_LEVEL, doc + "\n");
         }
     }
@@ -132,7 +133,7 @@ public class Main {
             long startTime = System.currentTimeMillis();
 
             Query query = new Query(crawler, queryString);
-            ArrayList<String> docs = handler.retrieveDocumentsForQuery(query);
+            TreeSet<QueryResult> docs = handler.retrieveDocumentsForQuery(query);
 
             long time = System.currentTimeMillis() - startTime;
             printDynamicStats(queryString, docs, time);
@@ -142,11 +143,11 @@ public class Main {
                     + " milliseconds.");
             System.out.println("Number of documents: " + docs.size());
             System.out.println("Results:");
-
+/*
             for (String s : docs) {
                 System.out.println(s);
             }
-
+*/
             System.out.println();
         }
     }
