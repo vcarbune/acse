@@ -74,7 +74,6 @@ public class Crawler {
             throws IOException {
         String line;
         while ((line = reader.readLine()) != null) {
-            line = line.replaceAll("-", " ");
             line = line.replaceAll("[^a-zA-Z]", " ");
 
             StringTokenizer tokens = new StringTokenizer(line);
