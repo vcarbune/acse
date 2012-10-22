@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.TreeSet;
 import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
@@ -28,7 +27,7 @@ public class Main {
         logger.log(Config.LOG_LEVEL, "Results:\n");
 
         for (QueryResult result : results) {
-            logger.log(Config.LOG_LEVEL, "(" + result.getDocId() + ", " + result.getScore() + ")\n");
+            logger.log(Config.LOG_LEVEL, result + "\n");
         }
 
         logger.log(Config.LOG_LEVEL, "------------------------------------------------------------\n");
@@ -113,7 +112,7 @@ public class Main {
         }
 
         QueryHandler handler = new QueryHandler(dataSet);
-        Scanner in = new Scanner(System.in);
+        //Scanner in = new Scanner(System.in);
 
         ArrayList<String> queryFiles = new ArrayList<String>();
         if (queryFolder != null) {
@@ -135,16 +134,20 @@ public class Main {
             long startTime = System.currentTimeMillis();
 
             Query query = new Query(crawler, queryString);
-            TreeSet<QueryResult> docs = handler.retrieveDocumentsForQuery(query);
+            TreeSet<QueryResult> results = handler.retrieveDocumentsForQuery(query);
 
             long time = System.currentTimeMillis() - startTime;
-            printDynamicStats(queryString, docs, time);
+            printDynamicStats(queryString, results, time);
 
             System.out.println("Query: " + queryString);
             System.out.println("The query was processed in " + time
                     + " milliseconds.");
-            System.out.println("Number of documents: " + docs.size());
+            System.out.println("Number of documents: " + results.size());
             System.out.println("Results:");
+            
+            for (QueryResult res: results) {
+                System.out.print(res + "\n");
+            }
 
             System.out.println();
         }

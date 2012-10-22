@@ -50,5 +50,9 @@ public class QueryResult implements Comparable<QueryResult> {
         
         return docId.equals(((DocEntry) entry).getDocId());
     }
+    
+    public String toString() {
+        return "(" + docId + ", " + score + ")";
+    }
 
 }

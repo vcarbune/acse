@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 
 public class QueryHandler {
 
@@ -11,7 +10,6 @@ public class QueryHandler {
      * Remembers the documents IDs used to create the index.*
      */
     private DataSet dataSet;
-    private final static Logger logger = Logger.getLogger(QueryHandler.class.getName());
 
     public QueryHandler(DataSet dataSet) {
         this.dataSet = dataSet;
@@ -24,21 +22,29 @@ public class QueryHandler {
      * @return
      */
     public TreeSet<QueryResult> retrieveDocumentsForQuery(final Query query) {
+        
         TreeSet<QueryResult> docSet = new TreeSet<QueryResult>();
+        
         if (query.getTermCounts().isEmpty()) {
             return docSet;
         }
 
+        ArrayList<String> docIdList = getMatchingDocs(query);
+
+        if (docIdList.isEmpty()) {
+            return docSet;
+        }
+        
         double queryVectorLength = 0;
+        
         for (Map.Entry<String, Integer> termCount : query.getTermCounts()) {
             double qi = dataSet.computeQueryWeight(termCount.getKey(), termCount.getValue());
             queryVectorLength += qi * qi;
         }
+        
         queryVectorLength = Math.sqrt(queryVectorLength);
 
-        ArrayList<String> docIdList = getMatchingDocs(query);
         for (String docId : docIdList) {
-
             double score = 0;
             double docVectorLength = 0;
 
