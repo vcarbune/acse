@@ -1,8 +1,12 @@
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.FileHandler;
@@ -13,6 +17,8 @@ public class Main {
 
     private static Logger logger;
     private static String stopWordFile = null;
+    private static String queryFile = null;
+    private static String queryFolder = null;
 
     public static void printDynamicStats(String query, ArrayList<String> docs, long time) {
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
@@ -23,7 +29,6 @@ public class Main {
         for (String doc : docs) {
             logger.log(Config.LOG_LEVEL, doc + "\n");
         }
-
     }
 
     public static void initializeLogging() {
@@ -52,8 +57,12 @@ public class Main {
             } else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
                 int eqPos = args[i].indexOf("=");
                 stopWordFile = args[i].substring(eqPos + 1, args[i].length());
-            } else if (args[i].equals(Config.PARAM_ORDERED_PROXIMITY)) {
-                Config.orderedProximity = true;
+            } else if (args[i].startsWith(Config.PARAM_QUERYFOLDER)) {
+                int eqPos = args[i].indexOf("=");
+                queryFolder = args[i].substring(eqPos + 1, args[i].length());
+            } else if (args[i].startsWith(Config.PARAM_QUERYFILE)) {
+                int eqPos = args[i].indexOf("=");
+                queryFile = args[i].substring(eqPos + 1, args[i].length());
             }
         }
     }
@@ -64,7 +73,8 @@ public class Main {
                     + " [" + Config.PARAM_STOPWORD + "]"
                     + " [" + Config.PARAM_STOPWORDFILE + "]"
                     + " [" + Config.PARAM_STEMMING + "]"
-                    + " [" + Config.PARAM_ORDERED_PROXIMITY + "]");
+                    + " [" + Config.PARAM_QUERYFOLDER + "]"
+                    + " [" + Config.PARAM_QUERYFILE + "]");
 
             return;
         }
@@ -100,40 +110,72 @@ public class Main {
         }
 
         QueryHandler handler = new QueryHandler(dataSet);
-
         Scanner in = new Scanner(System.in);
 
-        while (true) {
-            System.out.println("Enter new query (or \"quit\" to quit): ");
-            String queryString = null;
-            do {
-                queryString = in.nextLine();
-            } while (queryString.isEmpty());
+        ArrayList<String> queryFiles = new ArrayList<String>();
+        if (queryFolder != null) {
+            File folder = new File(queryFolder);
+            File[] listOfFiles = folder.listFiles();
 
-            if (queryString.equals("quit")) {
-                break;
-            } else {
-                long startTime = System.currentTimeMillis();
-
-                Query query = new Query(crawler, queryString);
-                ArrayList<String> docs = handler.retrieveDocumentsForQuery(query);
-
-                long time = System.currentTimeMillis() - startTime;
-                printDynamicStats(queryString, docs, time);
-
-                System.out.println("The query was processed in " + time
-                        + " milliseconds.");
-                System.out.println("Number of documents: " + docs.size());
-                System.out.println("Results:");
-
-                for (String s: docs) {
-                    System.out.println(s);
-                }
-
-
-                System.out.println();
-
+            for (int i = 0; i < listOfFiles.length; i++) {
+                queryFiles.add(queryFolder + "/" + listOfFiles[i].getName());
             }
+        } else if (queryFile != null) {
+            queryFiles.add(queryFile);
+        } else {
+            System.out.println("No queries!");
         }
+        
+        for (String queryFile : queryFiles) {
+            String queryString = readQuery(queryFile);
+
+            long startTime = System.currentTimeMillis();
+
+            Query query = new Query(crawler, queryString);
+            ArrayList<String> docs = handler.retrieveDocumentsForQuery(query);
+
+            long time = System.currentTimeMillis() - startTime;
+            printDynamicStats(queryString, docs, time);
+
+            System.out.println("Query: " + queryString);
+            System.out.println("The query was processed in " + time
+                    + " milliseconds.");
+            System.out.println("Number of documents: " + docs.size());
+            System.out.println("Results:");
+
+            for (String s : docs) {
+                System.out.println(s);
+            }
+
+            System.out.println();
+        }
+    }
+
+    private static String readQuery(String queryFile) {
+        FileInputStream inputStream;
+
+        try {
+            inputStream = new FileInputStream(queryFile);
+            DataInputStream dataInput = new DataInputStream(inputStream);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    dataInput));
+
+            StringBuilder queryBuilder = new StringBuilder();
+            
+            String line;
+            while ((line = reader.readLine()) != null) {
+                queryBuilder.append(line.toUpperCase());
+                queryBuilder.append(" ");
+            }
+
+            inputStream.close();
+            
+            return queryBuilder.toString();
+        } catch (IOException e) {
+            System.out.println("The query file cannot be found!");
+            System.exit(2);
+        }
+        
+        return "";
     }
 }

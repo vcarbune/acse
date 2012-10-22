@@ -11,21 +11,20 @@ public class Config {
     public static final String DYNAMIC_STATS_FILE = "dynamic_stats.log";
 
     // No log rotation is needed for now.
-    public static final int LOG_FILE_COUNT = 1;
+    public static final int LOG_FILE_COUNT = 5;
     public static final int LOG_FILE_SIZE = 102400;
 
-    //Stop Word file param
+    // Stopword file param
     public static final String PARAM_STOPWORDFILE = "--stopfile=";
+
+    // Query folder param
+    public static final String PARAM_QUERYFOLDER = "--queryfolder=";
+    public static final String PARAM_QUERYFILE = "--queryfile=";
 
     // Offline configuration flags
     public static final String PARAM_STOPWORD = "--stopword";
     public static boolean enableStopwordElimination = false;
 
     public static final String PARAM_STEMMING = "--stemming";
-
     public static boolean enableStemming = false;
-
-    // Ordered proximity (due to ambiguity in the requirements)
-    public static final String PARAM_ORDERED_PROXIMITY = "--ordered_proximity";
-    public static boolean orderedProximity = false;
 }
