@@ -3,8 +3,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Query {
-    
-    //TODO: remove all methods for parsing queries except for AND queries
 
     public static enum Type {
 
@@ -14,13 +12,10 @@ public class Query {
         PHRASE,
         PROXIMITY
     };
-    private static String PHRASE_DELIMITER = "\"";
-    private static String PROXIMITY_DELIMITER = "\\";
+    private static String QUERY_END = ".";
     private Crawler crawler;
     private Type type;
-    private int proximity_window;
     private ArrayList<String> terms;
-    private ArrayList<String> notTerms;
     private Stemmer stemmer;
 
     public Query(Crawler crawler, String query) {
@@ -29,96 +24,24 @@ public class Query {
         if (Config.enableStemming) {
             stemmer = new Stemmer();
         }
-        
-        proximity_window = Integer.MAX_VALUE;
+
         terms = new ArrayList<String>();
-        notTerms = new ArrayList<String>();
 
         Scanner scanner = new Scanner(query);
-        String token = scanner.next().toUpperCase();
 
-        if (maybeSetPhrase(token) || maybeSetProximity(token)) {
-            parseImplicitAndTerms(scanner);
-        } else {
-            setBoolean(token, scanner);
-            parseFullBooleanTerms(scanner);
-        }
+        type = Type.AND;
+        parseTerms(scanner);
     }
 
-    private boolean maybeSetPhrase(String token) {
-        if (token.startsWith(PHRASE_DELIMITER)) {
-            type = Type.PHRASE;
-            addTerm(token.substring(1), true);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean maybeSetProximity(String token) {
-        if (token.startsWith(PROXIMITY_DELIMITER)) {
-            type = Type.PROXIMITY;
-            Scanner s = new Scanner(token.substring(1));
-            proximity_window = s.nextInt();
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private void setBoolean(String token, Scanner scanner) {
-        try {
-            type = Type.valueOf(token);
-
-            // We might encounter PHRASE and PROXIMITY as words.
-            // We don't want them to be parsed as the query Type.
-            if (type == Type.PHRASE || type == Type.PROXIMITY) {
-                // HACK WARNING: This code is a hack.
-                type = null;
-                throw new IllegalArgumentException("HACK for" + token);
-            }
-        } catch (IllegalArgumentException e) {
-            addTerm(token, true);
-            if (!scanner.hasNext()) { // If we have only one term
-                type = Type.AND;
-            } else {
-                token = scanner.next().toUpperCase();
-                type = Type.valueOf(token);
-            }
-        }
-    }
-
-    private void parseImplicitAndTerms(Scanner scanner) {
+    private void parseTerms(Scanner scanner) {
         while (scanner.hasNext()) {
             String token = scanner.next().toUpperCase();
-            addTerm(token, true);
+            addTerm(token);
         }
 
-        if (type == Type.PHRASE) {
-            String token = terms.remove(terms.size() - 1);
-            if (token.endsWith(PHRASE_DELIMITER)) {
-                token = token.substring(0, token.length() - 1);
-            }
-            addTerm(token, true);
-        }
-    }
-
-    private void parseFullBooleanTerms(Scanner scanner) {
-        Type lastOperator = type;
-        while (scanner.hasNext()) {
-            String token = scanner.next().toUpperCase();
-
-            if (lastOperator == Type.NOT) {
-                addTerm(token, false);
-            } else {
-                addTerm(token, true);
-            }
-
-            if (scanner.hasNext()) {
-                lastOperator = Type.valueOf(scanner.next().toUpperCase());
-            }
+        String token = terms.get(terms.size() - 1);
+        if (token.equals(QUERY_END)) {
+            terms.remove(terms.size() - 1);
         }
     }
 
@@ -126,26 +49,26 @@ public class Query {
         return type;
     }
 
+    /**
+     * @return -1
+     * @deprecated
+     */
     public int getProximityWindow() {
-        return proximity_window;
+        return -1;
     }
 
-    private void addTerm(String token, boolean positiveTerm) {
+    private void addTerm(String token) {
         if (crawler.getStopWords() != null && crawler.getStopWords().contains(token)) {
             return;
         }
-        
+
         if (Config.enableStemming) {
             stemmer.add(token.toLowerCase().toCharArray(), token.length());
             stemmer.stem();
             token = stemmer.toString().toUpperCase();
         }
 
-        if (positiveTerm) {
-            terms.add(token);
-        } else {
-            notTerms.add(token);
-        }
+        terms.add(token);
     }
 
     public String getTerm(int i) {
@@ -156,7 +79,11 @@ public class Query {
         return terms;
     }
 
+    /**
+     * @return null
+     * @deprecated
+     */
     public ArrayList<String> getNotTerms() {
-        return notTerms;
+        return null;
     }
 }
