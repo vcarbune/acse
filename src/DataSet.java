@@ -92,4 +92,41 @@ public class DataSet {
     public int getDocFrequency(String term) {
         return data.get(term).size();
     }
+    
+    /**
+     * Computes the tf-idf score for a document
+     * @param docId
+     * @param term
+     * @return
+     */
+    public double computeDocWeight(String docId, String term) {
+        if (!getDocIdSet(term).contains(docId)) {
+            return 0;
+        }
+        
+        int N = docSet.size();
+        int tf = getTermFrequency(docId, term);
+        int df = getDocFrequency(term);
+        
+        return (1+Math.log10(tf)) * Math.log10(N / (double) df);
+    }
+    
+    /**
+     * Computes the tf-idf score for a document
+     * @param docId
+     * @param term
+     * @return
+     */
+    public double computeQueryWeight(Query query, String term) {
+        if (!query.getTerms().contains(term)) {
+            return 0;
+        }
+        
+        int N = docSet.size();
+        //TODO: int tf = query.getTermFrequency(term);
+        int tf = 0;
+        int df = getDocFrequency(term);
+        
+        return (1+Math.log10(tf)) * Math.log10(N / (double) df);
+    }
 }
