@@ -21,15 +21,17 @@ public class Main {
     private static String queryFile = null;
     private static String queryFolder = null;
 
-    public static void printDynamicStats(String query, TreeSet<QueryResult> docs, long time) {
+    public static void printDynamicStats(String query, TreeSet<QueryResult> results, long time) {
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
         logger.log(Config.LOG_LEVEL, "Response time: " + time + "\n");
-        logger.log(Config.LOG_LEVEL, "Number of results: " + docs.size() + "\n");
+        logger.log(Config.LOG_LEVEL, "Number of results: " + results.size() + "\n");
         logger.log(Config.LOG_LEVEL, "Results:\n");
 
-        for (QueryResult doc : docs) {
-            logger.log(Config.LOG_LEVEL, doc + "\n");
+        for (QueryResult result : results) {
+            logger.log(Config.LOG_LEVEL, "(" + result.getDocId() + ", " + result.getScore() + ")\n");
         }
+
+        logger.log(Config.LOG_LEVEL, "------------------------------------------------------------\n");
     }
 
     public static void initializeLogging() {
