@@ -161,4 +161,7 @@ public class Crawler {
     public void setStopWordsFile(String stopWordsFile) {
         this.stopWordsFile = stopWordsFile;
     }
+    
+    
+    //TODO: a method for parsing a query into keywords that the Query class can handle.
 }

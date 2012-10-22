@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Query {
+    
+    //TODO: remove all methods for parsing queries except for AND queries
 
     public static enum Type {
 

@@ -15,6 +15,7 @@ public class QueryHandler {
         this.dataSet = dataSet;
     }
 
+    //TODO: return pairs (docId, score)
     public ArrayList<String> retrieveDocumentsForQuery(Query query) {
         
         if (query.getTerms().isEmpty()) {

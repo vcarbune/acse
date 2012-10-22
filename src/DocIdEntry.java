@@ -7,6 +7,7 @@ import java.util.TreeSet;
 public class DocIdEntry implements Comparable<DocIdEntry> {
     private String docId;
     private TreeSet<Integer> positions = new TreeSet<Integer>();
+    //TODO: keep term frequency, instead of positions
 
     public DocIdEntry(String docId) {
         this.docId = docId;

@@ -8,6 +8,9 @@ public class DataSet {
     private TreeSet<String> docSet = new TreeSet<String>();
     private Logger logger = Logger.getLogger(DataSet.class.getName());
 
+    //TODO: redesign the data structures
+    
+    
     private void initializeLogging() {
         try {
             FileHandler handler =
@@ -54,6 +57,8 @@ public class DataSet {
         return data.get(term);
     }
 
+    
+    //TODO: change this method, should update the frequencies
     /**
      * Marks the appearance of a term in a docId.
      * 
@@ -80,38 +85,5 @@ public class DataSet {
         }
         
         docIdEntry.addPosition(position);
-    }
-
-    /**
-     * Logs the statistics related to the corpus.
-     */
-    public void logStaticStats() {
-        logger.log(Config.LOG_LEVEL, "Generating Statistics from the Document Corpus\n");
-        logger.log(Config.LOG_LEVEL, "The Document Corpus: " + data.keySet().toString() + "\n");
-
-        String maxTerm = null;
-        String minTerm = null;
-        int totalOnes = 0;
-
-        for (String term: data.keySet()) {
-            int numDocs = data.get(term).size();
-            totalOnes += numDocs;
-
-            if (maxTerm == null || data.get(maxTerm).size() < numDocs) {
-                maxTerm = term;
-            }
-            if (minTerm == null || data.get(minTerm).size() > numDocs) {
-                minTerm = term;
-            }
-        }
-
-        logger.log(Config.LOG_LEVEL, "The size of the term-doc matrix: " + data.size() + 
-                " terms, " + docSet.size() + " documents.\n");
-        logger.log(Config.LOG_LEVEL, "The number of ones in the matrix: " + totalOnes + "\n");
-        logger.log(Config.LOG_LEVEL, "The longest posting list: " + maxTerm + " - " +
-                data.get(maxTerm).size() + "\n");
-        logger.log(Config.LOG_LEVEL, "The shortest posting list: " + minTerm + " - " +
-                data.get(minTerm).size() + "\n");
-
     }
 }
