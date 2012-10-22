@@ -27,6 +27,7 @@ public class Query {
 
         terms = new ArrayList<String>();
 
+        query = query.replaceAll("[^a-zA-Z]", " ");
         Scanner scanner = new Scanner(query);
 
         type = Type.AND;
