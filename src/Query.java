@@ -1,6 +1,10 @@
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Query {
 
@@ -15,7 +19,7 @@ public class Query {
     private static String QUERY_END = ".";
     private Crawler crawler;
     private Type type;
-    private ArrayList<String> terms;
+    private HashMap<String, Integer> termCounts;
     private Stemmer stemmer;
 
     public Query(Crawler crawler, String query) {
@@ -25,7 +29,7 @@ public class Query {
             stemmer = new Stemmer();
         }
 
-        terms = new ArrayList<String>();
+        termCounts = new HashMap<String, Integer>();
 
         query = query.replaceAll("[^a-zA-Z]", " ");
         Scanner scanner = new Scanner(query);
@@ -39,11 +43,6 @@ public class Query {
             String token = scanner.next().toUpperCase();
             addTerm(token);
         }
-
-        String token = terms.get(terms.size() - 1);
-        if (token.equals(QUERY_END)) {
-            terms.remove(terms.size() - 1);
-        }
     }
 
     public Type getType() {
@@ -51,8 +50,8 @@ public class Query {
     }
 
     /**
-     * @return -1
      * @deprecated
+     * @return -1
      */
     public int getProximityWindow() {
         return -1;
@@ -69,20 +68,36 @@ public class Query {
             token = stemmer.toString().toUpperCase();
         }
 
-        terms.add(token);
-    }
-
-    public String getTerm(int i) {
-        return terms.get(i);
-    }
-
-    public ArrayList<String> getTerms() {
-        return terms;
+        Integer count = termCounts.get(token);
+        if (count == null) {
+            termCounts.put(token, 1);
+        } else {
+            termCounts.put(token, count + 1);
+        }
     }
 
     /**
-     * @return null
      * @deprecated
+     */
+    public String getTerm(int i) {
+        Iterator<String> it = termCounts.keySet().iterator();
+        return it.next();
+    }
+
+    /**
+     * @deprecated
+     */
+    public ArrayList<String> getTerms() {
+        return new ArrayList<String>(termCounts.keySet());
+    }
+    
+    public Set<Map.Entry<String, Integer>> getTermCounts() {
+        return termCounts.entrySet();
+    }
+
+    /**
+     * @deprecated
+     * @return null
      */
     public ArrayList<String> getNotTerms() {
         return null;
