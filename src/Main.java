@@ -143,11 +143,7 @@ public class Main {
                     + " milliseconds.");
             System.out.println("Number of documents: " + docs.size());
             System.out.println("Results:");
-/*
-            for (String s : docs) {
-                System.out.println(s);
-            }
-*/
+
             System.out.println();
         }
     }
