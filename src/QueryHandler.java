@@ -1,73 +1,71 @@
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TreeMap;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-
 public class QueryHandler {
 
-    /** Remembers the documents IDs used to create the index.**/
+    /**
+     * Remembers the documents IDs used to create the index.*
+     */
     private DataSet dataSet;
-    private Logger logger = Logger.getLogger(QueryHandler.class.getName());
+    private final static Logger logger = Logger.getLogger(QueryHandler.class.getName());
 
-    public QueryHandler(DataSet dataSet){
+    public QueryHandler(DataSet dataSet) {
         this.dataSet = dataSet;
     }
 
     /**
      * Return the list of documents matching the query and their scores
+     *
      * @param query
      * @return
      */
-    public TreeSet<QueryResult> retrieveDocumentsForQuery(Query query) {
-        
+    public TreeSet<QueryResult> retrieveDocumentsForQuery(final Query query) {
         TreeSet<QueryResult> docSet = new TreeSet<QueryResult>();
-        
-        if (query.getTerms().isEmpty()) {
+        if (query.getTermCounts().isEmpty()) {
             return docSet;
         }
-        
-        ArrayList<String> docIdList = getMatchingDocs(query);
-        
+
         double queryVectorLength = 0;
-        
-        for (String term: query.getTerms()) {
-            double qi = dataSet.computeQueryWeight(query, term);
+        for (Map.Entry<String, Integer> termCount : query.getTermCounts()) {
+            double qi = dataSet.computeQueryWeight(termCount.getKey(), termCount.getValue());
             queryVectorLength += qi * qi;
         }
-        
         queryVectorLength = Math.sqrt(queryVectorLength);
-        
-        for (String docId: docIdList) {
-            
+
+        ArrayList<String> docIdList = getMatchingDocs(query);
+        for (String docId : docIdList) {
+
             double score = 0;
             double docVectorLength = 0;
-            
-            for (String term: query.getTerms()) {
-                double qi = dataSet.computeQueryWeight(query, term);
-                double di = dataSet.computeDocWeight(docId, term);
+
+            for (Map.Entry<String, Integer> termCount : query.getTermCounts()) {
+                double qi = dataSet.computeQueryWeight(termCount.getKey(), termCount.getValue());
+                double di = dataSet.computeDocWeight(docId, termCount.getKey());
                 docVectorLength += di * di;
                 score += qi * di;
             }
-            
+
             docVectorLength = Math.sqrt(docVectorLength);
-            
+
             score /= queryVectorLength * docVectorLength;
-            
+
             docSet.add(new QueryResult(docId, score));
         }
-        
+
         return docSet;
     }
-    
-    private ArrayList<String> getMatchingDocs(Query query) {
+
+    private ArrayList<String> getMatchingDocs(final Query query) {
+        Iterator<String> term = query.getTerms().iterator();
         TreeSet<String> matchingDocs =
-            new TreeSet<String>(dataSet.getDocIdSet(query.getTerm(0)));
-        
-        for (String term: query.getTerms()) {
-            matchingDocs.retainAll(dataSet.getDocIdSet(term));
+                new TreeSet<String>(dataSet.getDocIdSet(term.next()));
+
+        while (term.hasNext()) {
+            matchingDocs.retainAll(dataSet.getDocIdSet(term.next()));
         }
 
         return new ArrayList<String>(matchingDocs);

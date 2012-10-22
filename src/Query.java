@@ -50,8 +50,7 @@ public class Query {
     }
 
     /**
-     * @deprecated
-     * @return -1
+     * @deprecated @return -1
      */
     public int getProximityWindow() {
         return -1;
@@ -76,30 +75,11 @@ public class Query {
         }
     }
 
-    /**
-     * @deprecated
-     */
-    public String getTerm(int i) {
-        Iterator<String> it = termCounts.keySet().iterator();
-        return it.next();
-    }
-
-    /**
-     * @deprecated
-     */
-    public ArrayList<String> getTerms() {
-        return new ArrayList<String>(termCounts.keySet());
-    }
-    
     public Set<Map.Entry<String, Integer>> getTermCounts() {
         return termCounts.entrySet();
     }
 
-    /**
-     * @deprecated
-     * @return null
-     */
-    public ArrayList<String> getNotTerms() {
-        return null;
+    public Set<String> getTerms() {
+        return termCounts.keySet();
     }
 }
