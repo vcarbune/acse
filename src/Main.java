@@ -41,6 +41,9 @@ public class Main {
     }
 
     public static void initializeFlags(String args[]) {
+        
+        //TODO: add the query folder option
+        
         for (int i = 0; i < args.length; ++i) {
             if (args[i].equals(Config.PARAM_STOPWORD)) {
                 Config.enableStopwordElimination = true;
@@ -95,8 +98,6 @@ public class Main {
             System.out.println("Could not read the documents. Exiting...");
             return;
         }
-
-        dataSet.logStaticStats();
 
         QueryHandler handler = new QueryHandler(dataSet);
 
