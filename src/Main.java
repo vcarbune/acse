@@ -145,7 +145,7 @@ public class Main {
             long time = System.currentTimeMillis() - startTime;
             printDynamicStats(queryString, results, time);
             
-            int queryId = Integer.parseInt(queryFile.replaceAll("[A-Z]", ""));
+            int queryId = Integer.parseInt(queryFile.replaceAll("[^0-9]", ""));
             precisionRecall.computePrecisionAndRecall(queryId, results);
 
             System.out.println("Query: " + queryString);
