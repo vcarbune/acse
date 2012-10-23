@@ -35,11 +35,11 @@ public class QueryResult implements Comparable<QueryResult> {
         if (score > result.score) {
             return -1;
         }
-        else if (score == result.score) {
-            return 0;
+        else if (score < result.score) {
+            return 1;
         }
         else {
-            return 1;
+            return docId.compareTo(result.docId);
         }
     }
     
