@@ -19,6 +19,7 @@ public class Main {
     private static String stopWordFile = null;
     private static String queryFile = null;
     private static String queryFolder = null;
+    private static String relevancyList = null;
 
     public static void printDynamicStats(String query, TreeSet<QueryResult> results, long time) {
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
@@ -65,6 +66,9 @@ public class Main {
             } else if (args[i].startsWith(Config.PARAM_QUERYFILE)) {
                 int eqPos = args[i].indexOf("=");
                 queryFile = args[i].substring(eqPos + 1, args[i].length());
+            } else if(args[i].startsWith(Config.PARAM_RELEVANCY)){
+                int eqPos = args[i].indexOf("=");
+                relevancyList = args[i].substring(eqPos + 1, args[i].length());
             }
         }
     }
@@ -76,7 +80,8 @@ public class Main {
                     + " [" + Config.PARAM_STOPWORDFILE + "]"
                     + " [" + Config.PARAM_STEMMING + "]"
                     + " [" + Config.PARAM_QUERYFOLDER + "]"
-                    + " [" + Config.PARAM_QUERYFILE + "]");
+                    + " [" + Config.PARAM_QUERYFILE + "]"
+                    + " [" + Config.PARAM_RELEVANCY + "]");
 
             return;
         }
@@ -111,6 +116,7 @@ public class Main {
             return;
         }
 
+        PrecisionRecall precisionRecall = new PrecisionRecall(relevancyList);;
         QueryHandler handler = new QueryHandler(dataSet);
         //Scanner in = new Scanner(System.in);
 
@@ -135,9 +141,12 @@ public class Main {
 
             Query query = new Query(crawler, queryString);
             TreeSet<QueryResult> results = handler.retrieveDocumentsForQuery(query);
-
+            
             long time = System.currentTimeMillis() - startTime;
             printDynamicStats(queryString, results, time);
+            
+            int queryId = Integer.parseInt(queryFile.replaceAll("[A-Z]", ""));
+            precisionRecall.computePrecisionAndRecall(queryId, results);
 
             System.out.println("Query: " + queryString);
             System.out.println("The query was processed in " + time
@@ -151,6 +160,7 @@ public class Main {
 
             System.out.println();
         }
+        precisionRecall.computeAverageOverAllQueries();
     }
 
     private static String readQuery(String queryFile) {
