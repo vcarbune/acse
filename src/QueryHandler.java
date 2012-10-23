@@ -29,9 +29,10 @@ public class QueryHandler {
             return docSet;
         }
 
-        ArrayList<String> docIdList = getMatchingDocs(query);
-
-        if (docIdList.isEmpty()) {
+        //ArrayList<String> docIdList = getMatchingDocs(query);
+        TreeSet<String> docIdSet = dataSet.getDocSet();
+        
+        if (docIdSet.isEmpty()) {
             return docSet;
         }
         
@@ -44,7 +45,7 @@ public class QueryHandler {
         
         queryVectorLength = Math.sqrt(queryVectorLength);
 
-        for (String docId : docIdList) {
+        for (String docId : docIdSet) {
             double score = 0;
             double docVectorLength = 0;
 
@@ -57,9 +58,10 @@ public class QueryHandler {
 
             docVectorLength = Math.sqrt(docVectorLength);
 
-            score /= queryVectorLength * docVectorLength;
-
-            docSet.add(new QueryResult(docId, score));
+            if (docVectorLength != 0) {
+                score /= queryVectorLength * docVectorLength;
+                docSet.add(new QueryResult(docId, score));
+            }
         }
 
         return docSet;

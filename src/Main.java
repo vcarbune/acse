@@ -51,8 +51,6 @@ public class Main {
 
     public static void initializeFlags(String args[]) {
 
-        //TODO: add the query folder option
-
         for (int i = 0; i < args.length; ++i) {
             if (args[i].equals(Config.PARAM_STOPWORD)) {
                 Config.enableStopwordElimination = true;
@@ -172,7 +170,7 @@ public class Main {
         }
         if(relevancyList != null){
             double[] avg = precisionRecall.computeAverageOverAllQueries();
-            precisionRecall.generatePrecisionRecallGraph(avg, chartFile);
+            precisionRecall.generatePrecisionRecallGraph(avg, chartFile + ".png");
         }
     }
 

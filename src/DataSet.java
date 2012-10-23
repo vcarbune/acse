@@ -92,7 +92,12 @@ public class DataSet {
      * @return
      */
     public int getDocFrequency(String term) {
-        return data.get(term).size();
+        if (data.get(term) != null) {
+            return data.get(term).size();
+        }
+        else {
+            return 1; // Hack. The product qi*di will be zero anyway.
+        }
     }
 
     /**
@@ -109,6 +114,11 @@ public class DataSet {
 
         int N = docSet.size();
         int tf = getTermFrequency(docId, term);
+        
+        if (tf == 0) {
+            return 0;
+        }
+        
         int df = getDocFrequency(term);
 
         return (1 + Math.log10(tf)) * Math.log10(N / (double) df);

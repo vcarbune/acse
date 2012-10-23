@@ -2,8 +2,6 @@ import java.util.logging.Level;
 
 public class Config {
     
-    //TODO(vcarbune): add constants for query folder option 
-    
     public static final Level LOG_LEVEL = Level.INFO;
 
     // Different files for static stats and dynamic stats
