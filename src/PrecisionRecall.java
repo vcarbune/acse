@@ -30,10 +30,13 @@ public class PrecisionRecall {
 
             String line;
             int queryID;
+            
             while ((line = reader.readLine()) != null) {
                 StringTokenizer tokens = new StringTokenizer(line);
-                if(tokens.hasMoreTokens() == false)
-                    break;
+                if(tokens.hasMoreTokens() == false) {
+                    continue;
+                }
+                
                 queryID = Integer.parseInt(tokens.nextToken());
 
                 ArrayList<Integer> docIds = new ArrayList<Integer>();
