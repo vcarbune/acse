@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -8,12 +11,18 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
 
 public class PrecisionRecall {
     private HashMap<Integer, ArrayList<Integer>> testResults;
     private ArrayList<TablePerQuery> tablesInterpolated;
-
-
+    
     public PrecisionRecall(String fileName) {
         testResults = new HashMap<Integer, ArrayList<Integer>>();
         readTestResults(fileName);
@@ -107,6 +116,29 @@ public class PrecisionRecall {
         }
 
         return avg;
-
+    }
+    
+    public void generatePrecisionRecallGraph(double[] avg, String fileName) throws IOException{
+        XYSeriesCollection dataset = new XYSeriesCollection();  
+        XYSeries xySeries = new XYSeries("");  
+   
+       for(int i = 0; i < avg.length; i++)
+       {
+           xySeries.add(i * 0.1, avg[i]);
+       }
+          
+        dataset.addSeries( xySeries );
+        JFreeChart chart = ChartFactory.createXYLineChart( "Precision\\Recall GRaph for all Queries",  
+                                                           "Recall",  
+                                                           "Precision",  
+                                                           dataset,  
+                                                           PlotOrientation.VERTICAL,  
+                                                           true,  
+                                                           false,  
+                                                           false );  
+       
+        FileOutputStream out = new FileOutputStream( new File(fileName));  
+        ChartUtilities.writeChartAsPNG( out, chart, 800, 600 );  
+        
     }
 }
