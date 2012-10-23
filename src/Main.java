@@ -22,9 +22,12 @@ public class Main {
     private static String relevancyList = null;
     private static String chartFile = "chart";
 
-    public static void printDynamicStats(String query, TreeSet<QueryResult> results, long time) {
+    public static void printDynamicStats(String queryFile, String query, 
+            TreeSet<QueryResult> results, long time) {
+        
+        logger.log(Config.LOG_LEVEL, "Query file: " + queryFile + "\n");
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
-        logger.log(Config.LOG_LEVEL, "Response time: " + time + "\n");
+        logger.log(Config.LOG_LEVEL, "Response time: " + time + " ms\n");
         logger.log(Config.LOG_LEVEL, "Number of results: " + results.size() + "\n");
         logger.log(Config.LOG_LEVEL, "Results:\n");
 
@@ -147,7 +150,7 @@ public class Main {
             TreeSet<QueryResult> results = handler.retrieveDocumentsForQuery(query);
 
             long time = System.currentTimeMillis() - startTime;
-            printDynamicStats(queryString, results, time);
+            printDynamicStats(queryFile, queryString, results, time);
 
             if(relevancyList != null){
                 int indexFileName = queryFile.lastIndexOf("/");

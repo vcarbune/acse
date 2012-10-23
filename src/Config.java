@@ -10,7 +10,7 @@ public class Config {
 
     // No log rotation is needed for now.
     public static final int LOG_FILE_COUNT = 5;
-    public static final int LOG_FILE_SIZE = 102400;
+    public static final int LOG_FILE_SIZE = 1024000;
 
     // Stopword file param
     public static final String PARAM_STOPWORDFILE = "--stopfile=";
