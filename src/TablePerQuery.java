@@ -28,12 +28,16 @@ public class TablePerQuery {
         double recallStep = 0.1;
         Iterator<Double> recallIt = recall.iterator();
         Iterator<Double> precIt = precision.iterator();
-   
-    
-        double realRec = recallIt.next();
-        double realPrec = precIt.next();
-        double nextPrec = precIt.next();
-        double nextRec = recallIt.next();
+
+        double realRec=1.0, realPrec = 0.0, nextPrec = 0.0, nextRec=0.0;
+        if(recallIt.hasNext()){
+             realRec = recallIt.next();
+             realPrec = precIt.next();
+            if(recallIt.hasNext()){
+                nextPrec = precIt.next();
+                nextRec = recallIt.next();
+            }
+        }
         realPrec = Math.max(realPrec, nextPrec);
 
         for(double currRec = recallInit; currRec <= 1.0; currRec += recallStep){
