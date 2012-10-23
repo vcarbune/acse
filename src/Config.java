@@ -20,6 +20,9 @@ public class Config {
     // Query folder param
     public static final String PARAM_QUERYFOLDER = "--queryfolder=";
     public static final String PARAM_QUERYFILE = "--queryfile=";
+    
+    //RelevancyList file
+    public static final String PARAM_RELEVANCY = "--relevancyList=";
 
     // Offline configuration flags
     public static final String PARAM_STOPWORD = "--stopword";
