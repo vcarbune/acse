@@ -45,10 +45,10 @@ public class QueryResult implements Comparable<QueryResult> {
     
     @Override
     public boolean equals(Object entry) {
-        if (!entry.getClass().equals(DocEntry.class))
+        if (!entry.getClass().equals(QueryResult.class))
             return false;
         
-        return docId.equals(((DocEntry) entry).getDocId());
+        return docId.equals(((QueryResult) entry).getDocId());
     }
     
     public String toString() {
