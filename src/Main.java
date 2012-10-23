@@ -20,6 +20,7 @@ public class Main {
     private static String queryFile = null;
     private static String queryFolder = null;
     private static String relevancyList = null;
+    private static String chartFile = "chart";
 
     public static void printDynamicStats(String query, TreeSet<QueryResult> results, long time) {
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
@@ -49,14 +50,16 @@ public class Main {
     }
 
     public static void initializeFlags(String args[]) {
-        
+
         //TODO: add the query folder option
-        
+
         for (int i = 0; i < args.length; ++i) {
             if (args[i].equals(Config.PARAM_STOPWORD)) {
                 Config.enableStopwordElimination = true;
+                chartFile += "StopWord";
             } else if (args[i].equals(Config.PARAM_STEMMING)) {
                 Config.enableStemming = true;
+                chartFile+="Stemming";
             } else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
                 int eqPos = args[i].indexOf("=");
                 stopWordFile = args[i].substring(eqPos + 1, args[i].length());
@@ -116,7 +119,10 @@ public class Main {
             return;
         }
 
-        PrecisionRecall precisionRecall = new PrecisionRecall(relevancyList);;
+        PrecisionRecall precisionRecall = null;
+        if(relevancyList != null){
+            precisionRecall = new PrecisionRecall(relevancyList);
+        }
         QueryHandler handler = new QueryHandler(dataSet);
         //Scanner in = new Scanner(System.in);
 
@@ -133,7 +139,7 @@ public class Main {
         } else {
             System.out.println("No queries!");
         }
-        
+
         for (String queryFile : queryFiles) {
             String queryString = readQuery(queryFile);
 
@@ -141,26 +147,33 @@ public class Main {
 
             Query query = new Query(crawler, queryString);
             TreeSet<QueryResult> results = handler.retrieveDocumentsForQuery(query);
-            
+
             long time = System.currentTimeMillis() - startTime;
             printDynamicStats(queryString, results, time);
-            
-            int queryId = Integer.parseInt(queryFile.replaceAll("[^0-9]", ""));
-            precisionRecall.computePrecisionAndRecall(queryId, results);
+
+            if(relevancyList != null){
+                int indexFileName = queryFile.lastIndexOf("/");
+                String file = queryFile.substring(indexFileName, queryFile.length());
+                int queryId = Integer.parseInt(file.replaceAll("[^0-9]", ""));
+                precisionRecall.computePrecisionAndRecall(queryId, results);
+            }
 
             System.out.println("Query: " + queryString);
             System.out.println("The query was processed in " + time
                     + " milliseconds.");
             System.out.println("Number of documents: " + results.size());
             System.out.println("Results:");
-            
+
             for (QueryResult res: results) {
                 System.out.print(res + "\n");
             }
 
             System.out.println();
         }
-        precisionRecall.computeAverageOverAllQueries();
+        if(relevancyList != null){
+            double[] avg = precisionRecall.computeAverageOverAllQueries();
+            precisionRecall.generatePrecisionRecallGraph(avg, chartFile);
+        }
     }
 
     private static String readQuery(String queryFile) {
@@ -173,7 +186,7 @@ public class Main {
                     dataInput));
 
             StringBuilder queryBuilder = new StringBuilder();
-            
+
             String line;
             while ((line = reader.readLine()) != null) {
                 queryBuilder.append(line.toUpperCase());
@@ -181,13 +194,13 @@ public class Main {
             }
 
             inputStream.close();
-            
+
             return queryBuilder.toString();
         } catch (IOException e) {
             System.out.println("The query file cannot be found!");
             System.exit(2);
         }
-        
+
         return "";
     }
 }
