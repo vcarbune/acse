@@ -6,6 +6,7 @@
 .project
 .classpath
 bin/*
+lib/*
 documents/*
 static_stats.*
 dynamic_stats.*
