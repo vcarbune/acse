@@ -36,8 +36,13 @@ public class TablePerQuery {
             if(recallIt.hasNext()){
                 nextPrec = precIt.next();
                 nextRec = recallIt.next();
+                while(nextRec == realRec && recallIt.hasNext()){
+                    nextPrec = precIt.next();
+                    nextRec = recallIt.next();
+                }
             }
         }
+        
         realPrec = Math.max(realPrec, nextPrec);
 
         for(double currRec = recallInit; currRec <= 1.0; currRec += recallStep){
@@ -54,7 +59,20 @@ public class TablePerQuery {
                     newP.add(realPrec);
                     System.out.println(" Prec: " + realPrec);
                 }else{
-                    while(((currRec >  nextRec) || (nextRec <= currRec + 1)) && recallIt.hasNext()){
+                    if(recallIt.hasNext()){
+                        realPrec = nextPrec;
+                    }
+                    while(currRec > nextRec && recallIt.hasNext()){
+                        nextRec = recallIt.next();
+                        nextPrec = precIt.next();
+                    }
+                    
+                    if(currRec <= nextRec){
+                        realPrec = nextPrec;
+                        realRec = nextRec;
+                    }
+                    
+                    while(nextRec <= currRec + 0.1 && recallIt.hasNext()){
                         realRec = nextRec;
                         realPrec = Math.max(nextPrec, realPrec);
                         nextRec = recallIt.next();
