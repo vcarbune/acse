@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -61,13 +60,13 @@ public class PrecisionRecall {
         }
     }
 
-    public void computePrecisionAndRecall(int queryId, TreeSet<QueryResult> result){
+    public TablePerQuery computePrecisionAndRecall(int queryId, TreeSet<QueryResult> result){
         TablePerQuery table = new TablePerQuery();
         ArrayList<Integer> docs = testResults.get(queryId);
         int expectedRes = docs.size();
         if(expectedRes == 0){
             System.out.println("The query does not return any result!");
-            return;
+            return null;
         }
 
         int correctResults = 0;
@@ -94,6 +93,8 @@ public class PrecisionRecall {
         System.out.println("###Query: " + queryId + " #####");
         table.interpolate();
         tablesInterpolated.add(table);
+        
+        return table; 
 
     }
 
