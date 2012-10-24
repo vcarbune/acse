@@ -63,6 +63,10 @@ public class PrecisionRecall {
     public TablePerQuery computePrecisionAndRecall(int queryId, TreeSet<QueryResult> result){
         TablePerQuery table = new TablePerQuery();
         ArrayList<Integer> docs = testResults.get(queryId);
+        if(docs == null){
+            System.out.println("The queryID can not be found in the relevance list!");
+            System.exit(2);
+        }
         int expectedRes = docs.size();
         if(expectedRes == 0){
             System.out.println("The query does not return any result!");
@@ -129,7 +133,7 @@ public class PrecisionRecall {
        }
           
         dataset.addSeries( xySeries );
-        JFreeChart chart = ChartFactory.createXYLineChart( "Precision\\Recall GRaph for all Queries",  
+        JFreeChart chart = ChartFactory.createXYLineChart( "Precision\\Recall Graph for all Queries",  
                                                            "Recall",  
                                                            "Precision",  
                                                            dataset,  

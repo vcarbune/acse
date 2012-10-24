@@ -24,7 +24,7 @@ public class Main {
 
     public static void printDynamicStats(String queryFile, String query, 
             TreeSet<QueryResult> results, long time, TablePerQuery table) {
-        
+
         logger.log(Config.LOG_LEVEL, "Query file: " + queryFile + "\n");
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
         logger.log(Config.LOG_LEVEL, "Response time: " + time + " ms\n");
@@ -34,7 +34,7 @@ public class Main {
         for (QueryResult result : results) {
             logger.log(Config.LOG_LEVEL, result + "\n");
         }
-        
+
         if(table != null){
             logger.log(Config.LOG_LEVEL, table.toString() + "\n");
         }
@@ -155,7 +155,7 @@ public class Main {
             TreeSet<QueryResult> results = handler.retrieveDocumentsForQuery(query);
 
             long time = System.currentTimeMillis() - startTime;
-       
+
 
             System.out.println("Query: " + queryString);
             System.out.println("The query was processed in " + time
@@ -172,8 +172,14 @@ public class Main {
             if(relevancyList != null){
                 int indexFileName = queryFile.lastIndexOf("/");
                 String file = queryFile.substring(indexFileName, queryFile.length());
-                int queryId = Integer.parseInt(file.replaceAll("[^0-9]", ""));
-                table  = precisionRecall.computePrecisionAndRecall(queryId, results);
+                String queryNumber = file.replaceAll("[^0-9]", "");
+                if(queryNumber.isEmpty()){
+                    System.out.println("The name of the file for query"+ queryFile 
+                            + " does not have the proper format: Q[0-9]^+ !");
+                }else{
+                    int queryId = Integer.parseInt(queryNumber);
+                    table  = precisionRecall.computePrecisionAndRecall(queryId, results);
+                }
             }
             printDynamicStats(queryFile, queryString, results, time, table);
         }
