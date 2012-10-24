@@ -1,3 +1,5 @@
+import java.text.DecimalFormat;
+
 
 /**
  * Wraps the (document, score) pair as a result of a query
@@ -52,7 +54,8 @@ public class QueryResult implements Comparable<QueryResult> {
     }
     
     public String toString() {
-        return "(" + docId + ", " + score + ")";
+        DecimalFormat f = new DecimalFormat("##.000");
+        return "(" + docId + ", " + f.format(score) + ")";
     }
 
 }

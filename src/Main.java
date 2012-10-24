@@ -28,7 +28,7 @@ public class Main {
         logger.log(Config.LOG_LEVEL, "Query file: " + queryFile + "\n");
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
         logger.log(Config.LOG_LEVEL, "Response time: " + time + " ms\n");
-        logger.log(Config.LOG_LEVEL, "Number of results: " + results.size() + "\n");
+        logger.log(Config.LOG_LEVEL, "Number of results: " + results.size() + "\n\n");
         logger.log(Config.LOG_LEVEL, "Results:\n");
 
         for (QueryResult result : results) {
@@ -36,7 +36,7 @@ public class Main {
         }
 
         if(table != null){
-            logger.log(Config.LOG_LEVEL, table.toString() + "\n");
+            logger.log(Config.LOG_LEVEL, "\n" + table.toString() + "\n");
         }
 
         logger.log(Config.LOG_LEVEL, "------------------------------------------------------------\n");
@@ -130,7 +130,6 @@ public class Main {
             precisionRecall = new PrecisionRecall(relevancyList);
         }
         QueryHandler handler = new QueryHandler(dataSet);
-        //Scanner in = new Scanner(System.in);
 
         ArrayList<String> queryFiles = new ArrayList<String>();
         if (queryFolder != null) {
