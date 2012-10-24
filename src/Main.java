@@ -172,6 +172,9 @@ public class Main {
             if(relevancyList != null){
                 int indexFileName = queryFile.lastIndexOf("/");
                 String file = queryFile.substring(indexFileName, queryFile.length());
+                
+                System.out.println("Query file: " + queryFile);
+                
                 int queryId = Integer.parseInt(file.replaceAll("[^0-9]", ""));
                 table  = precisionRecall.computePrecisionAndRecall(queryId, results);
             }
