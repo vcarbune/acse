@@ -23,7 +23,7 @@ public class Main {
     private static String chartFile = "chart";
 
     public static void printDynamicStats(String queryFile, String query, 
-            TreeSet<QueryResult> results, long time) {
+            TreeSet<QueryResult> results, long time, TablePerQuery table) {
         
         logger.log(Config.LOG_LEVEL, "Query file: " + queryFile + "\n");
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
@@ -33,6 +33,10 @@ public class Main {
 
         for (QueryResult result : results) {
             logger.log(Config.LOG_LEVEL, result + "\n");
+        }
+        
+        if(table != null){
+            logger.log(Config.LOG_LEVEL, table.toString() + "\n");
         }
 
         logger.log(Config.LOG_LEVEL, "------------------------------------------------------------\n");
@@ -59,6 +63,7 @@ public class Main {
                 Config.enableStopwordElimination = true;
                 chartFile += "StopWord";
             } else if (args[i].equals(Config.PARAM_STEMMING)) {
+                System.out.println("Stemmming is selected.....");
                 Config.enableStemming = true;
                 chartFile+="Stemming";
             } else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
@@ -150,14 +155,7 @@ public class Main {
             TreeSet<QueryResult> results = handler.retrieveDocumentsForQuery(query);
 
             long time = System.currentTimeMillis() - startTime;
-            printDynamicStats(queryFile, queryString, results, time);
-
-            if(relevancyList != null){
-                int indexFileName = queryFile.lastIndexOf("/");
-                String file = queryFile.substring(indexFileName, queryFile.length());
-                int queryId = Integer.parseInt(file.replaceAll("[^0-9]", ""));
-                precisionRecall.computePrecisionAndRecall(queryId, results);
-            }
+       
 
             System.out.println("Query: " + queryString);
             System.out.println("The query was processed in " + time
@@ -170,6 +168,14 @@ public class Main {
             }
 
             System.out.println();
+            TablePerQuery table = null;
+            if(relevancyList != null){
+                int indexFileName = queryFile.lastIndexOf("/");
+                String file = queryFile.substring(indexFileName, queryFile.length());
+                int queryId = Integer.parseInt(file.replaceAll("[^0-9]", ""));
+                table  = precisionRecall.computePrecisionAndRecall(queryId, results);
+            }
+            printDynamicStats(queryFile, queryString, results, time, table);
         }
         if(relevancyList != null){
             double[] avg = precisionRecall.computeAverageOverAllQueries();

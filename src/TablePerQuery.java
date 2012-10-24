@@ -82,4 +82,22 @@ public class TablePerQuery {
         return precision.get(index);
     }
 
+    @Override
+    public String toString() {
+       StringBuilder b = new StringBuilder();
+       Iterator<Double> rit = recall.iterator();
+       Iterator<Double> pit = precision.iterator();
+       b.append("Recall   Precision" + "\n");
+       DecimalFormat f = new DecimalFormat("##.00");
+       while(rit.hasNext()){
+           b.append(f.format(rit.next()));
+           b.append("  ");
+           b.append(f.format(pit.next()));
+           b.append("\n");
+       }
+       return b.toString();
+       
+    }
+
+    
 }
