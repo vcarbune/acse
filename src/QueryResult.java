@@ -54,7 +54,7 @@ public class QueryResult implements Comparable<QueryResult> {
     }
     
     public String toString() {
-        DecimalFormat f = new DecimalFormat("##.000");
+        DecimalFormat f = new DecimalFormat("##.00000");
         return "(" + docId + ", " + f.format(score) + ")";
     }
 

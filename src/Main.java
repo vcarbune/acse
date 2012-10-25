@@ -120,6 +120,7 @@ public class Main {
             }
 
             dataSet = crawler.readDocuments();
+            dataSet.computeDocLengths();
         } catch (IOException e) {
             System.out.println("Could not read the documents. Exiting...");
             return;

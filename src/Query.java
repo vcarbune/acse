@@ -1,7 +1,5 @@
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -16,7 +14,8 @@ public class Query {
         PHRASE,
         PROXIMITY
     };
-    private static String QUERY_END = ".";
+    
+    //private static String QUERY_END = ".";
     private Crawler crawler;
     private Type type;
     private HashMap<String, Integer> termCounts;

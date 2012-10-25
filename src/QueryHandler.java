@@ -1,6 +1,4 @@
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -29,7 +27,6 @@ public class QueryHandler {
             return docSet;
         }
 
-        //ArrayList<String> docIdList = getMatchingDocs(query);
         TreeSet<String> docIdSet = dataSet.getDocSet();
         
         if (docIdSet.isEmpty()) {
@@ -47,35 +44,19 @@ public class QueryHandler {
 
         for (String docId : docIdSet) {
             double score = 0;
-            double docVectorLength = 0;
 
             for (Map.Entry<String, Integer> termCount : query.getTermCounts()) {
                 double qi = dataSet.computeQueryWeight(termCount.getKey(), termCount.getValue());
                 double di = dataSet.computeDocWeight(docId, termCount.getKey());
-                docVectorLength += di * di;
                 score += qi * di;
             }
 
-            docVectorLength = Math.sqrt(docVectorLength);
-
-            if (docVectorLength != 0) {
-                score /= queryVectorLength * docVectorLength;
+            if (score > 0) {
+                score /= queryVectorLength * dataSet.getDocLength(docId);
                 docSet.add(new QueryResult(docId, score));
             }
         }
 
         return docSet;
-    }
-
-    private ArrayList<String> getMatchingDocs(final Query query) {
-        Iterator<String> term = query.getTerms().iterator();
-        TreeSet<String> matchingDocs =
-                new TreeSet<String>(dataSet.getDocIdSet(term.next()));
-
-        while (term.hasNext()) {
-            matchingDocs.retainAll(dataSet.getDocIdSet(term.next()));
-        }
-
-        return new ArrayList<String>(matchingDocs);
     }
 }

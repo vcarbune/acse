@@ -6,6 +6,7 @@ public class DataSet {
 
     private HashMap<String, TreeSet<DocEntry>> data = new HashMap<String, TreeSet<DocEntry>>();
     private TreeSet<String> docSet = new TreeSet<String>();
+    private HashMap<String, Double> docLengths = new HashMap<String, Double>();
 
     public DataSet() {
     }
@@ -65,6 +66,40 @@ public class DataSet {
         }
 
         docEntry.incFrequency();
+    }
+    
+    /**
+     * Computes the lengths of all the document vectors
+     */
+    public void computeDocLengths() {
+        
+        for (String term: data.keySet()) {
+            for (DocEntry entry: data.get(term)) {
+                String docId = entry.getDocId();
+                double di = computeDocWeight(docId, term);
+                
+                if (docLengths.get(docId) != null) {
+                    docLengths.put(docId, docLengths.get(docId) + di * di);
+                }
+                else {
+                    docLengths.put(docId, di * di);
+                }
+            }
+        }
+        
+        for (String docId: docLengths.keySet()) {
+            docLengths.put(docId, Math.sqrt(docLengths.get(docId)));
+            //System.out.println(docId + " -->\t\t" + docLengths.get(docId));
+        }
+    }
+    
+    /**
+     * Gets the length of a document vector
+     * @param docId
+     * @return
+     */
+    public double getDocLength(String docId) {
+        return docLengths.get(docId);
     }
 
     /**
