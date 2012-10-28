@@ -31,4 +31,7 @@ public class Config {
 
     public static final String PARAM_STEMMING = "--stemming";
     public static boolean enableStemming = false;
+    
+    // Online switch between BASIC / 0, LOCAL / 1 and GLOBAL / 2 query expansion.
+    public static int queryType = 0;
 }

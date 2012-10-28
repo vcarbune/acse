@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.TreeSet;
 import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
@@ -23,6 +24,11 @@ public class Main {
     private static String relevancyList = null;
     private static String chartFile = "chart";
 
+    private static Crawler crawler;
+    private static DataSet dataSet;
+    private static QueryHandler queryHandler;
+    private static PrecisionRecall precisionRecall;
+    
     public static void printDynamicStats(String queryFile, String query, 
             TreeSet<QueryResult> results, long time, TablePerQuery table) {
 
@@ -57,6 +63,32 @@ public class Main {
         }
     }
 
+    public static void initializeDataSet(String corpusFolder) {
+        crawler = new Crawler(corpusFolder);
+        
+        try {
+            if (Config.enableStopwordElimination == true) {
+                if (stopWordFile == null) {
+                    System.out.println("The stop word file was not given as parameter!"
+                            + " When the stopWord flag is set also the file of stop words"
+                            + " needs to be given as parameter!");
+                    System.exit(1);
+                }
+
+                crawler.setStopWordsFile(stopWordFile);
+                crawler.readStopWords();
+
+                System.out.println("Stop Words Elimination Selected...");
+            }
+
+            dataSet = crawler.readDocuments();
+            dataSet.computeDocLengths();
+        } catch (IOException e) {
+            System.out.println("Could not read the documents. Exiting...");
+            System.exit(1);
+        }
+    }
+    
     public static void initializeFlags(String args[]) {
 
         for (int i = 0; i < args.length; ++i) {
@@ -86,6 +118,105 @@ public class Main {
         }
     }
 
+    public static void handleQueries() throws IOException
+    {
+        precisionRecall = null;
+        if(relevancyList != null){
+            precisionRecall = new PrecisionRecall(relevancyList);
+        }
+
+        Scanner in = new Scanner(System.in);
+
+        while(true) {
+            System.out.println("\nType \"quit\" anytime to finish handling of queries.");
+            System.out.print("Enter query file / folder: ");
+
+            String queryLocation = in.nextLine();
+            if (queryLocation.equals("quit")) {
+                return;
+            }
+            
+            System.out.print("Enter query expansion (0 / NONE, 1 / LOCAL, 2 / GLOBAL): ");
+            Config.queryType = Integer.valueOf(in.nextLine().toString());
+
+            ArrayList<String> queryFiles = getQueryFiles(queryLocation);
+
+            for (String queryFile : queryFiles) {
+                String queryString = readQuery(queryFile);
+                
+                long startTime = System.currentTimeMillis();
+                Query query = new Query(crawler, queryString);
+                query.setType(Config.queryType);
+                TreeSet<QueryResult> results = queryHandler.retrieveDocument(query);
+
+                long time = System.currentTimeMillis() - startTime;
+                TablePerQuery table = computePrecisionRecallForFile(queryFile, results);
+                
+                // Logging stuff for each query.
+                printStatsForQuery(queryString, results.size(), time);
+                for (QueryResult res : results) {
+                    System.out.println(res);
+                }
+                System.out.println();
+                printDynamicStats(queryFile, queryString, results, time, table);
+            }
+
+            if (relevancyList == null) {
+                continue;
+            }
+
+            double[] avg = precisionRecall.computeAverageOverAllQueries();
+            precisionRecall.generatePrecisionRecallGraph(avg, chartFile + ".png");
+        }
+    }
+    
+    private static TablePerQuery computePrecisionRecallForFile(String queryFile,
+            TreeSet<QueryResult> results) {
+        if (relevancyList == null) {
+            return null;
+        }
+        
+        TablePerQuery table = null;
+
+        int indexFileName = queryFile.lastIndexOf("/");
+        String file = queryFile.substring(indexFileName, queryFile.length());
+        String queryNumber = file.replaceAll("[^0-9]", "");
+        if (queryNumber.isEmpty()) {
+            System.out.println("The name of the file for query" + queryFile
+                    + " does not have the proper format: Q[0-9]^+ !");
+            return null;
+        }
+        
+        int queryId = Integer.parseInt(queryNumber);
+        return precisionRecall.computePrecisionAndRecall(queryId, results);
+    }
+
+    private static void printStatsForQuery(String queryString, int size, long time) {
+        System.out.println("Query: " + queryString);
+        System.out.println("The query was processed in " + time + " milliseconds.");
+        System.out.println("Number of documents: " + size);
+        System.out.println("Results:");
+    }
+
+    private static ArrayList<String> getQueryFiles(String queryLocation) {
+        ArrayList<String> queryFiles = new ArrayList<String>();
+        
+        File file = new File(queryLocation);
+        if (file.isDirectory()) {
+            // Fetch all files within the directory.
+            File[] listOfFiles = file.listFiles();
+
+            for (int i = 0; i < listOfFiles.length; i++) {
+                queryFiles.add(queryLocation + "/" + listOfFiles[i].getName());
+            }
+        } else {
+            // We have only one file, already given as parameter.
+            queryFiles.add(queryLocation);
+        }
+
+        return queryFiles;
+    }
+
     public static void main(String args[]) throws IOException, FileNotFoundException {
         if (args.length < 1) {
             System.out.println("Usage: Main <document_folder>"
@@ -100,97 +231,13 @@ public class Main {
         }
 
         initializeLogging();
-
         if (args.length >= 1) {
             initializeFlags(args);
         }
+        initializeDataSet(args[0]);
 
-        Crawler crawler = new Crawler(args[0]);
-        DataSet dataSet;
-
-        try {
-            if (Config.enableStopwordElimination == true) {
-                if (stopWordFile == null) {
-                    System.out.println("The stop word file was not given as parameter!"
-                            + " When the stopWord flag is set also the file of stop words"
-                            + " needs to be given as parameter!");
-                    return;
-                }
-
-                crawler.setStopWordsFile(stopWordFile);
-                crawler.readStopWords();
-
-                System.out.println("Stop Words Elimination Selected...");
-            }
-
-            dataSet = crawler.readDocuments();
-            dataSet.computeDocLengths();
-        } catch (IOException e) {
-            System.out.println("Could not read the documents. Exiting...");
-            return;
-        }
-
-        PrecisionRecall precisionRecall = null;
-        if(relevancyList != null){
-            precisionRecall = new PrecisionRecall(relevancyList);
-        }
-        QueryHandler handler = new QueryHandler(nounsFile, dataSet);
-
-        ArrayList<String> queryFiles = new ArrayList<String>();
-        if (queryFolder != null) {
-            File folder = new File(queryFolder);
-            File[] listOfFiles = folder.listFiles();
-
-            for (int i = 0; i < listOfFiles.length; i++) {
-                queryFiles.add(queryFolder + "/" + listOfFiles[i].getName());
-            }
-        } else if (queryFile != null) {
-            queryFiles.add(queryFile);
-        } else {
-            System.out.println("No queries!");
-        }
-
-        for (String queryFile : queryFiles) {
-            String queryString = readQuery(queryFile);
-
-            long startTime = System.currentTimeMillis();
-
-            Query query = new Query(crawler, queryString);
-            TreeSet<QueryResult> results = handler.retrieveDocument(query);
-
-            long time = System.currentTimeMillis() - startTime;
-
-
-            System.out.println("Query: " + queryString);
-            System.out.println("The query was processed in " + time
-                    + " milliseconds.");
-            System.out.println("Number of documents: " + results.size());
-            System.out.println("Results:");
-
-            for (QueryResult res: results) {
-                System.out.print(res + "\n");
-            }
-
-            System.out.println();
-            TablePerQuery table = null;
-            if(relevancyList != null){
-                int indexFileName = queryFile.lastIndexOf("/");
-                String file = queryFile.substring(indexFileName, queryFile.length());
-                String queryNumber = file.replaceAll("[^0-9]", "");
-                if(queryNumber.isEmpty()){
-                    System.out.println("The name of the file for query"+ queryFile 
-                            + " does not have the proper format: Q[0-9]^+ !");
-                }else{
-                    int queryId = Integer.parseInt(queryNumber);
-                    table  = precisionRecall.computePrecisionAndRecall(queryId, results);
-                }
-            }
-            printDynamicStats(queryFile, queryString, results, time, table);
-        }
-        if(relevancyList != null){
-            double[] avg = precisionRecall.computeAverageOverAllQueries();
-            precisionRecall.generatePrecisionRecallGraph(avg, chartFile + ".png");
-        }
+        queryHandler = new QueryHandler(nounsFile, dataSet);
+        handleQueries();
     }
 
     private static String readQuery(String queryFile) {
@@ -214,7 +261,7 @@ public class Main {
 
             return queryBuilder.toString();
         } catch (IOException e) {
-            System.out.println("The query file cannot be found!");
+            System.out.println("The query file could not be found!");
             System.exit(2);
         }
 

@@ -116,7 +116,7 @@ public class QueryHandler {
         // Compute centroids.
         HashMap<String, Double> RLTermCount = dataSet.getCentroid(relevantDocSet);
         HashMap<String, Double> NRTermCount = dataSet.getCentroid(nonRelevantDocSet);
-                
+
         // Compute the vector of the centroid.
         Set<Map.Entry<String, Double>> queryTermCount = query.getTermCounts();
         Iterator<Map.Entry<String, Double>> queryTermIterator = queryTermCount.iterator();

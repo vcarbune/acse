@@ -14,7 +14,7 @@ public class Query {
     };
     private final static String TYPE_START = "^";
     private Crawler crawler;
-    private Type type;
+    private Type type = Type.BASIC;
     private HashMap<String, Double> termCounts;
     private Stemmer stemmer;
 
@@ -26,28 +26,23 @@ public class Query {
         termCounts = new HashMap<String, Double>();
         this.crawler = crawler;
 
-        query = findType(query);
         query = query.replaceAll("[^a-zA-Z]", " ");
         Scanner scanner = new Scanner(query);
         parseTerms(scanner);
     }
 
-    private String findType(String query) {
-        type = Type.BASIC;
-        int index = query.indexOf(" ");
-        String token = query.substring(0, index).toUpperCase();
-
-        if (!token.startsWith(TYPE_START)) {
-            return query;
-        }
-
-        try {
-            type = Type.valueOf(token.substring(1));
-        } catch (IllegalArgumentException e) {
-            return query;
-        }
+    public void setType(int queryType) {
+        switch (queryType) {
+            case 1:
+                type = Type.LOCAL;
+                break;
+            case 2:
+                type = Type.GLOBAL;
+                break;
+            default:
+                type = Type.BASIC;
         
-        return query.substring(index + 1, query.length());
+        }
     }
 
     private void parseTerms(Scanner scanner) {
