@@ -156,7 +156,7 @@ public class Main {
             long startTime = System.currentTimeMillis();
 
             Query query = new Query(crawler, queryString);
-            TreeSet<QueryResult> results = handler.retrieveDocumentsForQuery(query);
+            TreeSet<QueryResult> results = handler.retrieveDocument(query);
 
             long time = System.currentTimeMillis() - startTime;
 
