@@ -91,4 +91,8 @@ public class Query {
     public Set<String> getTerms() {
         return termCounts.keySet();
     }
+
+    public boolean hasTerm(String term) {
+        return termCounts.get(term) != null;
+    }
 }

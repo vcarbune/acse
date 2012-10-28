@@ -124,8 +124,8 @@ public class QueryHandler {
         // TODO(vcarbune): Move alpha, beta, gamma to Config class.
         double alpha = 0.5;
         double beta = 0.5;
-        double gamma = 0.5;
-        
+        double gamma = 0.0;
+
         while (queryTermIterator.hasNext()) {
             Map.Entry<String, Double> entry = queryTermIterator.next();
             
@@ -144,6 +144,18 @@ public class QueryHandler {
                     alpha * queryFrequency + beta * relevantFrequency - gamma * nonRelevantFrequency);
         }
         
+        for (String term : RLTermCount.keySet()) {
+            if (query.hasTerm(term))
+                continue;
+
+            Double frequency = beta * RLTermCount.get(term);
+            if (NRTermCount.get(term) != null)
+                frequency -= gamma * NRTermCount.get(term);
+            
+            if (frequency > 0)
+                query.putTermWithCount(term, frequency);
+        }
+
         return retrieveDocumentsForQuery(query);
     }
         
