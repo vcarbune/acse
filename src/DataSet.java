@@ -166,7 +166,7 @@ public class DataSet {
      * @param term
      * @return
      */
-    public double computeQueryWeight(String term, int tf) {
+    public double computeQueryWeight(String term, double tf) {
         int N = docSet.size();
         int df = getDocFrequency(term);
 
