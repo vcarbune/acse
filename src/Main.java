@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.TreeSet;
 import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
@@ -20,15 +19,24 @@ public class Main {
     private static String stopWordFile = null;
     private static String queryFile = null;
     private static String queryFolder = null;
+    private static String relevancyList = null;
+    private static String chartFile = "chart";
 
-    public static void printDynamicStats(String query, TreeSet<QueryResult> results, long time) {
+    public static void printDynamicStats(String queryFile, String query, 
+            TreeSet<QueryResult> results, long time, TablePerQuery table) {
+
+        logger.log(Config.LOG_LEVEL, "Query file: " + queryFile + "\n");
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
-        logger.log(Config.LOG_LEVEL, "Response time: " + time + "\n");
-        logger.log(Config.LOG_LEVEL, "Number of results: " + results.size() + "\n");
+        logger.log(Config.LOG_LEVEL, "Response time: " + time + " ms\n");
+        logger.log(Config.LOG_LEVEL, "Number of results: " + results.size() + "\n\n");
         logger.log(Config.LOG_LEVEL, "Results:\n");
 
         for (QueryResult result : results) {
-            logger.log(Config.LOG_LEVEL, "(" + result.getDocId() + ", " + result.getScore() + ")\n");
+            logger.log(Config.LOG_LEVEL, result + "\n");
+        }
+
+        if(table != null){
+            logger.log(Config.LOG_LEVEL, "\n" + table.toString() + "\n");
         }
 
         logger.log(Config.LOG_LEVEL, "------------------------------------------------------------\n");
@@ -49,14 +57,15 @@ public class Main {
     }
 
     public static void initializeFlags(String args[]) {
-        
-        //TODO: add the query folder option
-        
+
         for (int i = 0; i < args.length; ++i) {
             if (args[i].equals(Config.PARAM_STOPWORD)) {
                 Config.enableStopwordElimination = true;
+                chartFile += "StopWord";
             } else if (args[i].equals(Config.PARAM_STEMMING)) {
+                System.out.println("Stemmming is selected.....");
                 Config.enableStemming = true;
+                chartFile+="Stemming";
             } else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
                 int eqPos = args[i].indexOf("=");
                 stopWordFile = args[i].substring(eqPos + 1, args[i].length());
@@ -66,6 +75,9 @@ public class Main {
             } else if (args[i].startsWith(Config.PARAM_QUERYFILE)) {
                 int eqPos = args[i].indexOf("=");
                 queryFile = args[i].substring(eqPos + 1, args[i].length());
+            } else if(args[i].startsWith(Config.PARAM_RELEVANCY)){
+                int eqPos = args[i].indexOf("=");
+                relevancyList = args[i].substring(eqPos + 1, args[i].length());
             }
         }
     }
@@ -77,7 +89,8 @@ public class Main {
                     + " [" + Config.PARAM_STOPWORDFILE + "]"
                     + " [" + Config.PARAM_STEMMING + "]"
                     + " [" + Config.PARAM_QUERYFOLDER + "]"
-                    + " [" + Config.PARAM_QUERYFILE + "]");
+                    + " [" + Config.PARAM_QUERYFILE + "]"
+                    + " [" + Config.PARAM_RELEVANCY + "]");
 
             return;
         }
@@ -107,13 +120,17 @@ public class Main {
             }
 
             dataSet = crawler.readDocuments();
+            dataSet.computeDocLengths();
         } catch (IOException e) {
             System.out.println("Could not read the documents. Exiting...");
             return;
         }
 
+        PrecisionRecall precisionRecall = null;
+        if(relevancyList != null){
+            precisionRecall = new PrecisionRecall(relevancyList);
+        }
         QueryHandler handler = new QueryHandler(dataSet);
-        Scanner in = new Scanner(System.in);
 
         ArrayList<String> queryFiles = new ArrayList<String>();
         if (queryFolder != null) {
@@ -128,25 +145,47 @@ public class Main {
         } else {
             System.out.println("No queries!");
         }
-        
+
         for (String queryFile : queryFiles) {
             String queryString = readQuery(queryFile);
 
             long startTime = System.currentTimeMillis();
 
             Query query = new Query(crawler, queryString);
-            TreeSet<QueryResult> docs = handler.retrieveDocumentsForQuery(query);
+            TreeSet<QueryResult> results = handler.retrieveDocumentsForQuery(query);
 
             long time = System.currentTimeMillis() - startTime;
-            printDynamicStats(queryString, docs, time);
+
 
             System.out.println("Query: " + queryString);
             System.out.println("The query was processed in " + time
                     + " milliseconds.");
-            System.out.println("Number of documents: " + docs.size());
+            System.out.println("Number of documents: " + results.size());
             System.out.println("Results:");
 
+            for (QueryResult res: results) {
+                System.out.print(res + "\n");
+            }
+
             System.out.println();
+            TablePerQuery table = null;
+            if(relevancyList != null){
+                int indexFileName = queryFile.lastIndexOf("/");
+                String file = queryFile.substring(indexFileName, queryFile.length());
+                String queryNumber = file.replaceAll("[^0-9]", "");
+                if(queryNumber.isEmpty()){
+                    System.out.println("The name of the file for query"+ queryFile 
+                            + " does not have the proper format: Q[0-9]^+ !");
+                }else{
+                    int queryId = Integer.parseInt(queryNumber);
+                    table  = precisionRecall.computePrecisionAndRecall(queryId, results);
+                }
+            }
+            printDynamicStats(queryFile, queryString, results, time, table);
+        }
+        if(relevancyList != null){
+            double[] avg = precisionRecall.computeAverageOverAllQueries();
+            precisionRecall.generatePrecisionRecallGraph(avg, chartFile + ".png");
         }
     }
 
@@ -160,7 +199,7 @@ public class Main {
                     dataInput));
 
             StringBuilder queryBuilder = new StringBuilder();
-            
+
             String line;
             while ((line = reader.readLine()) != null) {
                 queryBuilder.append(line.toUpperCase());
@@ -168,13 +207,13 @@ public class Main {
             }
 
             inputStream.close();
-            
+
             return queryBuilder.toString();
         } catch (IOException e) {
             System.out.println("The query file cannot be found!");
             System.exit(2);
         }
-        
+
         return "";
     }
 }

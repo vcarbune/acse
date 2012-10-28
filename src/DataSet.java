@@ -6,6 +6,7 @@ public class DataSet {
 
     private HashMap<String, TreeSet<DocEntry>> data = new HashMap<String, TreeSet<DocEntry>>();
     private TreeSet<String> docSet = new TreeSet<String>();
+    private HashMap<String, Double> docLengths = new HashMap<String, Double>();
 
     public DataSet() {
     }
@@ -66,6 +67,40 @@ public class DataSet {
 
         docEntry.incFrequency();
     }
+    
+    /**
+     * Computes the lengths of all the document vectors
+     */
+    public void computeDocLengths() {
+        
+        for (String term: data.keySet()) {
+            for (DocEntry entry: data.get(term)) {
+                String docId = entry.getDocId();
+                double di = computeDocWeight(docId, term);
+                
+                if (docLengths.get(docId) != null) {
+                    docLengths.put(docId, docLengths.get(docId) + di * di);
+                }
+                else {
+                    docLengths.put(docId, di * di);
+                }
+            }
+        }
+        
+        for (String docId: docLengths.keySet()) {
+            docLengths.put(docId, Math.sqrt(docLengths.get(docId)));
+            //System.out.println(docId + " -->\t\t" + docLengths.get(docId));
+        }
+    }
+    
+    /**
+     * Gets the length of a document vector
+     * @param docId
+     * @return
+     */
+    public double getDocLength(String docId) {
+        return docLengths.get(docId);
+    }
 
     /**
      * Returns the term frequency for a term in a document: tf
@@ -92,7 +127,12 @@ public class DataSet {
      * @return
      */
     public int getDocFrequency(String term) {
-        return data.get(term).size();
+        if (data.get(term) != null) {
+            return data.get(term).size();
+        }
+        else {
+            return 1; // Hack. The product qi*di will be zero anyway.
+        }
     }
 
     /**
@@ -109,6 +149,11 @@ public class DataSet {
 
         int N = docSet.size();
         int tf = getTermFrequency(docId, term);
+        
+        if (tf == 0) {
+            return 0;
+        }
+        
         int df = getDocFrequency(term);
 
         return (1 + Math.log10(tf)) * Math.log10(N / (double) df);

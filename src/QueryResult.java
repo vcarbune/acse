@@ -1,3 +1,5 @@
+import java.text.DecimalFormat;
+
 
 /**
  * Wraps the (document, score) pair as a result of a query
@@ -35,20 +37,25 @@ public class QueryResult implements Comparable<QueryResult> {
         if (score > result.score) {
             return -1;
         }
-        else if (score == result.score) {
-            return 0;
+        else if (score < result.score) {
+            return 1;
         }
         else {
-            return 1;
+            return docId.compareTo(result.docId);
         }
     }
     
     @Override
     public boolean equals(Object entry) {
-        if (!entry.getClass().equals(DocEntry.class))
+        if (!entry.getClass().equals(QueryResult.class))
             return false;
         
-        return docId.equals(((DocEntry) entry).getDocId());
+        return docId.equals(((QueryResult) entry).getDocId());
+    }
+    
+    public String toString() {
+        DecimalFormat f = new DecimalFormat("##.00000");
+        return "(" + docId + ", " + f.format(score) + ")";
     }
 
 }

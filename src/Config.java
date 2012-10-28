@@ -2,8 +2,6 @@ import java.util.logging.Level;
 
 public class Config {
     
-    //TODO(vcarbune): add constants for query folder option 
-    
     public static final Level LOG_LEVEL = Level.INFO;
 
     // Different files for static stats and dynamic stats
@@ -12,7 +10,7 @@ public class Config {
 
     // No log rotation is needed for now.
     public static final int LOG_FILE_COUNT = 5;
-    public static final int LOG_FILE_SIZE = 102400;
+    public static final int LOG_FILE_SIZE = 1024000;
 
     // Stopword file param
     public static final String PARAM_STOPWORDFILE = "--stopfile=";
@@ -20,6 +18,9 @@ public class Config {
     // Query folder param
     public static final String PARAM_QUERYFOLDER = "--queryfolder=";
     public static final String PARAM_QUERYFILE = "--queryfile=";
+    
+    //RelevancyList file
+    public static final String PARAM_RELEVANCY = "--relevancyList=";
 
     // Offline configuration flags
     public static final String PARAM_STOPWORD = "--stopword";
