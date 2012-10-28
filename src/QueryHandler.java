@@ -24,7 +24,7 @@ import net.sf.extjwnl.dictionary.Dictionary;
 public class QueryHandler {
 
     private final static String TYPE_NOUN = "NoC";
-    private final static String WORDNET_CONFIG = "";
+    private final static String WORDNET_CONFIG = "file_properties.xml";
     /**
      * Remembers the documents IDs used to create the index.*
      */
@@ -59,7 +59,7 @@ public class QueryHandler {
 
         while (file.hasNextLine()) {
             Scanner line = new Scanner(file.nextLine());
-            String word = line.next();
+            String word = line.next().toUpperCase();
             String type = line.next();
             if (type.equals(TYPE_NOUN)) {
                 nouns.add(word);
@@ -182,26 +182,27 @@ public class QueryHandler {
 
     private TreeSet<QueryResult> retrieveDocumentsWithGlobalExpansion(final Query query) {
         Query expandedQuery = new Query(query);
-
+        
         try {
             for (String term : query.getTerms()) {
-                System.out.println("For " + term);
                 if (nouns.contains(term)) {
                     IndexWord indexWord = dictionary.getIndexWord(POS.NOUN, term);
                     List<Synset> synsets = indexWord.getSenses();
-                    if (synsets.size() > 0) {
+                    
+                    if (!synsets.isEmpty()) {
                         for (Word word : synsets.get(0).getWords()) {
-                            expandedQuery.addTerm(word.getLemma());
-                            System.out.println("\tAdded " + word.getLemma());
+                            expandedQuery.addTerm(word.getLemma().toUpperCase());
                         }
                     }
+                } else {
+                    expandedQuery.addTerm(term);
                 }
             }
         } catch (JWNLException ex) {
             Logger.getLogger(QueryHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return null;
+        return retrieveDocumentsForQuery(expandedQuery);
     }
 
     public TreeSet<QueryResult> retrieveDocument(Query query) {
