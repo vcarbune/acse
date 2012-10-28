@@ -8,33 +8,41 @@ public class Query {
 
     public static enum Type {
 
-        AND,
-        OR,
-        NOT,
-        PHRASE,
-        PROXIMITY
+        BASIC,
+        LOCAL,
+        GLOBAL
     };
-    
-    //private static String QUERY_END = ".";
     private Crawler crawler;
     private Type type;
     private HashMap<String, Integer> termCounts;
     private Stemmer stemmer;
 
     public Query(Crawler crawler, String query) {
-        this.crawler = crawler;
-
         if (Config.enableStemming) {
             stemmer = new Stemmer();
         }
-
+        
         termCounts = new HashMap<String, Integer>();
-
+        this.crawler = crawler;
+        
+        findType(query);
         query = query.replaceAll("[^a-zA-Z]", " ");
         Scanner scanner = new Scanner(query);
-
-        type = Type.AND;
         parseTerms(scanner);
+    }
+
+    private void findType(String query) {
+        type = Type.BASIC;
+        Scanner scanner = new Scanner(query);
+        
+        if (scanner.hasNext()) {
+            String token = scanner.next().toUpperCase();
+            try {
+                type = Type.valueOf(token);
+            } catch (IllegalArgumentException e) {
+                addTerm(token);
+            }
+        }
     }
 
     private void parseTerms(Scanner scanner) {
@@ -46,13 +54,6 @@ public class Query {
 
     public Type getType() {
         return type;
-    }
-
-    /**
-     * @deprecated @return -1
-     */
-    public int getProximityWindow() {
-        return -1;
     }
 
     private void addTerm(String token) {
