@@ -1,4 +1,7 @@
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -58,5 +61,26 @@ public class QueryHandler {
         }
 
         return docSet;
+    }
+   
+    private TreeSet<QueryResult> retrieveDocumentsWithLocalExpansion(final Query query) {
+        // Pseudo-relevance method: assume first document is relevant, while the others are not.
+        TreeSet<QueryResult> documents = retrieveDocumentsForQuery(query);
+        
+        Iterator<QueryResult> it = documents.iterator();
+        String relevantDocId = it.next().getDocId();
+        
+        // Compute the centroid for the rest of the documents.
+        ArrayList<String> nonRelevantDocId = new ArrayList<String>();
+        
+        HashMap<String, Integer> NRTermCount = new HashMap<String, Integer>();
+        
+        while (it.hasNext()) {
+            String docId = it.next().getDocId();
+        }
+        
+        // Compute the vector of the centroid.
+        
+        return null;
     }
 }
