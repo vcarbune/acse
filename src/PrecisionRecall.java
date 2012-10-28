@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -17,18 +18,18 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-
 public class PrecisionRecall {
+
     private HashMap<Integer, ArrayList<Integer>> testResults;
     private ArrayList<TablePerQuery> tablesInterpolated;
-    
+
     public PrecisionRecall(String fileName) {
         testResults = new HashMap<Integer, ArrayList<Integer>>();
         readTestResults(fileName);
         tablesInterpolated = new ArrayList<TablePerQuery>();
     }
 
-    private void readTestResults(String file){
+    private void readTestResults(String file) {
         FileInputStream inputStream;
         try {
             inputStream = new FileInputStream(file);
@@ -38,17 +39,17 @@ public class PrecisionRecall {
 
             String line;
             int queryID;
-            
+
             while ((line = reader.readLine()) != null) {
                 StringTokenizer tokens = new StringTokenizer(line);
-                if(tokens.hasMoreTokens() == false) {
+                if (tokens.hasMoreTokens() == false) {
                     continue;
                 }
-                
+
                 queryID = Integer.parseInt(tokens.nextToken());
 
                 ArrayList<Integer> docIds = new ArrayList<Integer>();
-                while(tokens.hasMoreTokens()){
+                while (tokens.hasMoreTokens()) {
                     docIds.add(Integer.parseInt(tokens.nextToken()));
                 }
                 testResults.put(queryID, docIds);
@@ -60,15 +61,15 @@ public class PrecisionRecall {
         }
     }
 
-    public TablePerQuery computePrecisionAndRecall(int queryId, TreeSet<QueryResult> result){
+    public TablePerQuery computePrecisionAndRecall(int queryId, TreeSet<QueryResult> result) {
         TablePerQuery table = new TablePerQuery();
         ArrayList<Integer> docs = testResults.get(queryId);
-        if(docs == null){
+        if (docs == null) {
             System.out.println("The queryID can not be found in the relevance list!");
             System.exit(2);
         }
         int expectedRes = docs.size();
-        if(expectedRes == 0){
+        if (expectedRes == 0) {
             System.out.println("The query does not return any result!");
             return null;
         }
@@ -78,17 +79,18 @@ public class PrecisionRecall {
         ArrayList<QueryResult> listResults = new ArrayList<QueryResult>();
         listResults.addAll(result);
         int docId;
-        for(QueryResult res: listResults){
-            if(correctResults >= expectedRes)
+        for (QueryResult res : listResults) {
+            if (correctResults >= expectedRes) {
                 break;
-            retrievedRes ++;
+            }
+            retrievedRes++;
             docId = Integer.parseInt(res.getDocId().replaceAll("[a-zA-Z]", ""));
-            if(docs.contains(docId)){
-                correctResults ++;
+            if (docs.contains(docId)) {
+                correctResults++;
             }
 
-            table.addRecall(((double) correctResults)/expectedRes);
-            table.addPrecision(((double) correctResults) /retrievedRes);
+            table.addRecall(((double) correctResults) / expectedRes);
+            table.addPrecision(((double) correctResults) / retrievedRes);
 
             //         System.out.println(docId +  "correct "+ correctResults+ " " +((double) correctResults)/expectedRes 
             //                + "   " + (double) correctResults /retrievedRes);
@@ -97,53 +99,52 @@ public class PrecisionRecall {
         System.out.println("###Query: " + queryId + " #####");
         table.interpolate();
         tablesInterpolated.add(table);
-        
-        return table; 
+
+        return table;
 
     }
 
-    public double[] computeAverageOverAllQueries(){
+    public double[] computeAverageOverAllQueries() {
         System.out.println("### Average over all queries ###");
         double avg[] = new double[11];
-        int nrQueries = tablesInterpolated.size(); 
-        for(TablePerQuery t:tablesInterpolated){
+        int nrQueries = tablesInterpolated.size();
+        for (TablePerQuery t : tablesInterpolated) {
             ArrayList<Double> precision = t.getPrecision();
             int index = 0;
-            for(Double d: precision){
-                avg[index] += d/nrQueries;
+            for (Double d : precision) {
+                avg[index] += d / nrQueries;
                 index++;
             }
         }
 
-        for(int i = 0; i <11; i++){
+        for (int i = 0; i < 11; i++) {
             double recall = i * 0.1;
             System.out.println(recall + "  " + avg[i]);
         }
 
         return avg;
     }
-    
-    public void generatePrecisionRecallGraph(double[] avg, String fileName) throws IOException{
-        XYSeriesCollection dataset = new XYSeriesCollection();  
-        XYSeries xySeries = new XYSeries("");  
-   
-       for(int i = 0; i < avg.length; i++)
-       {
-           xySeries.add(i * 0.1, avg[i]);
-       }
-          
-        dataset.addSeries( xySeries );
-        JFreeChart chart = ChartFactory.createXYLineChart( "Precision\\Recall Graph for all Queries",  
-                                                           "Recall",  
-                                                           "Precision",  
-                                                           dataset,  
-                                                           PlotOrientation.VERTICAL,  
-                                                           true,  
-                                                           false,  
-                                                           false );  
-       
-        FileOutputStream out = new FileOutputStream( new File(fileName));  
-        ChartUtilities.writeChartAsPNG( out, chart, 800, 600 );  
-        
+
+    public void generatePrecisionRecallGraph(double[] avg, String fileName) throws IOException {
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        XYSeries xySeries = new XYSeries("");
+
+        for (int i = 0; i < avg.length; i++) {
+            xySeries.add(i * 0.1, avg[i]);
+        }
+
+        dataset.addSeries(xySeries);
+        JFreeChart chart = ChartFactory.createXYLineChart("Precision\\Recall Graph for all Queries",
+                "Recall",
+                "Precision",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                false,
+                false);
+
+        FileOutputStream out = new FileOutputStream(new File(fileName));
+        ChartUtilities.writeChartAsPNG(out, chart, 800, 600);
+
     }
 }

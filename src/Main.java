@@ -23,7 +23,7 @@ public class Main {
     private static String relevancyList = null;
     private static String chartFile = "chart";
 
-    public static void printDynamicStats(String queryFile, String query, 
+    public static void printDynamicStats(String queryFile, String query,
             TreeSet<QueryResult> results, long time, TablePerQuery table) {
 
         logger.log(Config.LOG_LEVEL, "Query file: " + queryFile + "\n");
@@ -36,7 +36,7 @@ public class Main {
             logger.log(Config.LOG_LEVEL, result + "\n");
         }
 
-        if(table != null){
+        if (table != null) {
             logger.log(Config.LOG_LEVEL, "\n" + table.toString() + "\n");
         }
 
@@ -49,7 +49,7 @@ public class Main {
             LogManager.getLogManager().readConfiguration(inputStream);
 
             FileHandler handler =
-                new FileHandler(Config.DYNAMIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
+                    new FileHandler(Config.DYNAMIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
             logger = Logger.getLogger(Main.class.getName());
             logger.addHandler(handler);
         } catch (Exception e) {
@@ -66,7 +66,7 @@ public class Main {
             } else if (args[i].equals(Config.PARAM_STEMMING)) {
                 System.out.println("Stemmming is selected.....");
                 Config.enableStemming = true;
-                chartFile+="Stemming";
+                chartFile += "Stemming";
             } else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
                 int eqPos = args[i].indexOf("=");
                 stopWordFile = args[i].substring(eqPos + 1, args[i].length());
@@ -79,7 +79,7 @@ public class Main {
             } else if (args[i].startsWith(Config.PARAM_QUERYFILE)) {
                 int eqPos = args[i].indexOf("=");
                 queryFile = args[i].substring(eqPos + 1, args[i].length());
-            } else if(args[i].startsWith(Config.PARAM_RELEVANCY)){
+            } else if (args[i].startsWith(Config.PARAM_RELEVANCY)) {
                 int eqPos = args[i].indexOf("=");
                 relevancyList = args[i].substring(eqPos + 1, args[i].length());
             }
@@ -131,7 +131,7 @@ public class Main {
         }
 
         PrecisionRecall precisionRecall = null;
-        if(relevancyList != null){
+        if (relevancyList != null) {
             precisionRecall = new PrecisionRecall(relevancyList);
         }
         QueryHandler handler = new QueryHandler(nounsFile, dataSet);
@@ -167,27 +167,27 @@ public class Main {
             System.out.println("Number of documents: " + results.size());
             System.out.println("Results:");
 
-            for (QueryResult res: results) {
+            for (QueryResult res : results) {
                 System.out.print(res + "\n");
             }
 
             System.out.println();
             TablePerQuery table = null;
-            if(relevancyList != null){
+            if (relevancyList != null) {
                 int indexFileName = queryFile.lastIndexOf("/");
                 String file = queryFile.substring(indexFileName, queryFile.length());
                 String queryNumber = file.replaceAll("[^0-9]", "");
-                if(queryNumber.isEmpty()){
-                    System.out.println("The name of the file for query"+ queryFile 
+                if (queryNumber.isEmpty()) {
+                    System.out.println("The name of the file for query" + queryFile
                             + " does not have the proper format: Q[0-9]^+ !");
-                }else{
+                } else {
                     int queryId = Integer.parseInt(queryNumber);
-                    table  = precisionRecall.computePrecisionAndRecall(queryId, results);
+                    table = precisionRecall.computePrecisionAndRecall(queryId, results);
                 }
             }
             printDynamicStats(queryFile, queryString, results, time, table);
         }
-        if(relevancyList != null){
+        if (relevancyList != null) {
             double[] avg = precisionRecall.computeAverageOverAllQueries();
             precisionRecall.generatePrecisionRecallGraph(avg, chartFile + ".png");
         }

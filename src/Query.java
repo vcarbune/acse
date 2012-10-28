@@ -33,8 +33,7 @@ public class Query {
     }
 
     /**
-     * Initializes an empty BASIC query.
-     * This is NOT a copy constructor.
+     * Initializes an empty BASIC query. This is NOT a copy constructor.
      *
      * @param query used ONLY to inherit the crawler and the stemmer
      */

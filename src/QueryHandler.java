@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -112,7 +113,7 @@ public class QueryHandler {
 
         return docSet;
     }
-   
+
     private TreeSet<QueryResult> retrieveDocumentsWithLocalExpansion(Query query) {
         // Pseudo-relevance method: assume first document is relevant, while the others are not.
         TreeSet<QueryResult> documents = retrieveDocumentsForQuery(query);
@@ -121,21 +122,21 @@ public class QueryHandler {
         // Relevant document set (only 1 used, according to the specification)
         ArrayList<String> relevantDocSet = new ArrayList<String>();
         relevantDocSet.add(docSetIterator.next().getDocId());
-        
+
         // Non-relevant document set (the rest of them).
         ArrayList<String> nonRelevantDocSet = new ArrayList<String>();
         while (docSetIterator.hasNext()) {
             nonRelevantDocSet.add(docSetIterator.next().getDocId());
         }
-        
+
         // Compute centroids.
         HashMap<String, Double> RLTermCount = dataSet.getCentroid(relevantDocSet);
         HashMap<String, Double> NRTermCount = dataSet.getCentroid(nonRelevantDocSet);
-                
+
         // Compute the vector of the centroid.
         Set<Map.Entry<String, Double>> queryTermCount = query.getTermCounts();
         Iterator<Map.Entry<String, Double>> queryTermIterator = queryTermCount.iterator();
-        
+
         // TODO(vcarbune): Move alpha, beta, gamma to Config class.
         double alpha = 0.5;
         double beta = 0.5;
@@ -143,40 +144,45 @@ public class QueryHandler {
 
         while (queryTermIterator.hasNext()) {
             Map.Entry<String, Double> entry = queryTermIterator.next();
-            
+
             Double queryFrequency = entry.getValue();
             Double relevantFrequency = RLTermCount.get(entry.getKey());
-            if (relevantFrequency == null)
+            if (relevantFrequency == null) {
                 relevantFrequency = 0.0;
+            }
             relevantFrequency /= relevantDocSet.size();
-            
+
             Double nonRelevantFrequency = NRTermCount.get(entry.getKey());
-            if (nonRelevantFrequency == null)
+            if (nonRelevantFrequency == null) {
                 nonRelevantFrequency = 0.0;
+            }
             nonRelevantFrequency /= nonRelevantDocSet.size();
 
             query.putTermWithCount(entry.getKey(),
                     alpha * queryFrequency + beta * relevantFrequency - gamma * nonRelevantFrequency);
         }
-        
+
         for (String term : RLTermCount.keySet()) {
-            if (query.hasTerm(term))
+            if (query.hasTerm(term)) {
                 continue;
+            }
 
             Double frequency = beta * RLTermCount.get(term);
-            if (NRTermCount.get(term) != null)
+            if (NRTermCount.get(term) != null) {
                 frequency -= gamma * NRTermCount.get(term);
-            
-            if (frequency > 0)
+            }
+
+            if (frequency > 0) {
                 query.putTermWithCount(term, frequency);
+            }
         }
 
         return retrieveDocumentsForQuery(query);
     }
-        
+
     private TreeSet<QueryResult> retrieveDocumentsWithGlobalExpansion(final Query query) {
         Query expandedQuery = new Query(query);
-        
+
         try {
             for (String term : query.getTerms()) {
                 System.out.println("For " + term);
@@ -204,7 +210,7 @@ public class QueryHandler {
         } else if (query.getType().equals(Query.Type.LOCAL)) {
             return retrieveDocumentsWithLocalExpansion(query);
         }
-        
+
         return retrieveDocumentsForQuery(query);
     }
 }
