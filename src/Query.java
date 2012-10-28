@@ -12,37 +12,42 @@ public class Query {
         LOCAL,
         GLOBAL
     };
+    private final static String TYPE_START = "^";
     private Crawler crawler;
     private Type type;
-    private HashMap<String, Integer> termCounts;
+    private HashMap<String, Double> termCounts;
     private Stemmer stemmer;
 
     public Query(Crawler crawler, String query) {
         if (Config.enableStemming) {
             stemmer = new Stemmer();
         }
-        
-        termCounts = new HashMap<String, Integer>();
+
+        termCounts = new HashMap<String, Double>();
         this.crawler = crawler;
-        
-        findType(query);
+
+        query = findType(query);
         query = query.replaceAll("[^a-zA-Z]", " ");
         Scanner scanner = new Scanner(query);
         parseTerms(scanner);
     }
 
-    private void findType(String query) {
+    private String findType(String query) {
         type = Type.BASIC;
-        Scanner scanner = new Scanner(query);
-        
-        if (scanner.hasNext()) {
-            String token = scanner.next().toUpperCase();
-            try {
-                type = Type.valueOf(token);
-            } catch (IllegalArgumentException e) {
-                addTerm(token);
-            }
+        int index = query.indexOf(" ");
+        String token = query.substring(0, index).toUpperCase();
+
+        if (!token.startsWith(TYPE_START)) {
+            return query;
         }
+
+        try {
+            type = Type.valueOf(token.substring(1));
+        } catch (IllegalArgumentException e) {
+            return query;
+        }
+        
+        return query.substring(index + 1, query.length());
     }
 
     private void parseTerms(Scanner scanner) {
@@ -67,15 +72,19 @@ public class Query {
             token = stemmer.toString().toUpperCase();
         }
 
-        Integer count = termCounts.get(token);
+        Double count = termCounts.get(token);
         if (count == null) {
-            termCounts.put(token, 1);
+            termCounts.put(token, 1.0);
         } else {
             termCounts.put(token, count + 1);
         }
     }
+    
+    public void putTermWithCount(String term, Double count) {
+        termCounts.put(term, count);
+    }
 
-    public Set<Map.Entry<String, Integer>> getTermCounts() {
+    public Set<Map.Entry<String, Double>> getTermCounts() {
         return termCounts.entrySet();
     }
 

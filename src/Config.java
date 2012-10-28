@@ -14,6 +14,9 @@ public class Config {
 
     // Stopword file param
     public static final String PARAM_STOPWORDFILE = "--stopfile=";
+    
+    // Nouns file param
+    public static final String PARAM_NOUNSFILE = "--nounsfile=";
 
     // Query folder param
     public static final String PARAM_QUERYFOLDER = "--queryfolder=";

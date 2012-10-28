@@ -17,6 +17,7 @@ public class Main {
 
     private static Logger logger;
     private static String stopWordFile = null;
+    private static String nounsFile = null;
     private static String queryFile = null;
     private static String queryFolder = null;
     private static String relevancyList = null;
@@ -69,6 +70,9 @@ public class Main {
             } else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
                 int eqPos = args[i].indexOf("=");
                 stopWordFile = args[i].substring(eqPos + 1, args[i].length());
+            } else if (args[i].startsWith(Config.PARAM_NOUNSFILE)) {
+                int eqPos = args[i].indexOf("=");
+                nounsFile = args[i].substring(eqPos + 1, args[i].length());
             } else if (args[i].startsWith(Config.PARAM_QUERYFOLDER)) {
                 int eqPos = args[i].indexOf("=");
                 queryFolder = args[i].substring(eqPos + 1, args[i].length());
@@ -130,7 +134,7 @@ public class Main {
         if(relevancyList != null){
             precisionRecall = new PrecisionRecall(relevancyList);
         }
-        QueryHandler handler = new QueryHandler(dataSet);
+        QueryHandler handler = new QueryHandler(nounsFile, dataSet);
 
         ArrayList<String> queryFiles = new ArrayList<String>();
         if (queryFolder != null) {
@@ -152,7 +156,7 @@ public class Main {
             long startTime = System.currentTimeMillis();
 
             Query query = new Query(crawler, queryString);
-            TreeSet<QueryResult> results = handler.retrieveDocumentsForQuery(query);
+            TreeSet<QueryResult> results = handler.retrieveDocument(query);
 
             long time = System.currentTimeMillis() - startTime;
 

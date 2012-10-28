@@ -167,28 +167,28 @@ public class DataSet {
      * @param term
      * @return
      */
-    public double computeQueryWeight(String term, int tf) {
+    public double computeQueryWeight(String term, double tf) {
         int N = docSet.size();
         int df = getDocFrequency(term);
 
         return (1 + Math.log10(tf)) * Math.log10(N / (double) df);
     }
-    
+
     /**
-     * Computes the Centroid of a set of documents.
+     * Computes the centroid of a set of documents.
      */
-    public HashMap<String, Integer> getCentroid(ArrayList<String> documentList) {
-        HashMap<String, Integer> centroid = new HashMap<String, Integer>();
+    public HashMap<String, Double> getCentroid(ArrayList<String> documentList) {
+        HashMap<String, Double> centroid = new HashMap<String, Double>();
 
         for (String term : data.keySet()) {
             TreeSet<DocEntry> docIdSet = getDocIdEntrySet(term);
-            Integer currentFrequency = 0;
+            Double currentFrequency = 0.0;
 
             for (String document : documentList) {
                 DocEntry entry = docIdSet.floor(new DocEntry(document));
-                if (entry != null && entry.getDocId().equals(document)) {
+                
+                if (entry != null && entry.getDocId().equals(document))
                     currentFrequency += entry.getFrequency();
-                }
             }
 
             if (currentFrequency != 0) {

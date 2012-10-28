@@ -1,20 +1,54 @@
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class QueryHandler {
 
+    private final static String TYPE_NOUN = "NoC";
     /**
      * Remembers the documents IDs used to create the index.*
      */
     private DataSet dataSet;
+    private HashSet nouns;
 
-    public QueryHandler(DataSet dataSet) {
+    public QueryHandler(String nounsFile, DataSet dataSet) {
+        if (nounsFile == null) {
+            nouns = null;
+        } else {
+            nouns = new HashSet();
+            parseNounsFile(nounsFile);
+        }
+
         this.dataSet = dataSet;
+    }
+
+    private void parseNounsFile(String nounsFile) {
+        Scanner file = null;
+        try {
+            file = new Scanner(new BufferedInputStream(new FileInputStream(nounsFile)));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(QueryHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        while (file.hasNextLine()) {
+            Scanner line = new Scanner(file.nextLine());
+            String word = line.next();
+            String type = line.next();
+            if (type.equals(TYPE_NOUN)) {
+                nouns.add(word);
+            }
+        }
     }
 
     /**
@@ -24,32 +58,32 @@ public class QueryHandler {
      * @return
      */
     public TreeSet<QueryResult> retrieveDocumentsForQuery(final Query query) {
-        
+
         TreeSet<QueryResult> docSet = new TreeSet<QueryResult>();
-        
+
         if (query.getTermCounts().isEmpty()) {
             return docSet;
         }
 
         TreeSet<String> docIdSet = dataSet.getDocSet();
-        
+
         if (docIdSet.isEmpty()) {
             return docSet;
         }
-        
+
         double queryVectorLength = 0;
-        
-        for (Map.Entry<String, Integer> termCount : query.getTermCounts()) {
+
+        for (Map.Entry<String, Double> termCount : query.getTermCounts()) {
             double qi = dataSet.computeQueryWeight(termCount.getKey(), termCount.getValue());
             queryVectorLength += qi * qi;
         }
-        
+
         queryVectorLength = Math.sqrt(queryVectorLength);
 
         for (String docId : docIdSet) {
             double score = 0;
 
-            for (Map.Entry<String, Integer> termCount : query.getTermCounts()) {
+            for (Map.Entry<String, Double> termCount : query.getTermCounts()) {
                 double qi = dataSet.computeQueryWeight(termCount.getKey(), termCount.getValue());
                 double di = dataSet.computeDocWeight(docId, termCount.getKey());
                 score += qi * di;
@@ -80,12 +114,12 @@ public class QueryHandler {
         }
         
         // Compute centroids.
-        HashMap<String, Integer> RLTermCount = dataSet.getCentroid(relevantDocSet);
-        HashMap<String, Integer> NRTermCount = dataSet.getCentroid(nonRelevantDocSet);
+        HashMap<String, Double> RLTermCount = dataSet.getCentroid(relevantDocSet);
+        HashMap<String, Double> NRTermCount = dataSet.getCentroid(nonRelevantDocSet);
                 
         // Compute the vector of the centroid.
-        Set<Map.Entry<String, Integer>> queryTermCount = query.getTermCounts();
-        Iterator<Map.Entry<String, Integer>> queryTermIterator = queryTermCount.iterator();
+        Set<Map.Entry<String, Double>> queryTermCount = query.getTermCounts();
+        Iterator<Map.Entry<String, Double>> queryTermIterator = queryTermCount.iterator();
         
         // TODO(vcarbune): Move alpha, beta, gamma to Config class.
         double alpha = 0.5;
@@ -93,21 +127,37 @@ public class QueryHandler {
         double gamma = 0.5;
         
         while (queryTermIterator.hasNext()) {
-            Map.Entry<String, Integer> entry = queryTermIterator.next();
+            Map.Entry<String, Double> entry = queryTermIterator.next();
             
-            Integer queryFrequency = entry.getValue();
-            Integer relevantFrequency = RLTermCount.get(entry.getKey());
+            Double queryFrequency = entry.getValue();
+            Double relevantFrequency = RLTermCount.get(entry.getKey());
             if (relevantFrequency == null)
-                relevantFrequency = 0;
+                relevantFrequency = 0.0;
+            relevantFrequency /= relevantDocSet.size();
             
-            Integer nonRelevantFrequency = NRTermCount.get(entry.getKey());
+            Double nonRelevantFrequency = NRTermCount.get(entry.getKey());
             if (nonRelevantFrequency == null)
-                nonRelevantFrequency = 0;
+                nonRelevantFrequency = 0.0;
+            nonRelevantFrequency /= nonRelevantDocSet.size();
 
             query.putTermWithCount(entry.getKey(),
                     alpha * queryFrequency + beta * relevantFrequency - gamma * nonRelevantFrequency);
         }
         
+        return retrieveDocumentsForQuery(query);
+    }
+        
+    private TreeSet<QueryResult> retrieveDocumentsWithGlobalExpansion(final Query query) {
         return null;
+    }
+
+    public TreeSet<QueryResult> retrieveDocument(Query query) {
+        if (query.getType().equals(Query.Type.GLOBAL)) {
+            return retrieveDocumentsWithGlobalExpansion(query);
+        } else if (query.getType().equals(Query.Type.LOCAL)) {
+            return retrieveDocumentsWithLocalExpansion(query);
+        }
+        
+        return retrieveDocumentsForQuery(query);
     }
 }
