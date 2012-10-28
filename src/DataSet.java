@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -171,5 +172,30 @@ public class DataSet {
         int df = getDocFrequency(term);
 
         return (1 + Math.log10(tf)) * Math.log10(N / (double) df);
+    }
+    
+    /**
+     * Computes the Centroid of a set of documents.
+     */
+    public HashMap<String, Integer> getCentroid(ArrayList<String> documentList) {
+        HashMap<String, Integer> centroid = new HashMap<String, Integer>();
+
+        for (String term : data.keySet()) {
+            TreeSet<DocEntry> docIdSet = getDocIdEntrySet(term);
+            Integer currentFrequency = 0;
+
+            for (String document : documentList) {
+                DocEntry entry = docIdSet.floor(new DocEntry(document));
+                if (entry != null && entry.getDocId().equals(document)) {
+                    currentFrequency += entry.getFrequency();
+                }
+            }
+
+            if (currentFrequency != 0) {
+                centroid.put(term, currentFrequency);
+            }
+        }
+        
+        return centroid;
     }
 }
