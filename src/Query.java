@@ -41,8 +41,19 @@ public class Query {
                 break;
             default:
                 type = Type.BASIC;
-        
         }
+    }
+    
+    /**
+     * Initializes an empty BASIC query. This is NOT a copy constructor.
+     *
+     * @param query used ONLY to inherit the crawler and the stemmer
+     */
+    public Query(final Query query) {
+        this.stemmer = query.stemmer;
+        this.termCounts = new HashMap<String, Double>();
+        this.crawler = query.crawler;
+        this.type = Type.BASIC;
     }
 
     private void parseTerms(Scanner scanner) {
@@ -56,7 +67,7 @@ public class Query {
         return type;
     }
 
-    private void addTerm(String token) {
+    public void addTerm(String token) {
         if (crawler.getStopWords() != null && crawler.getStopWords().contains(token)) {
             return;
         }
@@ -74,7 +85,7 @@ public class Query {
             termCounts.put(token, count + 1);
         }
     }
-    
+
     public void putTermWithCount(String term, Double count) {
         termCounts.put(term, count);
     }

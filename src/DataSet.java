@@ -68,34 +68,34 @@ public class DataSet {
 
         docEntry.incFrequency();
     }
-    
+
     /**
      * Computes the lengths of all the document vectors
      */
     public void computeDocLengths() {
-        
-        for (String term: data.keySet()) {
-            for (DocEntry entry: data.get(term)) {
+
+        for (String term : data.keySet()) {
+            for (DocEntry entry : data.get(term)) {
                 String docId = entry.getDocId();
                 double di = computeDocWeight(docId, term);
-                
+
                 if (docLengths.get(docId) != null) {
                     docLengths.put(docId, docLengths.get(docId) + di * di);
-                }
-                else {
+                } else {
                     docLengths.put(docId, di * di);
                 }
             }
         }
-        
-        for (String docId: docLengths.keySet()) {
+
+        for (String docId : docLengths.keySet()) {
             docLengths.put(docId, Math.sqrt(docLengths.get(docId)));
             //System.out.println(docId + " -->\t\t" + docLengths.get(docId));
         }
     }
-    
+
     /**
      * Gets the length of a document vector
+     *
      * @param docId
      * @return
      */
@@ -130,8 +130,7 @@ public class DataSet {
     public int getDocFrequency(String term) {
         if (data.get(term) != null) {
             return data.get(term).size();
-        }
-        else {
+        } else {
             return 1; // Hack. The product qi*di will be zero anyway.
         }
     }
@@ -150,11 +149,11 @@ public class DataSet {
 
         int N = docSet.size();
         int tf = getTermFrequency(docId, term);
-        
+
         if (tf == 0) {
             return 0;
         }
-        
+
         int df = getDocFrequency(term);
 
         return (1 + Math.log10(tf)) * Math.log10(N / (double) df);
@@ -186,16 +185,17 @@ public class DataSet {
 
             for (String document : documentList) {
                 DocEntry entry = docIdSet.floor(new DocEntry(document));
-                
-                if (entry != null && entry.getDocId().equals(document))
+
+                if (entry != null && entry.getDocId().equals(document)) {
                     currentFrequency += entry.getFrequency();
+                }
             }
 
             if (currentFrequency != 0) {
                 centroid.put(term, currentFrequency);
             }
         }
-        
+
         return centroid;
     }
 }

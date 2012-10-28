@@ -1,9 +1,9 @@
 
 /**
- * Wrapper to easily represent and sort pairs of type
- * (docId, frequency) within the DataSet.
+ * Wrapper to easily represent and sort pairs of type (docId, frequency) within the DataSet.
  */
 public class DocEntry implements Comparable<DocEntry> {
+
     private String docId;
     private int frequency;
 
@@ -11,11 +11,11 @@ public class DocEntry implements Comparable<DocEntry> {
         this.docId = docId;
         this.frequency = 1;
     }
-    
+
     public String getDocId() {
         return docId;
     }
-    
+
     public int getFrequency() {
         return frequency;
     }
@@ -28,12 +28,13 @@ public class DocEntry implements Comparable<DocEntry> {
     public int compareTo(DocEntry entry) {
         return docId.compareTo(entry.getDocId());
     }
-    
+
     @Override
     public boolean equals(Object entry) {
-        if (!entry.getClass().equals(DocEntry.class))
+        if (!entry.getClass().equals(DocEntry.class)) {
             return false;
-        
+        }
+
         return docId.equals(((DocEntry) entry).getDocId());
     }
 }

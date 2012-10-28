@@ -42,7 +42,7 @@ public class Main {
             logger.log(Config.LOG_LEVEL, result + "\n");
         }
 
-        if(table != null){
+        if (table != null) {
             logger.log(Config.LOG_LEVEL, "\n" + table.toString() + "\n");
         }
 
@@ -55,7 +55,7 @@ public class Main {
             LogManager.getLogManager().readConfiguration(inputStream);
 
             FileHandler handler =
-                new FileHandler(Config.DYNAMIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
+                    new FileHandler(Config.DYNAMIC_STATS_FILE, Config.LOG_FILE_SIZE, Config.LOG_FILE_COUNT);
             logger = Logger.getLogger(Main.class.getName());
             logger.addHandler(handler);
         } catch (Exception e) {
@@ -98,7 +98,7 @@ public class Main {
             } else if (args[i].equals(Config.PARAM_STEMMING)) {
                 System.out.println("Stemmming is selected.....");
                 Config.enableStemming = true;
-                chartFile+="Stemming";
+                chartFile += "Stemming";
             } else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
                 int eqPos = args[i].indexOf("=");
                 stopWordFile = args[i].substring(eqPos + 1, args[i].length());
@@ -111,7 +111,7 @@ public class Main {
             } else if (args[i].startsWith(Config.PARAM_QUERYFILE)) {
                 int eqPos = args[i].indexOf("=");
                 queryFile = args[i].substring(eqPos + 1, args[i].length());
-            } else if(args[i].startsWith(Config.PARAM_RELEVANCY)){
+            } else if (args[i].startsWith(Config.PARAM_RELEVANCY)) {
                 int eqPos = args[i].indexOf("=");
                 relevancyList = args[i].substring(eqPos + 1, args[i].length());
             }
@@ -175,8 +175,6 @@ public class Main {
         if (relevancyList == null) {
             return null;
         }
-        
-        TablePerQuery table = null;
 
         int indexFileName = queryFile.lastIndexOf("/");
         String file = queryFile.substring(indexFileName, queryFile.length());
