@@ -13,10 +13,10 @@ public class Query {
         GLOBAL
     };
     private final static String TYPE_START = "^";
+    private Stemmer stemmer;
+    private HashMap<String, Double> termCounts;
     private Crawler crawler;
     private Type type;
-    private HashMap<String, Double> termCounts;
-    private Stemmer stemmer;
 
     public Query(Crawler crawler, String query) {
         if (Config.enableStemming) {
@@ -30,6 +30,19 @@ public class Query {
         query = query.replaceAll("[^a-zA-Z]", " ");
         Scanner scanner = new Scanner(query);
         parseTerms(scanner);
+    }
+
+    /**
+     * Initializes an empty BASIC query.
+     * This is NOT a copy constructor.
+     *
+     * @param query used ONLY to inherit the crawler and the stemmer
+     */
+    public Query(final Query query) {
+        this.stemmer = query.stemmer;
+        this.termCounts = new HashMap<String, Double>();
+        this.crawler = query.crawler;
+        this.type = Type.BASIC;
     }
 
     private String findType(String query) {
@@ -46,7 +59,7 @@ public class Query {
         } catch (IllegalArgumentException e) {
             return query;
         }
-        
+
         return query.substring(index + 1, query.length());
     }
 
@@ -61,7 +74,7 @@ public class Query {
         return type;
     }
 
-    private void addTerm(String token) {
+    public void addTerm(String token) {
         if (crawler.getStopWords() != null && crawler.getStopWords().contains(token)) {
             return;
         }
@@ -79,7 +92,7 @@ public class Query {
             termCounts.put(token, count + 1);
         }
     }
-    
+
     public void putTermWithCount(String term, Double count) {
         termCounts.put(term, count);
     }
