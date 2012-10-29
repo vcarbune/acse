@@ -26,4 +26,9 @@ public class Config {
     public static boolean enableStemming = false;
     // Online switch between BASIC / 0, LOCAL / 1 and GLOBAL / 2 query expansion.
     public static int queryType = 0;
+    
+    // Alpha, Beta parameters for local expansion.
+    public static double alpha = 0.5;
+    public static double beta = 0.5;
+    public static double gamma = 0.0;
 }

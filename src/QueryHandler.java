@@ -137,11 +137,6 @@ public class QueryHandler {
         Set<Map.Entry<String, Double>> queryTermCount = query.getTermCounts();
         Iterator<Map.Entry<String, Double>> queryTermIterator = queryTermCount.iterator();
 
-        // TODO(vcarbune): Move alpha, beta, gamma to Config class.
-        double alpha = 0.5;
-        double beta = 0.5;
-        double gamma = 0.0;
-
         while (queryTermIterator.hasNext()) {
             Map.Entry<String, Double> entry = queryTermIterator.next();
 
@@ -158,8 +153,12 @@ public class QueryHandler {
             }
             nonRelevantFrequency /= nonRelevantDocSet.size();
 
-            query.putTermWithCount(entry.getKey(),
-                    alpha * queryFrequency + beta * relevantFrequency - gamma * nonRelevantFrequency);
+            Double finalFrequency = Config.alpha * queryFrequency + 
+                    Config.beta * relevantFrequency - Config.gamma * nonRelevantFrequency;
+            
+            if (finalFrequency > 0) {
+                query.putTermWithCount(entry.getKey(), finalFrequency);
+            }
         }
 
         for (String term : RLTermCount.keySet()) {
@@ -167,9 +166,9 @@ public class QueryHandler {
                 continue;
             }
 
-            Double frequency = beta * RLTermCount.get(term);
+            Double frequency = Config.beta * RLTermCount.get(term);
             if (NRTermCount.get(term) != null) {
-                frequency -= gamma * NRTermCount.get(term);
+                frequency -= Config.gamma * NRTermCount.get(term);
             }
 
             if (frequency > 0) {

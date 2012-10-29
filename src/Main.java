@@ -138,6 +138,13 @@ public class Main {
             
             System.out.print("Enter query expansion (0 / NONE, 1 / LOCAL, 2 / GLOBAL): ");
             Config.queryType = Integer.valueOf(in.nextLine().toString());
+            if (Config.queryType == 1) {
+                System.out.print("Enter alpha: ");
+                Config.alpha = Double.valueOf(in.nextLine().toString());
+                
+                System.out.print("Enter beta: ");
+                Config.beta = Double.valueOf(in.nextLine().toString());
+            }
 
             ArrayList<String> queryFiles = getQueryFiles(queryLocation);
 
