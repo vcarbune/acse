@@ -185,8 +185,10 @@ public class QueryHandler {
         
         try {
             for (String term : query.getTerms()) {
-                if (nouns != null && nouns.contains(term)) {
-                    IndexWord indexWord = dictionary.getIndexWord(POS.NOUN, term);
+                IndexWord indexWord = dictionary.getIndexWord(POS.NOUN, term.toLowerCase());
+                // We use WordNet to test if a word is a noun or not.
+                // if (nouns != null && nouns.contains(term) && indexWord != null)
+                if (indexWord != null) {
                     List<Synset> synsets = indexWord.getSenses();
                     
                     if (!synsets.isEmpty()) {
