@@ -10,3 +10,5 @@ documents/*
 static_stats.*
 dynamic_stats.*
 .DS_Store
+dict/data*
+dict/index*
