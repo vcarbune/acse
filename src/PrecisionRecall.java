@@ -146,5 +146,6 @@ public class PrecisionRecall {
         FileOutputStream out = new FileOutputStream(new File(fileName));
         ChartUtilities.writeChartAsPNG(out, chart, 800, 600);
 
+        out.close();
     }
 }
