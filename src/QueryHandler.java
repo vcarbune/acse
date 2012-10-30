@@ -118,10 +118,12 @@ public class QueryHandler {
         // Pseudo-relevance method: assume first document is relevant, while the others are not.
         TreeSet<QueryResult> documents = retrieveDocumentsForQuery(query);
         Iterator<QueryResult> docSetIterator = documents.iterator();
-
+        
         // Relevant document set (only 1 used, according to the specification)
         ArrayList<String> relevantDocSet = new ArrayList<String>();
-        relevantDocSet.add(docSetIterator.next().getDocId());
+        if(docSetIterator.hasNext()){
+            relevantDocSet.add(docSetIterator.next().getDocId());
+        }
 
         // Non-relevant document set (the rest of them).
         ArrayList<String> nonRelevantDocSet = new ArrayList<String>();
