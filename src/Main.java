@@ -121,13 +121,14 @@ public class Main {
     public static void handleQueries() throws IOException
     {
         precisionRecall = null;
-        if(relevancyList != null){
-            precisionRecall = new PrecisionRecall(relevancyList);
-        }
-
         Scanner in = new Scanner(System.in);
-
+        String params = "";
         while(true) {
+         
+            if(relevancyList != null){
+                precisionRecall = new PrecisionRecall(relevancyList);
+            }
+            
             System.out.println("\nType \"quit\" anytime to finish handling of queries.");
             System.out.print("Enter query file / folder: ");
 
@@ -141,9 +142,11 @@ public class Main {
             if (Config.queryType == 1) {
                 System.out.print("Enter alpha: ");
                 Config.alpha = Double.valueOf(in.nextLine().toString());
+                params = "_a=" + Config.alpha * 100;
                 
                 System.out.print("Enter beta: ");
                 Config.beta = Double.valueOf(in.nextLine().toString());
+                params = params + "_b=" + Config.beta * 100;
             }
 
             ArrayList<String> queryFiles = getQueryFiles(queryLocation);
@@ -154,6 +157,7 @@ public class Main {
                 long startTime = System.currentTimeMillis();
                 Query query = new Query(crawler, queryString);
                 query.setType(Config.queryType);
+                System.out.println("Query name: " + queryFile);
                 TreeSet<QueryResult> results = queryHandler.retrieveDocument(query);
 
                 long time = System.currentTimeMillis() - startTime;
@@ -173,7 +177,9 @@ public class Main {
             }
 
             double[] avg = precisionRecall.computeAverageOverAllQueries();
-            precisionRecall.generatePrecisionRecallGraph(avg, chartFile + ".png");
+            String chartFileName = chartFile + "_" + "type:" + Config.queryType + params + ".png";
+            precisionRecall.generatePrecisionRecallGraph(avg, chartFileName);
+            
         }
     }
     
@@ -218,6 +224,8 @@ public class Main {
             // We have only one file, already given as parameter.
             queryFiles.add(queryLocation);
         }
+        
+        chartFile = "chart" + "_" + file.getName();
 
         return queryFiles;
     }
