@@ -148,6 +148,9 @@ public class Main {
                 Config.beta = Double.valueOf(in.nextLine().toString());
                 params = params + "_b=" + Config.beta * 100;
             }
+            else {
+                params = "";
+            }
 
             ArrayList<String> queryFiles = getQueryFiles(queryLocation);
 
