@@ -180,7 +180,7 @@ public class Main {
             }
 
             double[] avg = precisionRecall.computeAverageOverAllQueries();
-            String chartFileName = chartFile + "_" + "type:" + Config.queryType + params + ".png";
+            String chartFileName = chartFile + "_" + "type" + Config.queryType + params + ".png";
             precisionRecall.generatePrecisionRecallGraph(avg, chartFileName);
             
         }
