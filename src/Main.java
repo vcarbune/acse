@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.TreeSet;
@@ -179,10 +180,21 @@ public class Main {
             double[] avg = precisionRecall.computeAverageOverAllQueries();
             String chartFileName = chartFile + "_" + "type:" + Config.queryType + params + ".png";
             precisionRecall.generatePrecisionRecallGraph(avg, chartFileName);
+            printAverageOverAllQueries(avg);
             
         }
     }
     
+    private static void printAverageOverAllQueries(double[] avg){
+        logger.log(Config.LOG_LEVEL, " ---- Average over all queries ----");
+        DecimalFormat f = new DecimalFormat("##.00");
+        for (int i = 0; i < avg.length; i++) {
+            
+            logger.log(Config.LOG_LEVEL, "Recall: " +
+                    f.format(0.1 *i) + "  Precision: " + f.format(avg[i]) + "\n");
+        }
+        logger.log(Config.LOG_LEVEL, "------------------------------------------------------------\n");
+    }
     private static TablePerQuery computePrecisionRecallForFile(String queryFile,
             TreeSet<QueryResult> results) {
         if (relevancyList == null) {
