@@ -149,6 +149,9 @@ public class Main {
                 Config.beta = Double.valueOf(in.nextLine().toString());
                 params = params + "_b=" + Config.beta * 100;
             }
+            else {
+                params = "";
+            }
 
             ArrayList<String> queryFiles = getQueryFiles(queryLocation);
 
@@ -178,7 +181,7 @@ public class Main {
             }
 
             double[] avg = precisionRecall.computeAverageOverAllQueries();
-            String chartFileName = chartFile + "_" + "type:" + Config.queryType + params + ".png";
+            String chartFileName = chartFile + "_" + "type" + Config.queryType + params + ".png";
             precisionRecall.generatePrecisionRecallGraph(avg, chartFileName);
             printAverageOverAllQueries(avg);
             
