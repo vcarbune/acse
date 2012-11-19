@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.TreeSet;
@@ -19,7 +20,6 @@ public class Main {
     private static Logger logger;
     private static String stopWordFile = null;
     private static String nounsFile = null;
-    private static String queryFile = null;
     private static String queryFolder = null;
     private static String relevancyList = null;
     private static String chartFile = "chart";
@@ -27,22 +27,6 @@ public class Main {
     private static Crawler crawler;
     private static DataSet dataSet;
     
-    public static void printDynamicStats(String queryFile, String query, 
-            TreeSet<QueryResult> results, long time) {
-
-        logger.log(Config.LOG_LEVEL, "Query file: " + queryFile + "\n");
-        logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
-        logger.log(Config.LOG_LEVEL, "Response time: " + time + " ms\n");
-        logger.log(Config.LOG_LEVEL, "Number of results: " + results.size() + "\n\n");
-        logger.log(Config.LOG_LEVEL, "Results:\n");
-
-        for (QueryResult result : results) {
-            logger.log(Config.LOG_LEVEL, result + "\n");
-        }
-
-        logger.log(Config.LOG_LEVEL, "------------------------------------------------------------\n");
-    }
-
     public static void initializeLogging() {
         try {
             InputStream inputStream = new FileInputStream("logging.properties");
@@ -102,47 +86,8 @@ public class Main {
             } else if (args[i].startsWith(Config.PARAM_QUERYFOLDER)) {
                 int eqPos = args[i].indexOf("=");
                 queryFolder = args[i].substring(eqPos + 1, args[i].length());
-            } else if (args[i].startsWith(Config.PARAM_QUERYFILE)) {
-                int eqPos = args[i].indexOf("=");
-                queryFile = args[i].substring(eqPos + 1, args[i].length());
-            } else if (args[i].startsWith(Config.PARAM_RELEVANCY)) {
-                int eqPos = args[i].indexOf("=");
-                relevancyList = args[i].substring(eqPos + 1, args[i].length());
             }
         }
-    }
-
-    public static void handleQueries() throws IOException
-    {
-        Scanner in = new Scanner(System.in);
-
-        while(true) {
-            System.out.println("\nType \"quit\" anytime to finish handling of queries.");
-            System.out.print("Enter query file / folder: ");
-
-            String queryLocation = in.nextLine();
-            if (queryLocation.equals("quit")) {
-                return;
-            }
-            
-            System.out.print("Enter query expansion (0 / NONE, 1 / LOCAL, 2 / GLOBAL): ");
-            Config.queryType = Integer.valueOf(in.nextLine().toString());
-            if (Config.queryType == 1) {
-                System.out.print("Enter alpha: ");
-                Config.alpha = Double.valueOf(in.nextLine().toString());
-                
-                System.out.print("Enter beta: ");
-                Config.beta = Double.valueOf(in.nextLine().toString());
-            }
-
-        }
-    }
-    
-    private static void printStatsForQuery(String queryString, int size, long time) {
-        System.out.println("Query: " + queryString);
-        System.out.println("The query was processed in " + time + " milliseconds.");
-        System.out.println("Number of documents: " + size);
-        System.out.println("Results:");
     }
 
     private static ArrayList<String> getQueryFiles(String queryLocation) {
@@ -160,6 +105,8 @@ public class Main {
             // We have only one file, already given as parameter.
             queryFiles.add(queryLocation);
         }
+        
+        chartFile = "chart" + "_" + file.getName();
 
         return queryFiles;
     }
@@ -182,8 +129,6 @@ public class Main {
             initializeFlags(args);
         }
         initializeDataSet(args[0]);
-
-        handleQueries();
     }
 
     private static String readQuery(String queryFile) {
