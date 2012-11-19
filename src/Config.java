@@ -31,4 +31,8 @@ public class Config {
     public static double alpha = 0.5;
     public static double beta = 0.5;
     public static double gamma = 0.0;
+    
+    //Folder param for the Naive Bayesian
+    public static final String PARAM_FOLDER = "--folder=";
+    
 }
