@@ -27,7 +27,6 @@ public class Main {
     private static Crawler crawler;
     private static DataSet dataSet;
     private static QueryHandler queryHandler;
-    private static PrecisionRecall precisionRecall;
     
     public static void printDynamicStats(String queryFile, String query, 
             TreeSet<QueryResult> results, long time, TablePerQuery table) {
@@ -120,11 +119,6 @@ public class Main {
 
     public static void handleQueries() throws IOException
     {
-        precisionRecall = null;
-        if(relevancyList != null){
-            precisionRecall = new PrecisionRecall(relevancyList);
-        }
-
         Scanner in = new Scanner(System.in);
 
         while(true) {
@@ -146,56 +140,9 @@ public class Main {
                 Config.beta = Double.valueOf(in.nextLine().toString());
             }
 
-            ArrayList<String> queryFiles = getQueryFiles(queryLocation);
-
-            for (String queryFile : queryFiles) {
-                String queryString = readQuery(queryFile);
-                
-                long startTime = System.currentTimeMillis();
-                Query query = new Query(crawler, queryString);
-                query.setType(Config.queryType);
-                TreeSet<QueryResult> results = queryHandler.retrieveDocument(query);
-
-                long time = System.currentTimeMillis() - startTime;
-                TablePerQuery table = computePrecisionRecallForFile(queryFile, results);
-                
-                // Logging stuff for each query.
-                printStatsForQuery(queryString, results.size(), time);
-                for (QueryResult res : results) {
-                    System.out.println(res);
-                }
-                System.out.println();
-                printDynamicStats(queryFile, queryString, results, time, table);
-            }
-
-            if (relevancyList == null) {
-                continue;
-            }
-
-            double[] avg = precisionRecall.computeAverageOverAllQueries();
-            precisionRecall.generatePrecisionRecallGraph(avg, chartFile + ".png");
         }
     }
     
-    private static TablePerQuery computePrecisionRecallForFile(String queryFile,
-            TreeSet<QueryResult> results) {
-        if (relevancyList == null) {
-            return null;
-        }
-
-        int indexFileName = queryFile.lastIndexOf("/");
-        String file = queryFile.substring(indexFileName, queryFile.length());
-        String queryNumber = file.replaceAll("[^0-9]", "");
-        if (queryNumber.isEmpty()) {
-            System.out.println("The name of the file for query" + queryFile
-                    + " does not have the proper format: Q[0-9]^+ !");
-            return null;
-        }
-        
-        int queryId = Integer.parseInt(queryNumber);
-        return precisionRecall.computePrecisionAndRecall(queryId, results);
-    }
-
     private static void printStatsForQuery(String queryString, int size, long time) {
         System.out.println("Query: " + queryString);
         System.out.println("The query was processed in " + time + " milliseconds.");
