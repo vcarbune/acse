@@ -69,7 +69,7 @@ public class FrequencyMap {
     }
     
     // TODO(uvictor)
-    public void subtract(FrequencyMap other) {
-        
+    public FrequencyMap subtract(FrequencyMap other) {
+        return null;
     }
 }

@@ -1,16 +1,10 @@
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.TreeSet;
 import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -22,7 +16,7 @@ public class Main {
     private static String chartFile = "chart";
 
     private static Crawler crawler;
-    private static DataSet dataSet;
+    private static ArrayList<DocSet> docSetList;
     
     public static void initializeLogging() {
         try {
@@ -56,9 +50,10 @@ public class Main {
                 System.out.println("Stop Words Elimination Selected...");
             }
 
-            dataSet = crawler.readDocSet();
+            //TODO: add this after the Crawler has been modified:
+            // docSetList = crawler.readDocSetList();
        
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Could not read the documents. Exiting...");
             System.exit(1);
         }
@@ -96,10 +91,74 @@ public class Main {
         }
 
         initializeLogging();
+        
         if (args.length >= 1) {
             initializeFlags(args);
         }
+        
         initializeDataSet(args[0]);
+        
+        FrequencyMap totalMap = new FrequencyMap();
+        int totalSpamDocs = 0;
+        int totalHamDocs = 0;
+        
+        // Precomputing the total values.
+        for (DocSet docSet: docSetList) { 
+            totalMap.add(docSet);
+            totalSpamDocs += docSet.getNumSpamDocs();
+            totalHamDocs += docSet.getNumHamDocs();
+        }
+        
+        int run = 0;
+        
+        // Testing
+        for (DocSet docSet: docSetList) {
+            run++;
+            
+            FrequencyMap trainingMap = totalMap.subtract(docSet);
+            
+            int trainingSpamDocs = totalSpamDocs - docSet.getNumSpamDocs();
+            int trainingHamDocs = totalHamDocs - docSet.getNumHamDocs();
+            int totalDocs = trainingSpamDocs + trainingHamDocs;
+            double spamProb = totalSpamDocs / (double) totalDocs;
+            double hamProb = 1 - spamProb;
+            
+            //TODO: uncomment this after it's implemented
+            // Classifier classifier = new Classifier(trainingMap, docSet);
+            
+            // int TP = classifier.getTP();
+            // int FP = classifier.getFP();
+            // int TN = classifier.getTN();
+            // int FN = classifier.getFN();
+            
+            // We can compute the values below in Main or in Classifier.
+            
+            // double precision = classifier.getPrecision();
+            // double recall = classifier.getRecall();
+            // double fpRate = classifier.getFPRate();
+            // double tpRate = classifier.getTPRate();
+            
+            //TODO: logging
+            //TODO: format doubles
+            
+            System.out.println("====================================================================");
+            System.out.println("Run no. " + run);
+            System.out.println("Total training size: " + totalDocs);
+            System.out.println("Total spam documents: " + totalSpamDocs);
+            System.out.println("Total correct documents: " + totalHamDocs);
+            System.out.println();
+            System.out.println("Prior probabilities:");
+            System.out.println("Spam - " + spamProb);
+            System.out.println("Ham - " + hamProb);
+            //System.out.println("TP = " + TP + ", FN = " + FN + ", FP = " + FP + ", TN = " + TN );
+            //System.out.println("Precision = " + precision + ", Recall = " + recall);
+            
+            //TODO: send fpRate and tpRate to some object that will generate the ROC curve
+            
+        }
+        
+        //TODO: generate chart for ROC curve
+        
     }
 
 }
