@@ -19,9 +19,6 @@ public class Main {
 
     private static Logger logger;
     private static String stopWordFile = null;
-    private static String nounsFile = null;
-    private static String queryFolder = null;
-    private static String relevancyList = null;
     private static String chartFile = "chart";
 
     private static Crawler crawler;
@@ -59,8 +56,8 @@ public class Main {
                 System.out.println("Stop Words Elimination Selected...");
             }
 
-            dataSet = crawler.readDocuments();
-            dataSet.computeDocLengths();
+            dataSet = crawler.readDocSet();
+       
         } catch (IOException e) {
             System.out.println("Could not read the documents. Exiting...");
             System.exit(1);
@@ -80,36 +77,11 @@ public class Main {
             } else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
                 int eqPos = args[i].indexOf("=");
                 stopWordFile = args[i].substring(eqPos + 1, args[i].length());
-            } else if (args[i].startsWith(Config.PARAM_NOUNSFILE)) {
-                int eqPos = args[i].indexOf("=");
-                nounsFile = args[i].substring(eqPos + 1, args[i].length());
-            } else if (args[i].startsWith(Config.PARAM_QUERYFOLDER)) {
-                int eqPos = args[i].indexOf("=");
-                queryFolder = args[i].substring(eqPos + 1, args[i].length());
-            }
+            } 
         }
     }
 
-    private static ArrayList<String> getQueryFiles(String queryLocation) {
-        ArrayList<String> queryFiles = new ArrayList<String>();
-        
-        File file = new File(queryLocation);
-        if (file.isDirectory()) {
-            // Fetch all files within the directory.
-            File[] listOfFiles = file.listFiles();
-
-            for (int i = 0; i < listOfFiles.length; i++) {
-                queryFiles.add(queryLocation + "/" + listOfFiles[i].getName());
-            }
-        } else {
-            // We have only one file, already given as parameter.
-            queryFiles.add(queryLocation);
-        }
-        
-        chartFile = "chart" + "_" + file.getName();
-
-        return queryFiles;
-    }
+  
 
     public static void main(String args[]) throws IOException, FileNotFoundException {
         if (args.length < 1) {
@@ -117,9 +89,8 @@ public class Main {
                     + " [" + Config.PARAM_STOPWORD + "]"
                     + " [" + Config.PARAM_STOPWORDFILE + "]"
                     + " [" + Config.PARAM_STEMMING + "]"
-                    + " [" + Config.PARAM_QUERYFOLDER + "]"
-                    + " [" + Config.PARAM_QUERYFILE + "]"
-                    + " [" + Config.PARAM_RELEVANCY + "]");
+                    + " [" + Config.PARAM_FOLDER + "]"
+            			);
 
             return;
         }
@@ -131,31 +102,4 @@ public class Main {
         initializeDataSet(args[0]);
     }
 
-    private static String readQuery(String queryFile) {
-        FileInputStream inputStream;
-
-        try {
-            inputStream = new FileInputStream(queryFile);
-            DataInputStream dataInput = new DataInputStream(inputStream);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    dataInput));
-
-            StringBuilder queryBuilder = new StringBuilder();
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                queryBuilder.append(line.toUpperCase());
-                queryBuilder.append(" ");
-            }
-
-            inputStream.close();
-
-            return queryBuilder.toString();
-        } catch (IOException e) {
-            System.out.println("The query file could not be found!");
-            System.exit(2);
-        }
-
-        return "";
-    }
 }
