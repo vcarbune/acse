@@ -26,10 +26,9 @@ public class Main {
 
     private static Crawler crawler;
     private static DataSet dataSet;
-    private static QueryHandler queryHandler;
     
     public static void printDynamicStats(String queryFile, String query, 
-            TreeSet<QueryResult> results, long time, TablePerQuery table) {
+            TreeSet<QueryResult> results, long time) {
 
         logger.log(Config.LOG_LEVEL, "Query file: " + queryFile + "\n");
         logger.log(Config.LOG_LEVEL, "Query: " + query + "\n");
@@ -39,10 +38,6 @@ public class Main {
 
         for (QueryResult result : results) {
             logger.log(Config.LOG_LEVEL, result + "\n");
-        }
-
-        if (table != null) {
-            logger.log(Config.LOG_LEVEL, "\n" + table.toString() + "\n");
         }
 
         logger.log(Config.LOG_LEVEL, "------------------------------------------------------------\n");
@@ -188,7 +183,6 @@ public class Main {
         }
         initializeDataSet(args[0]);
 
-        queryHandler = new QueryHandler(nounsFile, dataSet);
         handleQueries();
     }
 
