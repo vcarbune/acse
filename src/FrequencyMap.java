@@ -29,7 +29,13 @@ public class FrequencyMap {
             this.spamCount += count;
         }
     }
+    
+    
     private HashMap<String, WordCount> wordCounts;
+    
+    public FrequencyMap(){
+    	wordCounts = new HashMap<String, WordCount>();
+    }
 
     protected void addWord(final boolean spam, final String wordId, final int count) {
         int spamCount = 0;
