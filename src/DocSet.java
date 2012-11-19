@@ -1,23 +1,18 @@
 
-// TODO(uvictor)
-public class DocSet {
+import java.util.ArrayList;
+import java.util.Map;
 
-    public int getHamCount(final String docId) {
-        return 0;
-    }
+// TODO: complete this with what is needed
+public class DocSet extends FrequencyMap {
 
-    public int getSpamCount(final String docId) {
-        return 0;
-    }
+    ArrayList<DocEntry> docEntries;
 
-    public void incCount(final String docId, final String word) {
-    }
-    
-    public void add(final DocSet docSet) {
-        
-    }
-    
-    public void substract(final DocSet docSet) {
-        
+    public void addDoc(final DocEntry docEntry) {
+        docEntries.add(docEntry);
+
+        boolean spam = docEntry.isSpam();
+        for (Map.Entry<String, Integer> wordCount : docEntry.getWordCounts()) {
+            addWord(spam, wordCount.getKey(), wordCount.getValue());
+        }
     }
 }
