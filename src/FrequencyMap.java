@@ -1,5 +1,8 @@
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class FrequencyMap {
 
@@ -76,6 +79,42 @@ public class FrequencyMap {
     
     // TODO(uvictor)
     public FrequencyMap subtract(FrequencyMap other) {
-        return null;
+        HashMap<String, WordCount> wordCountCopy = new HashMap<String, WordCount>();
+        wordCountCopy.putAll(wordCounts);
+         
+        if(other == null){
+        	FrequencyMap fMap = new FrequencyMap();
+        	fMap.setWordCounts(wordCountCopy);	
+        	return fMap;
+        }
+        
+        List<String> toRemoveWords = new ArrayList<String>();
+        for(Entry<String, WordCount> entry : wordCountCopy.entrySet()){
+        	String term = entry.getKey();
+        	WordCount count = entry.getValue();
+        	
+        	int subHam = other.getWordHamCount(term);
+        	int subSpam = other.getWordSpamCount(term);
+        	count.addHamCount((-1) * subHam);
+        	count.addSpamCount((-1) * subSpam);
+        	
+        	if(count.getHamCount() <= 0 && count.getSpamCount() <= 0){
+        		toRemoveWords.add(term);
+        	}
+        	entry.setValue(count); 	
+        }
+        
+        for(String term : toRemoveWords){
+        	wordCountCopy.remove(term);
+        }
+        
+        FrequencyMap fMap = new FrequencyMap(); 
+        fMap.setWordCounts(wordCountCopy);
+        
+       return fMap;
+    }
+    
+    public void setWordCounts(HashMap<String, WordCount> wordCounts){
+    	this.wordCounts = wordCounts;
     }
 }
