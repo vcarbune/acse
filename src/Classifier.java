@@ -11,6 +11,13 @@ public class Classifier {
     public Classifier() {
     }
     
+    public void reset() {
+        truePositives = 0;
+        trueNegatives = 0;
+        falsePositives = 0;
+        falseNegatives = 0;
+    }
+    
     /**
      * Classifies a given document using naive bayes rule.
      *  
@@ -50,8 +57,8 @@ public class Classifier {
      * @param spamClassPrior    The prior probability for the spam class.
      */
     public void classify(DocSet docSet, FrequencyMap frequencyMap, double spamClassPrior) {
-        // TODO(vcarbune): Guess docEntries shouldn't be public in FrequencyMap so it might change.
-        for (DocEntry entry : docSet.docEntries) {
+
+        for (DocEntry entry : docSet.getDocEntries()) {
             boolean isSpam = classifyDocument(entry, frequencyMap, spamClassPrior);
 
             if (isSpam == entry.isSpam()) {

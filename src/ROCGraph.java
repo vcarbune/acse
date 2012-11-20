@@ -14,15 +14,12 @@ public class ROCGraph {
 	private ArrayList<Double> fpRate = new ArrayList<Double>();
 	private ArrayList<Double> tpRate = new ArrayList<Double>();
 
-	public void addTruePositiveRate(Double tp){
-		tpRate.add(tp);
+	public void addPoint(double tp, double fp) {
+	    tpRate.add(tp);
+	    fpRate.add(fp);
 	}
-
-	public void addFalsePositiveRate(Double fp){
-		fpRate.add(fp);
-	}
-
-	public void createRoCGraph(){
+	
+	public void createROCGraph(){
 		XYSeries series = new XYSeries("ROC");
 		int poz = 0;
 		for(double fp : fpRate){

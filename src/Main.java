@@ -47,8 +47,6 @@ public class Main {
 			System.out.println("Stop Words Elimination Selected...");
 		}
 
-		//TODO: add this after the Crawler has been modified:
-		// DONE
 		docSetList = crawler.readDocSet();       
 	}
 
@@ -101,10 +99,12 @@ public class Main {
 			totalSpamDocs += docSet.getNumSpamDocs();
 			totalHamDocs += docSet.getNumHamDocs();
 		}
+		
+		Classifier classifier = new Classifier();
+        ROCGraph graph = new ROCGraph();
 
 		int run = 0;
-
-		ROCGraph graph = new ROCGraph();
+		
 		// Testing
 		for (DocSet docSet: docSetList) {
 			run++;
@@ -117,20 +117,17 @@ public class Main {
 			double spamProb = totalSpamDocs / (double) totalDocs;
 			double hamProb = 1 - spamProb;
 
-			//TODO: uncomment this after it's implemented
-			// Classifier classifier = new Classifier(trainingMap, docSet);
+			classifier.classify(docSet, trainingMap, spamProb);
 
-			// int TP = classifier.getTP();
-			// int FP = classifier.getFP();
-			// int TN = classifier.getTN();
-			// int FN = classifier.getFN();
+			int TP = classifier.getTruePositives();
+			int FP = classifier.getFalsePositives();
+			int TN = classifier.getTrueNegatives();
+			int FN = classifier.getFalseNegatives();
 
-			// We can compute the values below in Main or in Classifier.
-
-			// double precision = classifier.getPrecision();
-			// double recall = classifier.getRecall();
-			// double fpRate = classifier.getFPRate();
-			// double tpRate = classifier.getTPRate();
+			double precision = TP / (double) TP + FP;
+			double recall = TP / (double) TP + FN;
+			double fpRate = FP / (double) FP + TN;
+			double tpRate = recall;
 
 			//TODO: logging
 			//TODO: format doubles
@@ -144,17 +141,13 @@ public class Main {
 			System.out.println("Prior probabilities:");
 			System.out.println("Spam - " + spamProb);
 			System.out.println("Ham - " + hamProb);
-			//System.out.println("TP = " + TP + ", FN = " + FN + ", FP = " + FP + ", TN = " + TN );
-			//System.out.println("Precision = " + precision + ", Recall = " + recall);
+			System.out.println("TP = " + TP + ", FN = " + FN + ", FP = " + FP + ", TN = " + TN );
+			System.out.println("Precision = " + precision + ", Recall = " + recall);
 
-			//TODO: remove comment after classifier offers all methods
-			//graph.addFalsePositiveRate(fpRate);
-			//graph.addTruePositiveRate(tpRate);
-
+			graph.addPoint(tpRate, fpRate);
 		}
 
-		//TODO: remove comment after classifier offers all methods
-		//graph.createRoCGraph();
+		graph.createROCGraph();
 	}
 
 }
