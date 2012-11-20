@@ -22,8 +22,6 @@ public class Classifier {
      */
     public boolean classifyDocument (DocEntry entry, FrequencyMap frequencyMap,
             double spamClassPrior) {
-        // We're not expecting more than two classes (in this order): Ham and Spam
-
         double logHamSum = 0.0;
         int denominatorHam = frequencyMap.getTotalCounts().get(0) +
                 frequencyMap.getVocabularySize();
@@ -47,8 +45,8 @@ public class Classifier {
     /**
      * Classifies each of the documents in the given document set.
      *
-     * @param docSet        The documents to be classified.
-     * @param frequencyMap  The complete frequency map.
+     * @param docSet            The documents to be classified.
+     * @param frequencyMap      The complete frequency map.
      * @param spamClassPrior    The prior probability for the spam class.
      */
     public void classify(DocSet docSet, FrequencyMap frequencyMap, double spamClassPrior) {
