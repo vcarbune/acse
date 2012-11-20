@@ -38,4 +38,8 @@ public class DocEntry {
     public Set<Map.Entry<String, Integer>> getWordCounts() {
         return wordCounts.entrySet();
     }
+    
+    public Set<String> getWords() {
+        return wordCounts.keySet();
+    }
 }

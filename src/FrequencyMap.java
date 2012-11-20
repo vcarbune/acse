@@ -1,5 +1,8 @@
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 public class FrequencyMap {
 
@@ -51,10 +54,22 @@ public class FrequencyMap {
         }
     }
 
+    public List<Integer> getTotalCounts() {
+        int totalHamCount = 0;
+        int totalSpamCount = 0;
+
+        for (String word : wordCounts.keySet()) {
+            totalHamCount   += wordCounts.get(word).getHamCount();
+            totalSpamCount  += wordCounts.get(word).getSpamCount(); 
+        }
+
+        return Arrays.asList(totalHamCount, totalSpamCount);
+    }
+    
     public int getWordHamCount(final String wordId) {
         return wordCounts.get(wordId).getHamCount();
     }
-
+    
     public int getWordSpamCount(final String wordId) {
         return wordCounts.get(wordId).getSpamCount();
     }
