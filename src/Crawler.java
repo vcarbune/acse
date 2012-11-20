@@ -57,7 +57,7 @@ public class Crawler {
 		while ((line = reader.readLine()) != null) {
 			line = line.replaceAll("[^a-zA-Z]", " ");
 
-			StringTokenizer tokens = new StringTokenizer(line);
+			StringTokenizer tokens = new StringTokenizer(line.toUpperCase());
 
 			while (tokens.hasMoreElements()) {
 				String token = tokens.nextToken();
