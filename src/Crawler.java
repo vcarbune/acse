@@ -87,6 +87,10 @@ public class Crawler {
 		File[] listOfFiles = folder.listFiles();
 		for (int i = 0; i < listOfFiles.length; i++) {
 			String fileName = listOfFiles[i].getName();
+			
+			if (fileName.startsWith(".")) {
+			    continue;
+			}
 
 			boolean spam = false; 
 			if(fileName.startsWith("spmsg"))

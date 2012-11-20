@@ -152,7 +152,7 @@ public class Main {
 			graph.addPoint(tpRate, fpRate);
 		}
 
-		graph.createROCGraph();
+		graph.createROCGraph(chartFile + ".png");
 	}
 
 }
