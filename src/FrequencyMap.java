@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 public class FrequencyMap {
+    private int totalHamCount = 0;
+    private int totalSpamCount = 0;
 
     private static class WordCount {
 
@@ -45,8 +47,10 @@ public class FrequencyMap {
         int hamCount = 0;
         if (spam) {
             spamCount += count;
+            totalSpamCount++;
         } else {
             hamCount += count;
+            totalHamCount++;
         }
 
         WordCount wordCount = wordCounts.get(wordId);
@@ -61,14 +65,6 @@ public class FrequencyMap {
     }
 
     public List<Integer> getTotalCounts() {
-        int totalHamCount = 0;
-        int totalSpamCount = 0;
-
-        for (String word : wordCounts.keySet()) {
-            totalHamCount   += wordCounts.get(word).getHamCount();
-            totalSpamCount  += wordCounts.get(word).getSpamCount(); 
-        }
-
         return Arrays.asList(totalHamCount, totalSpamCount);
     }
 
