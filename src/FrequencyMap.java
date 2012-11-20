@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Map.Entry;
 
 public class FrequencyMap {
+    
     private int totalHamCount = 0;
     private int totalSpamCount = 0;
+    private HashMap<String, WordCount> wordCounts;
 
+    
     private static class WordCount {
 
         private int hamCount;
@@ -35,10 +38,7 @@ public class FrequencyMap {
         }
     }
     
-    
-    private HashMap<String, WordCount> wordCounts;
-    
-    public FrequencyMap(){
+    public FrequencyMap() {
     	wordCounts = new HashMap<String, WordCount>();
     }
 
@@ -64,8 +64,12 @@ public class FrequencyMap {
         }
     }
 
-    public List<Integer> getTotalCounts() {
-        return Arrays.asList(totalHamCount, totalSpamCount);
+    public int getTotalHamCount() {
+        return totalHamCount;
+    }
+    
+    public int getTotalSpamCount() {
+        return totalSpamCount;
     }
 
     public int getWordHamCount(final String wordId) {
@@ -86,9 +90,29 @@ public class FrequencyMap {
         return wordCounts.size();
     }
     
-    // TODO(uvictor)
     public void add(FrequencyMap other) {
         
+        if (other == null) {
+            return;
+        }
+        
+        for (Entry<String, WordCount> entry : other.wordCounts.entrySet()) {
+            
+            WordCount wc = wordCounts.get(entry.getKey());
+            
+            if (wc == null) {
+                wc = new WordCount(entry.getValue().getHamCount(), entry.getValue().getSpamCount());
+            }
+            else {
+                wc.addHamCount(entry.getValue().getHamCount());
+                wc.addSpamCount(entry.getValue().getSpamCount());
+            }
+            
+            wordCounts.put(entry.getKey(), wc);
+        }
+        
+        totalHamCount += other.getTotalHamCount();
+        totalSpamCount += other.getTotalSpamCount();
     }
     
     public FrequencyMap subtract(FrequencyMap other) {
@@ -97,7 +121,10 @@ public class FrequencyMap {
          
         if(other == null){
         	FrequencyMap fMap = new FrequencyMap();
-        	fMap.setWordCounts(wordCountCopy);	
+        	fMap.setWordCounts(wordCountCopy);
+        	fMap.totalHamCount = this.totalHamCount;
+        	fMap.totalSpamCount = this.totalSpamCount;
+        	
         	return fMap;
         }
         
@@ -124,7 +151,10 @@ public class FrequencyMap {
         FrequencyMap fMap = new FrequencyMap(); 
         fMap.setWordCounts(wordCountCopy);
         
-       return fMap;
+        fMap.totalHamCount = this.totalHamCount - other.totalHamCount;
+        fMap.totalSpamCount = this.totalSpamCount - other.totalSpamCount;
+        
+        return fMap;
     }
     
     public void setWordCounts(HashMap<String, WordCount> wordCounts){

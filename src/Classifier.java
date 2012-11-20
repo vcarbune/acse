@@ -30,11 +30,11 @@ public class Classifier {
     public boolean classifyDocument (DocEntry entry, FrequencyMap frequencyMap,
             double spamClassPrior) {
         double logHamSum = 0.0;
-        int denominatorHam = frequencyMap.getTotalCounts().get(0) +
+        int denominatorHam = frequencyMap.getTotalHamCount() +
                 frequencyMap.getVocabularySize();
 
         double logSpamSum = 0.0;
-        int denominatorSpam = frequencyMap.getTotalCounts().get(1) +
+        int denominatorSpam = frequencyMap.getTotalSpamCount() +
                 frequencyMap.getVocabularySize();
 
         for (String word : entry.getWords()) {
