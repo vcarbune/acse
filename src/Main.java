@@ -46,6 +46,8 @@ public class Main {
 			crawler.readStopWords();
 
 			System.out.println("Stop Words Elimination Selected...");
+			
+			logger.log(Config.LOG_LEVEL, "With stopwords elimination...\n\n");
 		}
 
 		docSetList = crawler.readDocSet();       
@@ -61,6 +63,7 @@ public class Main {
 				System.out.println("Stemmming is selected.....");
 				Config.enableStemming = true;
 				chartFile += "_Stemming";
+				logger.log(Config.LOG_LEVEL, "With stemming...\n\n");
 			} else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
 				int eqPos = args[i].indexOf("=");
 				stopWordFile = args[i].substring(eqPos + 1, args[i].length());
@@ -134,20 +137,21 @@ public class Main {
 			double fpRate = FP / ((double) FP + TN);
 			double tpRate = recall;
 
-			//TODO: logging
-			//TODO: format doubles
-
-			System.out.println("====================================================================");
-			System.out.println("Run no. " + run);
-			System.out.println("Total training size: " + totalTrainingDocs);
-			System.out.println("Total spam documents: " + trainingSpamDocs);
-			System.out.println("Total ham documents: " + trainingHamDocs);
-			System.out.println();
-			System.out.println("Prior probabilities:");
-			System.out.println("Spam - " + spamProb);
-			System.out.println("Ham - " + hamProb);
-			System.out.println("TP = " + TP + ", FN = " + FN + ", FP = " + FP + ", TN = " + TN );
-			System.out.println("Precision = " + precision + ", Recall = " + recall);
+			StringBuilder stats = new StringBuilder();
+			
+			stats.append("Run no. " + run + "\n");
+			stats.append("Total training size: " + totalTrainingDocs + "\n");
+			stats.append("Total spam documents: " + trainingSpamDocs + "\n");
+			stats.append("Total ham documents: " + trainingHamDocs + "\n");
+			stats.append("Prior probabilities:\n");
+			stats.append("Spam - " + spamProb + "\n");
+			stats.append("Ham - " + hamProb + "\n");
+			stats.append("TP = " + TP + ", FN = " + FN + ", FP = " + FP + ", TN = " + TN  + "\n");
+			stats.append("Precision = " + precision + ", Recall = " + recall + "\n");
+			stats.append("====================================================================\n");
+			
+			logger.log(Config.LOG_LEVEL, stats.toString());
+			System.out.println(stats);
 
 			graph.addPoint(tpRate, fpRate);
 		}
