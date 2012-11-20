@@ -31,9 +31,14 @@ public class DocEntry {
     }
 
     public void incCount(String word) {
-        int count = wordCounts.get(word);
-        wordCounts.put(word, count + 1);
-    }
+
+		if(wordCounts.get(word) == null)
+			wordCounts.put(word, 1);
+		else{
+			int count = wordCounts.get(word);
+			wordCounts.put(word, count + 1);
+		}
+	}
     
     public Set<Map.Entry<String, Integer>> getWordCounts() {
         return wordCounts.entrySet();

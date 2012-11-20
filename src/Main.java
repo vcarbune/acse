@@ -104,6 +104,7 @@ public class Main {
 
 		int run = 0;
 
+		ROCGraph graph = new ROCGraph();
 		// Testing
 		for (DocSet docSet: docSetList) {
 			run++;
@@ -146,12 +147,14 @@ public class Main {
 			//System.out.println("TP = " + TP + ", FN = " + FN + ", FP = " + FP + ", TN = " + TN );
 			//System.out.println("Precision = " + precision + ", Recall = " + recall);
 
-			//TODO: send fpRate and tpRate to some object that will generate the ROC curve
+			//TODO: remove comment after classifier offers all methods
+			//graph.addFalsePositiveRate(fpRate);
+			//graph.addTruePositiveRate(tpRate);
 
 		}
 
-		//TODO: generate chart for ROC curve
-
+		//TODO: remove comment after classifier offers all methods
+		//graph.createRoCGraph();
 	}
 
 }
