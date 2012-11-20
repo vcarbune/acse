@@ -6,6 +6,11 @@ public class DocSet extends FrequencyMap {
 
     ArrayList<DocEntry> docEntries;
     private int numSpamDocs;
+    
+    public DocSet(){
+    	docEntries = new ArrayList<DocEntry>();
+    	numSpamDocs = 0;
+    }
 
     public void addDoc(final DocEntry docEntry) {
         docEntries.add(docEntry);

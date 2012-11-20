@@ -5,28 +5,25 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 public class Crawler {
 
-	private DataSet dataSet;
 	private String folderName;
 	private String stopWordsFile;
 	private HashSet<String> stopWords;
 
 	public Crawler(String folderName) {
 		this.folderName = folderName;
-		dataSet = new DataSet();
 		stopWords = new HashSet<String>();
 	}
 
 	public Crawler(String folderName, String stopWordsFile) {
 		this.folderName = folderName;
 		this.stopWordsFile = stopWordsFile;
-
-		dataSet = new DataSet();
 	}
 
 	/**
@@ -54,7 +51,7 @@ public class Crawler {
 		}
 	}
 
-	
+
 	private void processFile(BufferedReader reader, DocEntry docEntry)
 	throws IOException {
 		String line;
@@ -77,14 +74,13 @@ public class Crawler {
 				}
 
 				if (token.isEmpty() == false) {
-					dataSet.addTerm(docEntry, token);
+					docEntry.incCount(token);
 				}
 			}
 		}
 	}
 
-	
-	public void readDocEntry(DocSet ds, String docSetName) throws IOException {
+	public void readDocEntries(DocSet docSet, String docSetName) throws IOException {
 		File folder = new File(docSetName);
 		if(folder.isDirectory() == false)
 			throw new IOException("The input should be a folder!"); 
@@ -92,41 +88,43 @@ public class Crawler {
 		File[] listOfFiles = folder.listFiles();
 		for (int i = 0; i < listOfFiles.length; i++) {
 			String fileName = listOfFiles[i].getName();
-			
+
 			boolean spam = false; 
 			if(fileName.startsWith("spmsg"))
 				spam = true; 
-		//	System.out.println(fileName + " " + spam);
-			DocEntry doc = dataSet.addDocEntry(ds, fileName, spam); 
-			
+			//	System.out.println(fileName + " " + spam);
+			DocEntry docEntry = new DocEntry(fileName, spam);
+
 			FileInputStream inputStream = new FileInputStream(listOfFiles[i]);
 			DataInputStream dataInput = new DataInputStream(inputStream);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					dataInput));
 
-			processFile(reader, doc);
+			processFile(reader, docEntry);
+			docSet.addDoc(docEntry);
+
 			inputStream.close();
 		}
 	}
 
-	public DataSet readDocSet() throws IOException{
+	public ArrayList<DocSet> readDocSet() throws IOException{
 		File folder = new File(folderName);
 		if(folder.isDirectory() == false)
 			throw new IOException("The input should be a folder!");
-		
+
+		ArrayList<DocSet> listDocSets = new ArrayList<DocSet>();
+
 		File[] listOfFiles = folder.listFiles();
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if(listOfFiles[i].isDirectory()){
-				String folderName = listOfFiles[i].getName();
-				DocSet docSet = dataSet.addDocSet(folderName);
-				readDocEntry(docSet, listOfFiles[i].getAbsolutePath()); 
+				DocSet docSet = new DocSet();
+				readDocEntries(docSet, listOfFiles[i].getAbsolutePath()); 
+				listDocSets.add(docSet);
 			}
 		}
-		
-		return dataSet; 
 
+		return listDocSets;
 	}
-
 
 	/**
 	 * Retrieves the stop words read from the stopWordsFile but upper cased.
