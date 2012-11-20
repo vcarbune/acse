@@ -29,6 +29,7 @@ public class Classifier {
      */
     public boolean classifyDocument (DocEntry entry, FrequencyMap frequencyMap,
             double spamClassPrior) {
+        
         double logHamSum = 0.0;
         int denominatorHam = frequencyMap.getTotalHamCount() +
                 frequencyMap.getVocabularySize();

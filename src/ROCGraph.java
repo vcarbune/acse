@@ -23,7 +23,7 @@ public class ROCGraph {
 		XYSeries series = new XYSeries("ROC");
 		int poz = 0;
 		for(double fp : fpRate){
-			double tp = tpRate.get(poz);
+			double tp = tpRate.get(poz++);
 			series.add(fp, tp);
 		}
 
@@ -40,5 +40,7 @@ public class ROCGraph {
 		);
 
 		chart.setBackgroundPaint(Color.white);
+		
+		//TODO: generate file?
 	}
 }
