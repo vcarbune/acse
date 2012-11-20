@@ -117,6 +117,7 @@ public class Main {
 			double spamProb = totalSpamDocs / (double) totalDocs;
 			double hamProb = 1 - spamProb;
 
+			classifier.reset();
 			classifier.classify(docSet, trainingMap, spamProb);
 
 			int TP = classifier.getTruePositives();
