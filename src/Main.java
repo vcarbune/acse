@@ -117,8 +117,8 @@ public class Main {
 
 			int trainingSpamDocs = totalSpamDocs - docSet.getNumSpamDocs();
 			int trainingHamDocs = totalHamDocs - docSet.getNumHamDocs();
-			int totalDocs = trainingSpamDocs + trainingHamDocs;
-			double spamProb = totalSpamDocs / (double) totalDocs;
+			int totalTrainingDocs = trainingSpamDocs + trainingHamDocs;
+			double spamProb = trainingSpamDocs / (double) totalTrainingDocs;
 			double hamProb = 1 - spamProb;
 
 			classifier.reset();
@@ -129,9 +129,9 @@ public class Main {
 			int TN = classifier.getTrueNegatives();
 			int FN = classifier.getFalseNegatives();
 
-			double precision = TP / (double) TP + FP;
-			double recall = TP / (double) TP + FN;
-			double fpRate = FP / (double) FP + TN;
+			double precision = TP / ((double) TP + FP);
+			double recall = TP / ((double) TP + FN);
+			double fpRate = FP / ((double) FP + TN);
 			double tpRate = recall;
 
 			//TODO: logging
@@ -139,9 +139,9 @@ public class Main {
 
 			System.out.println("====================================================================");
 			System.out.println("Run no. " + run);
-			System.out.println("Total training size: " + totalDocs);
-			System.out.println("Total spam documents: " + totalSpamDocs);
-			System.out.println("Total correct documents: " + totalHamDocs);
+			System.out.println("Total training size: " + totalTrainingDocs);
+			System.out.println("Total spam documents: " + trainingSpamDocs);
+			System.out.println("Total ham documents: " + trainingHamDocs);
 			System.out.println();
 			System.out.println("Prior probabilities:");
 			System.out.println("Spam - " + spamProb);
