@@ -11,6 +11,7 @@ public class Main {
 
 	private static Logger logger;
 	private static String stopWordFile = null;
+	private static String docFolder = null;
 	private static String chartFile = "chart";
 
 	private static Crawler crawler;
@@ -63,7 +64,10 @@ public class Main {
 			} else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
 				int eqPos = args[i].indexOf("=");
 				stopWordFile = args[i].substring(eqPos + 1, args[i].length());
-			} 
+			} else if (args[i].startsWith(Config.PARAM_FOLDER)) {
+                int eqPos = args[i].indexOf("=");
+                docFolder = args[i].substring(eqPos + 1, args[i].length());
+            } 
 		}
 	}
 
@@ -87,7 +91,7 @@ public class Main {
 			initializeFlags(args);
 		}
 
-		initializeDataSet(args[0]);
+		initializeDataSet(docFolder);
 
 		FrequencyMap totalMap = new FrequencyMap();
 		int totalSpamDocs = 0;

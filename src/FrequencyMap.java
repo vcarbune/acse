@@ -69,10 +69,16 @@ public class FrequencyMap {
     }
 
     public int getWordHamCount(final String wordId) {
+        if (wordCounts.get(wordId) == null) {
+            return 0;
+        }
         return wordCounts.get(wordId).getHamCount();
     }
 
     public int getWordSpamCount(final String wordId) {
+        if (wordCounts.get(wordId) == null) {
+            return 0;
+        }
         return wordCounts.get(wordId).getSpamCount();
     }
 
