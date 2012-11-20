@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 
 public class Classifier {
     private int truePositives = 0;
@@ -7,7 +5,6 @@ public class Classifier {
     private int falsePositives = 0;
     private int falseNegatives = 0;
 
-    // TODO(vcarbune): Should the constructor play the role of the classify method?
     public Classifier() {
     }
     
@@ -39,8 +36,10 @@ public class Classifier {
                 frequencyMap.getVocabularySize();
 
         for (String word : entry.getWords()) {
-            logHamSum   += Math.log((frequencyMap.getWordHamCount(word) + 1) / denominatorHam);
-            logSpamSum  += Math.log((frequencyMap.getWordSpamCount(word) + 1) / denominatorSpam);
+            logHamSum += entry.getCount(word) * 
+                    Math.log((frequencyMap.getWordHamCount(word) + 1) / (double) denominatorHam);
+            logSpamSum += entry.getCount(word) * 
+                    Math.log((frequencyMap.getWordSpamCount(word) + 1) / (double) denominatorSpam);
         }
 
         logHamSum += Math.log(1 - spamClassPrior);

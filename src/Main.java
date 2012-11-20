@@ -56,11 +56,11 @@ public class Main {
 		for (int i = 0; i < args.length; ++i) {
 			if (args[i].equals(Config.PARAM_STOPWORD)) {
 				Config.enableStopwordElimination = true;
-				chartFile += "StopWord";
+				chartFile += "_StopWord";
 			} else if (args[i].equals(Config.PARAM_STEMMING)) {
 				System.out.println("Stemmming is selected.....");
 				Config.enableStemming = true;
-				chartFile += "Stemming";
+				chartFile += "_Stemming";
 			} else if (args[i].startsWith(Config.PARAM_STOPWORDFILE)) {
 				int eqPos = args[i].indexOf("=");
 				stopWordFile = args[i].substring(eqPos + 1, args[i].length());

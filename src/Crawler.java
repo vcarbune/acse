@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.StringTokenizer;
-import java.util.TreeSet;
 
 public class Crawler {
 
