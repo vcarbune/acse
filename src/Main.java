@@ -99,7 +99,7 @@ public class Main {
 		FrequencyMap totalMap = new FrequencyMap();
 
 		Classifier classifier = new Classifier();
-        ROCGraph graph = new ROCGraph();
+		ROCGraph graph = new ROCGraph();
 
 		int run = 0;
 		
