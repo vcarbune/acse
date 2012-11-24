@@ -96,7 +96,7 @@ public class Main {
 
 		initializeDataSet(docFolder);
 
-		FrequencyMap totalMap = new FrequencyMap();
+//		FrequencyMap totalMap = new FrequencyMap();
 
 		Classifier classifier = new Classifier();
 		ROCGraph graph = new ROCGraph();
@@ -107,8 +107,9 @@ public class Main {
         for (DocSet docSet : docSetList) {
             int totalSpamDocs = 0;
             int totalHamDocs = 0;
-            
+
             // Re-compute total values.
+            FrequencyMap totalMap = new FrequencyMap();
             for (DocSet documentSet : docSetList) { 
                 totalMap.add(documentSet);
                 totalSpamDocs += documentSet.getNumSpamDocs();
