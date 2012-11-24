@@ -20,6 +20,10 @@ public class FrequencyMap {
             this.spamCount = spamCount;
         }
 
+        public WordCount(WordCount wordCount) {
+            this(wordCount.getHamCount(), wordCount.getSpamCount());
+        }
+
         public int getHamCount() {
             return hamCount;
         }
@@ -116,7 +120,9 @@ public class FrequencyMap {
     
     public FrequencyMap subtract(FrequencyMap other) {
         HashMap<String, WordCount> wordCountCopy = new HashMap<String, WordCount>();
-        wordCountCopy.putAll(wordCounts);
+        for (String word : wordCounts.keySet()) {
+            wordCountCopy.put(word, new WordCount(wordCounts.get(word)));
+        }
          
         if(other == null){
         	FrequencyMap fMap = new FrequencyMap();
