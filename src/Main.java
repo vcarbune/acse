@@ -97,23 +97,24 @@ public class Main {
 		initializeDataSet(docFolder);
 
 		FrequencyMap totalMap = new FrequencyMap();
-		int totalSpamDocs = 0;
-		int totalHamDocs = 0;
 
-		// Precomputing the total values.
-		for (DocSet docSet: docSetList) { 
-			totalMap.add(docSet);
-			totalSpamDocs += docSet.getNumSpamDocs();
-			totalHamDocs += docSet.getNumHamDocs();
-		}
-		
 		Classifier classifier = new Classifier();
         ROCGraph graph = new ROCGraph();
 
 		int run = 0;
 		
 		// Testing
-		for (DocSet docSet: docSetList) {
+        for (DocSet docSet : docSetList) {
+            int totalSpamDocs = 0;
+            int totalHamDocs = 0;
+            
+            // Re-compute total values.
+            for (DocSet documentSet : docSetList) { 
+                totalMap.add(documentSet);
+                totalSpamDocs += documentSet.getNumSpamDocs();
+                totalHamDocs += documentSet.getNumHamDocs();
+            }
+		        
 			run++;
 
 			FrequencyMap trainingMap = totalMap.subtract(docSet);
@@ -121,6 +122,7 @@ public class Main {
 			int trainingSpamDocs = totalSpamDocs - docSet.getNumSpamDocs();
 			int trainingHamDocs = totalHamDocs - docSet.getNumHamDocs();
 			int totalTrainingDocs = trainingSpamDocs + trainingHamDocs;
+			
 			double spamProb = trainingSpamDocs / (double) totalTrainingDocs;
 			double hamProb = 1 - spamProb;
 

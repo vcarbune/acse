@@ -36,9 +36,9 @@ public class Classifier {
                 frequencyMap.getVocabularySize();
 
         for (String word : entry.getWords()) {
-            logHamSum += entry.getCount(word) * 
+            logHamSum += entry.getCount(word) *
                     Math.log((frequencyMap.getWordHamCount(word) + 1) / (double) denominatorHam);
-            logSpamSum += entry.getCount(word) * 
+            logSpamSum += entry.getCount(word) *
                     Math.log((frequencyMap.getWordSpamCount(word) + 1) / (double) denominatorSpam);
         }
 
@@ -88,4 +88,4 @@ public class Classifier {
     public int getFalseNegatives() {
         return falseNegatives;
     }
-}
+} 
