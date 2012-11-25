@@ -4,8 +4,14 @@ public class Classifier {
     private int trueNegatives = 0;
     private int falsePositives = 0;
     private int falseNegatives = 0;
+    
+    private double threshold = 1.0;
 
     public Classifier() {
+    }
+    
+    public Classifier(double t) {
+        this.threshold = t;
     }
     
     public void reset() {
@@ -45,8 +51,8 @@ public class Classifier {
         logHamSum += Math.log(1 - spamClassPrior);
         logSpamSum += Math.log(spamClassPrior);
 
-        // TODO(vcarbune): Make sure this is the right check.
-        return logSpamSum > logHamSum;
+        // logs are negative, so checking the opposite
+        return (logSpamSum/logHamSum <= threshold);
     }
 
     /**

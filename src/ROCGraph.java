@@ -72,7 +72,7 @@ public class ROCGraph {
 		// Creating image file for the chart
 		try {
 			FileOutputStream out = new FileOutputStream(new File(fileName));
-			ChartUtilities.writeChartAsPNG(out, chart, 800, 600);
+			ChartUtilities.writeChartAsPNG(out, chart, 1200, 800);
 
 			out.close();
 		}
