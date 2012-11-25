@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -46,7 +47,7 @@ public class Main {
 			crawler.readStopWords();
 
 			System.out.println("Stop Words Elimination Selected...");
-			
+
 			logger.log(Config.LOG_LEVEL, "With stopwords elimination...\n\n");
 		}
 
@@ -68,159 +69,125 @@ public class Main {
 				int eqPos = args[i].indexOf("=");
 				stopWordFile = args[i].substring(eqPos + 1, args[i].length());
 			} else if (args[i].startsWith(Config.PARAM_FOLDER)) {
-                int eqPos = args[i].indexOf("=");
-                docFolder = args[i].substring(eqPos + 1, args[i].length());
-            } 
+				int eqPos = args[i].indexOf("=");
+				docFolder = args[i].substring(eqPos + 1, args[i].length());
+			} 
 		}
 	}
 
 	/**
 	 * Running tests with different thresholds, to generate points for the ROC curve
 	 */
-	public static void generateRocCurve() {
-	    
-        // TODO: Some refactoring needed
-	    int totalSpamDocs = 0;
-        int totalHamDocs = 0;
-        FrequencyMap totalMap = new FrequencyMap();
-        
-        for (DocSet documentSet : docSetList) { 
-            totalMap.add(documentSet);
-            totalSpamDocs += documentSet.getNumSpamDocs();
-            totalHamDocs += documentSet.getNumHamDocs();
-        }
+	public static void generateRocCurveThreshold() {
 
-        ROCGraph graph = new ROCGraph();
+		int totalSpamDocs = 0;
+		int totalHamDocs = 0;
+		FrequencyMap totalMap = new FrequencyMap();
 
-        for (double T=0.9; T<=1.0; T+=0.01) {
-        
-            double avgTPR = 0;
-            double avgFPR = 0;
-            int run = 0;
-            
-            Classifier classifier = new Classifier(T); 
-            
-            for (DocSet docSet : docSetList) {
-            	run++; 
-            	
-                FrequencyMap trainingMap = totalMap.subtract(docSet);
-    
-                int trainingSpamDocs = totalSpamDocs - docSet.getNumSpamDocs();
-                int trainingHamDocs = totalHamDocs - docSet.getNumHamDocs();
-                int totalTrainingDocs = trainingSpamDocs + trainingHamDocs;
-                
-                double spamProb = trainingSpamDocs / (double) totalTrainingDocs;
-    
-                classifier.reset();
-                classifier.classify(docSet, trainingMap, spamProb);
-    
-                int TP = classifier.getTruePositives();
-                int FP = classifier.getFalsePositives();
-                int TN = classifier.getTrueNegatives();
-                int FN = classifier.getFalseNegatives();
-    
-                double tpRate = TP / ((double) TP + FN);
-                double fpRate = FP / ((double) FP + TN);
-                double precision = TP / ((double) TP + FP);
-                double recall = TP / ((double) TP + FN);
-                
-                avgTPR += tpRate;
-                avgFPR += fpRate;
-                
-                StringBuilder stats = new StringBuilder();
-                
-                stats.append("Run no. " + run + "\n");
-                stats.append("Total training size: " + totalTrainingDocs + "\n");
-                stats.append("Total spam documents: " + trainingSpamDocs + "\n");
-                stats.append("Total ham documents: " + trainingHamDocs + "\n");
-                stats.append("Prior probabilities:\n");
-                stats.append("Spam - " + spamProb + "\n");
-                stats.append("Ham - " + (1- spamProb)+ "\n");
-                stats.append("TP = " + TP + ", FN = " + FN + ", FP = " + FP + ", TN = " + TN  + "\n");
-                stats.append("Precision = " + precision + ", Recall = " + recall + "\n");
-                stats.append("====================================================================\n");
-                
-                logger.log(Config.LOG_LEVEL, stats.toString());
-                System.out.println(stats.toString());
-                
-                
-            }
-            
-            avgTPR /= 8;
-            avgFPR /= 8;
-            
-            graph.addPoint(avgTPR, avgFPR);
-        }
+		for (DocSet documentSet : docSetList) { 
+			totalMap.add(documentSet);
+			totalSpamDocs += documentSet.getNumSpamDocs();
+			totalHamDocs += documentSet.getNumHamDocs();
+		}
 
-        graph.createROCGraph(chartFile + "_with_thresholds.png");
+		ROCGraph graph = new ROCGraph();
+
+		for (double T=0.9; T<=1.0; T+=0.01) {
+			
+			List<PointRate> rateList =  testingPhase(totalSpamDocs,
+					totalHamDocs, totalMap, T);
+			
+			double avgTPR = 0;
+			double avgFPR = 0;
+			for(PointRate p: rateList){
+				avgFPR += p.getFalsePosRate();
+				avgTPR += p.getTruePosRate();
+			}
+			
+			avgTPR /= 8;
+			avgFPR /= 8;
+
+			graph.addPoint(new PointRate(avgTPR, avgFPR));
+		}
+
+		graph.createROCGraph(chartFile + "_with_thresholds.png");
 	}
-	
+
 	/**
 	 * Run the tests with threshold=1 and generate the stats
 	 */
 	public static void generateStats() {
-	    
-	    int totalSpamDocs = 0;
-        int totalHamDocs = 0;
-        FrequencyMap totalMap = new FrequencyMap();
-        
-        for (DocSet documentSet : docSetList) { 
-            totalMap.add(documentSet);
-            totalSpamDocs += documentSet.getNumSpamDocs();
-            totalHamDocs += documentSet.getNumHamDocs();
-        }
 
-        Classifier classifier = new Classifier();
-        ROCGraph graph = new ROCGraph();
+		int totalSpamDocs = 0;
+		int totalHamDocs = 0;
+		FrequencyMap totalMap = new FrequencyMap();
 
-        int run = 0;
-        
-        // Testing
-        for (DocSet docSet : docSetList) {
-            run++;
+		for (DocSet documentSet : docSetList) { 
+			totalMap.add(documentSet);
+			totalSpamDocs += documentSet.getNumSpamDocs();
+			totalHamDocs += documentSet.getNumHamDocs();
+		}
 
-            FrequencyMap trainingMap = totalMap.subtract(docSet);
+		List<PointRate> rateList =  testingPhase(totalSpamDocs,
+				totalHamDocs, totalMap, 1.0);
+		ROCGraph graph = new ROCGraph();
+		graph.addPointList(rateList);
+		graph.createROCGraph(chartFile + ".png");
+	}
 
-            int trainingSpamDocs = totalSpamDocs - docSet.getNumSpamDocs();
-            int trainingHamDocs = totalHamDocs - docSet.getNumHamDocs();
-            int totalTrainingDocs = trainingSpamDocs + trainingHamDocs;
-            
-            double spamProb = trainingSpamDocs / (double) totalTrainingDocs;
-            double hamProb = 1 - spamProb;
+	private static List<PointRate> testingPhase(int totalSpamDocs, int totalHamDocs,
+			FrequencyMap totalMap, double threshold) {
+		// Testing
 
-            classifier.reset();
-            classifier.classify(docSet, trainingMap, spamProb);
+		ArrayList<PointRate> listRates = new ArrayList<PointRate>(); 
+		int run = 0;
+		Classifier classifier = new Classifier(threshold);
+		
+		for (DocSet docSet : docSetList) {
+			run++;
 
-            int TP = classifier.getTruePositives();
-            int FP = classifier.getFalsePositives();
-            int TN = classifier.getTrueNegatives();
-            int FN = classifier.getFalseNegatives();
+			FrequencyMap trainingMap = totalMap.subtract(docSet);
 
-            double precision = TP / ((double) TP + FP);
-            double recall = TP / ((double) TP + FN);
-            double fpRate = FP / ((double) FP + TN);
-            double tpRate = recall;
+			int trainingSpamDocs = totalSpamDocs - docSet.getNumSpamDocs();
+			int trainingHamDocs = totalHamDocs - docSet.getNumHamDocs();
+			int totalTrainingDocs = trainingSpamDocs + trainingHamDocs;
 
-            StringBuilder stats = new StringBuilder();
-            
-            stats.append("Run no. " + run + "\n");
-            stats.append("Total training size: " + totalTrainingDocs + "\n");
-            stats.append("Total spam documents: " + trainingSpamDocs + "\n");
-            stats.append("Total ham documents: " + trainingHamDocs + "\n");
-            stats.append("Prior probabilities:\n");
-            stats.append("Spam - " + spamProb + "\n");
-            stats.append("Ham - " + hamProb + "\n");
-            stats.append("TP = " + TP + ", FN = " + FN + ", FP = " + FP + ", TN = " + TN  + "\n");
-            stats.append("Precision = " + precision + ", Recall = " + recall + "\n");
-            stats.append("====================================================================\n");
-            
-            logger.log(Config.LOG_LEVEL, stats.toString());
-            System.out.println(stats.toString());
+			double spamProb = trainingSpamDocs / (double) totalTrainingDocs;
+			double hamProb = 1 - spamProb;
 
-            graph.addPoint(tpRate, fpRate);
-        }
+			classifier.reset();
+			classifier.classify(docSet, trainingMap, spamProb);
 
-        graph.createROCGraph(chartFile + ".png");
+			int TP = classifier.getTruePositives();
+			int FP = classifier.getFalsePositives();
+			int TN = classifier.getTrueNegatives();
+			int FN = classifier.getFalseNegatives();
+
+			double precision = TP / ((double) TP + FP);
+			double recall = TP / ((double) TP + FN);
+			double fpRate = FP / ((double) FP + TN);
+			double tpRate = recall;
+
+			StringBuilder stats = new StringBuilder();
+
+			stats.append("Run no. " + run + "\n");
+			stats.append("Total training size: " + totalTrainingDocs + "\n");
+			stats.append("Total spam documents: " + trainingSpamDocs + "\n");
+			stats.append("Total ham documents: " + trainingHamDocs + "\n");
+			stats.append("Prior probabilities:\n");
+			stats.append("Spam - " + spamProb + "\n");
+			stats.append("Ham - " + hamProb + "\n");
+			stats.append("TP = " + TP + ", FN = " + FN + ", FP = " + FP + ", TN = " + TN  + "\n");
+			stats.append("Precision = " + precision + ", Recall = " + recall + "\n");
+			stats.append("====================================================================\n");
+
+			logger.log(Config.LOG_LEVEL, stats.toString());
+			System.out.println(stats.toString());
+
+			listRates.add(new PointRate(tpRate, fpRate));
+		}
+
+		return listRates;
 	}
 
 
@@ -244,9 +211,9 @@ public class Main {
 
 		initializeDataSet(docFolder);
 
-		generateRocCurve();
+		generateRocCurveThreshold();
 		//generateStats();
-    
+
 	}
 
 }
