@@ -1,5 +1,6 @@
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ public class DocEntry {
     private Boolean spam;
     private HashMap<String, Integer> wordCounts;
     private HashMap<String, Double> wordWeights= null; // tf-idf weights
-    private double vectorLength;
+    private double vectorLength; // actually, this may not be needed
 
     public DocEntry(String docId, Boolean spam) {
         this.docId = docId;
@@ -90,22 +91,55 @@ public class DocEntry {
      * @return
      */
     public double getDistance(DocEntry other) {
-        //TODO: which formula? cosine doesn't seem suitable here...
-        return 0;
+        double dist = 0;
+        
+        Set<String> words = new HashSet<String>(wordCounts.keySet());
+        words.addAll(other.wordCounts.keySet());
+        
+        for (String word: words) {
+            double x1 = 0;
+            double x2 = 0;
+            
+            if (wordWeights.containsKey(word)) {
+                x1 = wordWeights.get(word);
+            }
+            if (other.wordWeights.containsKey(word)) {
+                x2 = other.wordWeights.get(word);
+            }
+            
+            dist += (x1-x2) * (x1-x2);
+        }
+        
+        dist = Math.sqrt(dist);
+        
+        return dist;
     }
     
     public static void main(String[] args) {
         
-        // Testing computeWordWeights
-        DocEntry doc = new DocEntry("doc1", true);
+        // Testing computeWordWeights and getDistance
+        DocEntry doc = new DocEntry("doc", true);
         doc.incCount("asd", 100);
         doc.incCount("qwe", 10);
+        doc.incCount("zxc", 20);
+        
+        DocEntry doc2 = new DocEntry("doc2", true);
+        doc2.incCount("asd", 10);
+        doc2.incCount("qwe", 100);
+        doc2.incCount("fgh", 1000);
+        
         HashMap<String, Integer> dfMap = new HashMap<String, Integer>();
         dfMap.put("asd", 10);
         dfMap.put("qwe", 1);
+        dfMap.put("zxc", 10);
+        dfMap.put("fgh", 1);
+        
         doc.computeWordWeights(dfMap, 100);
+        doc2.computeWordWeights(dfMap, 100);
         
         System.out.println(doc.wordWeights);
         System.out.println(doc.vectorLength);
+        System.out.println(doc2.wordWeights);
+        System.out.println(doc.getDistance(doc2));
     }
 }
