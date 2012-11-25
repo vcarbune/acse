@@ -56,7 +56,7 @@ public class Main {
 	public static void initializeFlags(String args[]) {
 
 		for (int i = 0; i < args.length; ++i) {
-			if (args[i].equals(Config.PARAM_STOPWORD)) {
+			if (args[i].equals(Config.                PARAM_STOPWORD)) {
 				Config.enableStopwordElimination = true;
 				chartFile += "_StopWord";
 			} else if (args[i].equals(Config.PARAM_STEMMING)) {
@@ -92,15 +92,17 @@ public class Main {
 
         ROCGraph graph = new ROCGraph();
 
-        for (double T=0.5; T<1.3; T+=0.01) {
+        for (double T=0.9; T<=1.0; T+=0.01) {
         
             double avgTPR = 0;
             double avgFPR = 0;
+            int run = 0;
             
-            Classifier classifier = new Classifier(T);
+            Classifier classifier = new Classifier(T); 
             
             for (DocSet docSet : docSetList) {
-                
+            	run++; 
+            	
                 FrequencyMap trainingMap = totalMap.subtract(docSet);
     
                 int trainingSpamDocs = totalSpamDocs - docSet.getNumSpamDocs();
@@ -119,9 +121,29 @@ public class Main {
     
                 double tpRate = TP / ((double) TP + FN);
                 double fpRate = FP / ((double) FP + TN);
+                double precision = TP / ((double) TP + FP);
+                double recall = TP / ((double) TP + FN);
                 
                 avgTPR += tpRate;
                 avgFPR += fpRate;
+                
+                StringBuilder stats = new StringBuilder();
+                
+                stats.append("Run no. " + run + "\n");
+                stats.append("Total training size: " + totalTrainingDocs + "\n");
+                stats.append("Total spam documents: " + trainingSpamDocs + "\n");
+                stats.append("Total ham documents: " + trainingHamDocs + "\n");
+                stats.append("Prior probabilities:\n");
+                stats.append("Spam - " + spamProb + "\n");
+                stats.append("Ham - " + (1- spamProb)+ "\n");
+                stats.append("TP = " + TP + ", FN = " + FN + ", FP = " + FP + ", TN = " + TN  + "\n");
+                stats.append("Precision = " + precision + ", Recall = " + recall + "\n");
+                stats.append("====================================================================\n");
+                
+                logger.log(Config.LOG_LEVEL, stats.toString());
+                System.out.println(stats.toString());
+                
+                
             }
             
             avgTPR /= 8;
@@ -193,7 +215,7 @@ public class Main {
             stats.append("====================================================================\n");
             
             logger.log(Config.LOG_LEVEL, stats.toString());
-            System.out.println(stats);
+            System.out.println(stats.toString());
 
             graph.addPoint(tpRate, fpRate);
         }
