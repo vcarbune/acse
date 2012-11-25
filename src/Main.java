@@ -92,7 +92,7 @@ public class Main {
 
 		ROCGraph graph = new ROCGraph();
 
-		for (double T=0.9; T<=1.0; T+=0.01) {
+		for (double T=0.5; T<=1.3; T+=0.01) {
 			
 			List<PointRate> rateList =  testingPhase(totalSpamDocs,
 					totalHamDocs, totalMap, T);
