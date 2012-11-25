@@ -56,7 +56,7 @@ public class DocEntry {
     /**
      * For phase 2.
      *  
-     * Computes the map with the tf-idf frequencies for each word in the doc,
+     * Computes the map with the tf-idf weights for each word in the doc,
      * using a map tha contains the df values for each term.
      * 
      * @param docFrequencyMap df values for each term
@@ -95,7 +95,7 @@ public class DocEntry {
     }
     
     public static void main(String[] args) {
-
+        
         // Testing computeWordWeights
         DocEntry doc = new DocEntry("doc1", true);
         doc.incCount("asd", 100);

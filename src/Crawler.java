@@ -6,7 +6,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 public class Crawler {
@@ -88,7 +90,7 @@ public class Crawler {
 		for (int i = 0; i < listOfFiles.length; i++) {
 			String fileName = listOfFiles[i].getName();
 			
-			if (fileName.startsWith(".")) {
+			if (fileName.startsWith(".")) { // check for Mac
 			    continue;
 			}
 
@@ -127,6 +129,67 @@ public class Crawler {
 		}
 
 		return listDocSets;
+	}
+	
+	/**
+	 * For phase 2.
+	 * 
+	 * Read the doc files and compute the vectors for all of them.
+	 * 
+	 * TODO: test this
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public ArrayList<DocEntry> readDocEntriesAndComputeVectors(String folderName) throws IOException {
+	    File folder = new File(folderName);
+        if (folder.isDirectory() == false) 
+            throw new IOException("The input should be a folder!"); 
+        
+        File[] listOfFiles = folder.listFiles();
+        
+        ArrayList<DocEntry> docList = new ArrayList<DocEntry>();
+        int numDocs = listOfFiles.length;
+        HashMap<String, Integer> dfMap = new HashMap<String, Integer>();
+        
+        for (int i = 0; i < listOfFiles.length; i++) {
+            String fileName = listOfFiles[i].getName();
+            
+            if (fileName.startsWith(".")) { // check for Mac
+                continue;
+            }
+
+            boolean spam = false; 
+            if (fileName.startsWith("spmsg"))
+                spam = true; 
+            DocEntry docEntry = new DocEntry(fileName, spam);
+
+            FileInputStream inputStream = new FileInputStream(listOfFiles[i]);
+            DataInputStream dataInput = new DataInputStream(inputStream);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    dataInput));
+
+            processFile(reader, docEntry);
+            inputStream.close();
+            
+            docList.add(docEntry);
+            
+            // Update the doc frequency map
+            for (Map.Entry<String, Integer> entry: docEntry.getWordCounts()) {
+                Integer df = dfMap.get(entry.getKey());
+                if (df == null) {
+                    df = 0;
+                }
+                dfMap.put(entry.getKey(), df + 1);
+            }
+        }
+        
+        // Precompute the vector for each document
+        for (DocEntry doc: docList) {
+            doc.computeWordWeights(dfMap, numDocs);
+        }
+        
+        return docList;
 	}
 
 	/**
