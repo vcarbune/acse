@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -23,22 +24,23 @@ import org.jfree.util.PublicCloneable;
 
 public class ROCGraph {
 
-	private ArrayList<Double> fpRate = new ArrayList<Double>();
-	private ArrayList<Double> tpRate = new ArrayList<Double>();
+	private ArrayList<PointRate> pointList = new ArrayList<PointRate>();
 
-	public void addPoint(double tp, double fp) {
-		tpRate.add(tp);
-		fpRate.add(fp);
+	public void addPoint(PointRate rate) {
+		pointList.add(rate); 
+	}
+
+	public void addPointList(List<PointRate> list){ 
+		for(PointRate p: list){
+			pointList.add(p);
+		}
 	}
 
 	public void createROCGraph(String fileName){
 		XYSeries series = new XYSeries("ROC");
-		StringBuilder builder = new StringBuilder();
-		int poz = 0;
-		for(double fp : fpRate){
-			double tp = tpRate.get(poz++);
-			series.add(fp, tp);
-			builder.append(poz).append(" ");
+
+		for(PointRate rate: pointList){
+			series.add(rate.getFalsePosRate(), rate.getTruePosRate());
 		}
 
 		XYDataset xyDataset = new XYSeriesCollection(series);
@@ -85,9 +87,9 @@ public class ROCGraph {
 class MyGenerator implements XYItemLabelGenerator {
 
 	private static int poz = 0;
-    @Override
-    public String generateLabel(XYDataset dataset, int series, int item) {
-         poz++;
-         return "" + poz;
-    }
+	@Override
+	public String generateLabel(XYDataset dataset, int series, int item) {
+		poz++;
+		return "" + poz;
+	}
 }
