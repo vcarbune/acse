@@ -1,3 +1,4 @@
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-
 public class Main {
 
 	private static Logger logger;
@@ -20,7 +20,6 @@ public class Main {
 	private static Crawler crawler;
 	private static ArrayList<DocSet> docSetList;
 	private static ArrayList<DocEntry> docEntries; 
-	
 
 	public static void initializeLogging() {
 		try {
@@ -202,7 +201,6 @@ public class Main {
 		return listRates;
 	}
 
-
 	public static void main(String args[]) throws IOException, FileNotFoundException {
 		if (args.length < 1) {
 			System.out.println("Usage: Main <document_folder>"
@@ -250,5 +248,4 @@ public class Main {
 			generateStats();
 		}
 	}
-
 }

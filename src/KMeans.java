@@ -49,7 +49,7 @@ public class KMeans {
 
     private void runOneIteration() {
         clusters.clear();
-        
+
         for (DocEntry docEntry : docEntries) {
             for (int i = 0; i < centroids.size(); i++) {
                 
