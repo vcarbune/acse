@@ -47,7 +47,7 @@ public class KMeans {
     public int getDocumentCluster(int index) {
         return clusters.get(index);
     }
-    
+
     public ArrayList<DocEntry> getCluster(int index) {
         // TODO(vcarbune): Clusterify.
         return null;
