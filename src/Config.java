@@ -35,4 +35,13 @@ public class Config {
     //Folder param for the Naive Bayesian
     public static final String PARAM_FOLDER = "--folder=";
     
+    //Param to run the Kmeans
+    public static final String PARAM_KMEANS = "--kmeans";
+    public static boolean enableKmeans = false;
+    
+    public static int K=1; 
+    public static int iterations = 10; 
+    public static int N = 10; 
+    
+    
 }
