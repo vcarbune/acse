@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 public class DocEntry {
 
@@ -59,13 +60,19 @@ public class DocEntry {
     }
 
     /**
-     * TODO: For phase 2.
-     *
      * Adds the word weights of the other DocEntry to this DocEntry.
      *
      * @param other DocEntry whose word weights we want to add
      */
     public void addWordWeights(DocEntry other) {
+        for (String word : other.wordWeights.keySet()) {
+            Double weight = other.wordWeights.get(word);
+            if (wordWeights.get(word) != null) {
+                weight += wordWeights.get(word);
+            }
+            
+            wordWeights.put(word, weight);
+        }
     }
 
     /**
