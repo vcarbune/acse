@@ -1,10 +1,11 @@
+
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-public class KMeansRunner {    
-    Logger logger = Logger.getLogger(KMeansRunner.class.getName());
-    ArrayList<DocEntry> docEntries;
+public class KMeansRunner {
 
+    final static Logger logger = Logger.getLogger(KMeansRunner.class.getName());
+    ArrayList<DocEntry> docEntries;
     ArrayList<Double> purityIndexAverage;
     ArrayList<Double> randIndexAverage;
 
