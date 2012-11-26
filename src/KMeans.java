@@ -17,8 +17,7 @@ public class KMeans {
         this.clusterNo = clusterNo;
         this.docEntries = docEntries;
         this.centroids = new ArrayList<DocEntry>(clusterNo);
-        // FIXME: remove
-        //this.documentClusters = new ArrayList<Integer>();
+        this.documentClusters = new ArrayList<Integer>();
         this.clusters = new ArrayList<ArrayList<DocEntry>>();
 
         initCentroids();
