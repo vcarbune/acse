@@ -211,8 +211,8 @@ public class Main {
 
 		initializeDataSet(docFolder);
 
-		generateRocCurveThreshold();
-		//generateStats();
+		//generateRocCurveThreshold();
+		generateStats();
 
 	}
 
