@@ -1,10 +1,8 @@
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
 public class KMeans {
-
     private int iterations;
     private int clusterNo;
     private ArrayList<DocEntry> docEntries;
