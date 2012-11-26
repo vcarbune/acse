@@ -12,8 +12,14 @@ public class KMeansRunner {
     public KMeansRunner(ArrayList<DocEntry> docEntries) {
         this.docEntries = docEntries;
 
-        purityIndexAverage = new ArrayList<Double>(Config.supK - Config.infK + 1);
-        randIndexAverage = new ArrayList<Double>(Config.supK - Config.infK + 1);
+        int  diff = Config.supK - Config.infK + 1;
+        purityIndexAverage = new ArrayList<Double>(diff);
+        randIndexAverage = new ArrayList<Double>(diff);
+        
+        for(int i = 0; i < diff; i++){
+            purityIndexAverage.add(0.0);
+            randIndexAverage.add(0.0);
+        }
     }
 
     public void run() {
@@ -21,6 +27,8 @@ public class KMeansRunner {
             // Log the results.
             StringBuilder stats = new StringBuilder();
             stats.append("Run no. " + N + "\n");
+            
+         
 
             for (int K = Config.infK; K <= Config.supK; ++K) {
                 KMeans kMeansInstance = new KMeans(Config.iterations, K, docEntries);
