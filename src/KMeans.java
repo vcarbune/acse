@@ -60,18 +60,20 @@ public class KMeans {
         // Compute centroids for each document
         for (int d = 0; d < docEntries.size(); d++) {
             int bestK = -1;
-            double bestDist = Integer.MAX_VALUE;
+            double bestDist = Double.MAX_VALUE;
 
             for (int k = 0; k < centroids.size(); k++) {
                 double dist = docEntries.get(d).getDistance(centroids.get(k));
+               
                 if (dist < bestDist) {
                     bestDist = dist;
                     bestK = k;
+                   // System.out.println(best);
                 }
+               //System.out.println(bestK);
             }
 
             documentClusters.set(d, bestK);
-            d++;
         }
 
         // Compute new centroids
@@ -79,6 +81,8 @@ public class KMeans {
             centroids.set(k, new DocEntry());
         }
         for (int d = 0; d < docEntries.size(); d++) {
+         //  System.out.println(d);
+          // System.out.println(documentClusters.get(d));
             centroids.get(documentClusters.get(d)).addWordWeights(docEntries.get(d));
         }
     }
