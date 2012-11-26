@@ -38,8 +38,9 @@ public class DocEntry {
 	}
     
     public void incCount(String word, int inc) {
-        if(wordCounts.get(word) == null)
+        if(wordCounts.get(word) == null) {
             wordCounts.put(word, inc);
+        }
         else{
             int count = wordCounts.get(word);
             wordCounts.put(word, count + inc);
@@ -64,8 +65,7 @@ public class DocEntry {
      * @param numDocs N in the tf-idf formula
      */
     public void computeWordWeights(HashMap<String, Integer> docFrequencyMap, int numDocs) {
-
-        if (wordCounts.size() == 0) {
+        if (wordCounts.isEmpty()) {
             throw new RuntimeException("The wordCounts map is empty!");
         }
 

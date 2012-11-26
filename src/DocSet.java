@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class DocSet extends FrequencyMap {
@@ -14,8 +15,8 @@ public class DocSet extends FrequencyMap {
     	numSpamDocs = 0;
     }
     
-    public ArrayList<DocEntry> getDocEntries() {
-        return docEntries;
+    public Iterator<DocEntry> getDocEntriesIterator() {
+        return docEntries.iterator();
     }
 
     public void addDoc(final DocEntry docEntry) {
