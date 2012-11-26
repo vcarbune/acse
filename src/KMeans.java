@@ -49,10 +49,10 @@ public class KMeans {
 
     private void runOneIteration() {
         clusters.clear();
-        
+
         for (DocEntry docEntry : docEntries) {
             for (int i = 0; i < centroids.size(); i++) {
-                
+
             }
         }
     }
@@ -60,34 +60,34 @@ public class KMeans {
     public ArrayList<DocEntry> getCluster(int index) {
         return clusters.get(index);
     }
-    
+
     //TODO: (lori) test it!
     public double computePurity(){
-    	Iterator<ArrayList<DocEntry>> it = clusters.iterator();
-    	int numerator = 0;
-    	
-    	while(it.hasNext()){
-    		int spam = 0;
-    		int ham = 0;
-    		ArrayList<DocEntry> cluster = it.next();
-    		for(DocEntry doc: cluster){
-    			if(doc.isSpam())
-    				spam ++;
-    			else 
-    				ham++;
-    		}
-    		
-    		int majority = Math.max(spam, ham);
-    		numerator += majority;
-    	}
-    	
-    	int denominator = docEntries.size();
-    	double rez = ((double) numerator) / denominator;
-    	
-    	return rez;
+        Iterator<ArrayList<DocEntry>> it = clusters.iterator();
+        int numerator = 0;
+
+        while(it.hasNext()){
+            int spam = 0;
+            int ham = 0;
+            ArrayList<DocEntry> cluster = it.next();
+            for(DocEntry doc: cluster){
+                if(doc.isSpam())
+                    spam ++;
+                else 
+                    ham++;
+            }
+
+            int majority = Math.max(spam, ham);
+            numerator += majority;
+        }
+
+        int denominator = docEntries.size();
+        double rez = ((double) numerator) / denominator;
+
+        return rez;
     }
-    
-    
+
+
     //TODO:(lori) test it!
     public double computeRandIndex(){
         int next = 1;
@@ -99,7 +99,7 @@ public class KMeans {
             int index = next;
             boolean currentSpam = docEntries.get(next -1).isSpam();
             Iterator<Integer> it = documentClusters.listIterator(next);
-            
+
             while(it.hasNext()){ 
                 int nextClusterID = it.next(); 
                 boolean otherSpam = docEntries.get(index).isSpam(); 
@@ -109,19 +109,19 @@ public class KMeans {
                     TN++;
                 }
             }
-            
+
             next++;
         }
-        
+
         int nominator = TP + TN; 
         int nrDocs = docEntries.size(); 
         int denominator = nrDocs * (nrDocs -1 )/2;
-        
+
         double randIndx = ((double)nominator)/denominator; 
-        
-    	return randIndx;
+
+        return randIndx;
     }
-    
+
     /**
      * FIXME: remove
      * @deprecated
