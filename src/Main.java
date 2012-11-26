@@ -219,9 +219,23 @@ public class Main {
 		
 		if(Config.enableKmeans == true){
 	        Scanner in = new Scanner(System.in);
+	        
 	        System.out.println("Enter k:"); 
-	        String kString = in.nextLine().toString(); 
+	        String kString = in.nextLine().toString();
+	        if(kString.contains("-")){
+	        	String splits[] = kString.replaceAll(" ", "").split("-");
+	        	Config.infK = Integer.parseInt(splits[0]); 
+	        	Config.supK = Integer.parseInt(splits[1]); 
+	        }else{
+	        	int k = Integer.parseInt(kString.replaceAll(" ", ""));
+	        	Config.infK = k; 
+	        	Config.supK = k; 
+	        }
+	        System.out.println("Enter #iterations: "); 
+	        String iterString = in.nextLine().toString();
+	        Config.iterations = Integer.parseInt(iterString); 
 	       
+	        //TODO: call the Kmeans Iteration algorithm
 	        
 		}else{
 			//generateRocCurveThreshold();
