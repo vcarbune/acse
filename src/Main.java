@@ -19,6 +19,8 @@ public class Main {
 
 	private static Crawler crawler;
 	private static ArrayList<DocSet> docSetList;
+	private static ArrayList<DocEntry> docEntries; 
+	
 
 	public static void initializeLogging() {
 		try {
@@ -37,7 +39,7 @@ public class Main {
 	public static void initializeDataSet(String corpusFolder) throws IOException {
 		crawler = new Crawler(corpusFolder);
 
-		if (Config.enableKmeans == false && Config.enableStopwordElimination == true) {
+		if (Config.enableStopwordElimination == true) {
 			if (stopWordFile == null) {
 				System.out.println("The stop word file was not given as parameter!"
 						+ " When the stopWord flag is set also the file of stop words"
@@ -54,6 +56,11 @@ public class Main {
 		}
 
 		docSetList = crawler.readDocSet();       
+	}
+	
+	public static void initializeKmeans(String corpusFolder) throws IOException{ 
+		crawler = new Crawler(corpusFolder);
+		docEntries = crawler.readDocEntriesAndComputeVectors(docFolder);
 	}
 
 	public static void initializeFlags(String args[]) {
@@ -214,8 +221,6 @@ public class Main {
 		if (args.length >= 1) {
 			initializeFlags(args);
 		}
-
-		initializeDataSet(docFolder);
 		
 		if(Config.enableKmeans == true){
 	        Scanner in = new Scanner(System.in);
@@ -233,11 +238,14 @@ public class Main {
 	        }
 	        System.out.println("Enter #iterations: "); 
 	        String iterString = in.nextLine().toString();
-	        Config.iterations = Integer.parseInt(iterString); 
-	       
-	        //TODO: call the Kmeans Iteration algorithm
+	        Config.iterations = Integer.parseInt(iterString);
+	        
+	        KMeansRunner kMeans = new KMeansRunner(docEntries);
+	        kMeans.run();
 	        
 		}else{
+			
+			initializeDataSet(docFolder);
 			//generateRocCurveThreshold();
 			generateStats();
 		}
