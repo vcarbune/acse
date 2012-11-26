@@ -40,7 +40,7 @@ public class FrequencyMap {
             this.spamCount += count;
         }
     }
-    
+
     public FrequencyMap() {
     	wordCounts = new HashMap<String, WordCount>();
     }
