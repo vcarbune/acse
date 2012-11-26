@@ -35,7 +35,7 @@ public class KMeans {
             indexes.add(current);
 
             DocEntry docEntry = new DocEntry();
-            docEntry.copyWordWeights(docEntries.get(current));
+            docEntry.addWordWeights(docEntries.get(current));
             centroids.add(docEntry);
         }
     }
