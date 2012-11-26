@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+
 
 public class Main {
 
@@ -35,7 +37,7 @@ public class Main {
 	public static void initializeDataSet(String corpusFolder) throws IOException {
 		crawler = new Crawler(corpusFolder);
 
-		if (Config.enableStopwordElimination == true) {
+		if (Config.enableKmeans == false && Config.enableStopwordElimination == true) {
 			if (stopWordFile == null) {
 				System.out.println("The stop word file was not given as parameter!"
 						+ " When the stopWord flag is set also the file of stop words"
@@ -71,7 +73,10 @@ public class Main {
 			} else if (args[i].startsWith(Config.PARAM_FOLDER)) {
 				int eqPos = args[i].indexOf("=");
 				docFolder = args[i].substring(eqPos + 1, args[i].length());
-			} 
+			} else if(args[i].equals(Config.PARAM_KMEANS)){
+				Config.enableKmeans = true; 
+				chartFile +="_KMeans"; 
+			}
 		}
 	}
 
@@ -93,17 +98,17 @@ public class Main {
 		ROCGraph graph = new ROCGraph();
 
 		for (double T=0.5; T<=1.3; T+=0.01) {
-			
+
 			List<PointRate> rateList =  testingPhase(totalSpamDocs,
 					totalHamDocs, totalMap, T);
-			
+
 			double avgTPR = 0;
 			double avgFPR = 0;
 			for(PointRate p: rateList){
 				avgFPR += p.getFalsePosRate();
 				avgTPR += p.getTruePosRate();
 			}
-			
+
 			avgTPR /= 8;
 			avgFPR /= 8;
 
@@ -142,7 +147,7 @@ public class Main {
 		ArrayList<PointRate> listRates = new ArrayList<PointRate>(); 
 		int run = 0;
 		Classifier classifier = new Classifier(threshold);
-		
+
 		for (DocSet docSet : docSetList) {
 			run++;
 
@@ -198,6 +203,7 @@ public class Main {
 					+ " [" + Config.PARAM_STOPWORDFILE + "]"
 					+ " [" + Config.PARAM_STEMMING + "]"
 					+ " [" + Config.PARAM_FOLDER + "]"
+					+ " [" + Config.PARAM_KMEANS + "]"
 			);
 
 			return;
@@ -210,10 +216,17 @@ public class Main {
 		}
 
 		initializeDataSet(docFolder);
-
-		generateRocCurveThreshold();
-		//generateStats();
-
+		
+		if(Config.enableKmeans == true){
+	        Scanner in = new Scanner(System.in);
+	        System.out.println("Enter k:"); 
+	        String kString = in.nextLine().toString(); 
+	       
+	        
+		}else{
+			//generateRocCurveThreshold();
+			generateStats();
+		}
 	}
 
 }

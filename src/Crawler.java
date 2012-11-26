@@ -123,7 +123,10 @@ public class Crawler {
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if(listOfFiles[i].isDirectory()){
 				DocSet docSet = new DocSet();
+
 				readDocEntries(docSet, listOfFiles[i].getAbsolutePath()); 
+				docSet.precomputeWordWeights();
+
 				listDocSets.add(docSet);
 			}
 		}
