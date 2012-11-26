@@ -1,9 +1,8 @@
-
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class KMeans {
-
     private int iterations;
     private int clusterNo;
     private ArrayList<DocEntry> docEntries;
@@ -59,6 +58,41 @@ public class KMeans {
 
     public ArrayList<DocEntry> getCluster(int index) {
         return clusters.get(index);
+    }
+    
+    public double computePurity(){
+    	Iterator<ArrayList<DocEntry>> it = clusters.iterator();
+    	int numerator = 0;
+    	
+    	while(it.hasNext()){
+    		int spam = 0;
+    		int ham = 0;
+    		ArrayList<DocEntry> cluster = it.next();
+    		for(DocEntry doc: cluster){
+    			if(doc.isSpam())
+    				spam ++;
+    			else 
+    				ham++;
+    		}
+    		
+    		int majority = Math.max(spam, ham);
+    		numerator += majority;
+    	}
+    	
+    	int denominator = docEntries.size();
+    	double rez = ((double) numerator) / denominator;
+    	
+    	return rez;
+    }
+    
+    
+    public double computeRandIndex(){
+    	Iterator<ArrayList<DocEntry>> it = clusters.iterator();
+    	int next = 1;
+    	
+    	return 0;
+
+    	
     }
     
     /**
