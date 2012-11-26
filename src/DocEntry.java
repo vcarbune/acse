@@ -9,17 +9,18 @@ public class DocEntry {
     private String docId;
     private Boolean spam;
     private HashMap<String, Integer> wordCounts;
-    private HashMap<String, Double> wordWeights = null; // tf-idf weights
+    private HashMap<String, Double> wordWeights; // tf-idf weights
     private double vectorLength; // actually, this may not be needed
 
     public DocEntry() {
         this(null, null);
     }
-    
+
     public DocEntry(String docId, Boolean spam) {
         this.docId = docId;
         this.spam = spam;
         this.wordCounts = new HashMap<String, Integer>();
+        this.wordWeights = new HashMap<String, Double>();
     }
 
     public String getDocId() {
@@ -69,11 +70,12 @@ public class DocEntry {
     }
 
     /**
-     * TODO: For phase 2.
+     * FIXME: remove For phase 2.
      *
      * *Hard* copies the word weights from the other DocEntry to this DocEntry. Does NOT remove
      * existing word weights in this DocEntry.
      *
+     * @deprecated Does NOT need to be implemented anymore
      * @param other DocEntry whose word weights are copied
      */
     public void copyWordWeights(DocEntry other) {
@@ -93,7 +95,6 @@ public class DocEntry {
             throw new RuntimeException("The wordCounts map is empty!");
         }
 
-        wordWeights = new HashMap<String, Double>();
         vectorLength = 0;
 
         for (String term : wordCounts.keySet()) {
@@ -138,8 +139,9 @@ public class DocEntry {
 
         return dist;
     }
-    // TODO: move to a test if still needed
-/*    public static void main(String[] args) {
+    /* FIXME: remove
+     * TODO: move to a test if still needed
+     public static void main(String[] args) {
 
      // Testing computeWordWeights and getDistance
      DocEntry doc = new DocEntry("doc", true);
