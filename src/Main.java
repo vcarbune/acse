@@ -58,8 +58,8 @@ public class Main {
 		docSetList = crawler.readDocSet();       
 	}
 	
-	public static void initializeKmeans(String corpusFolder) throws IOException{ 
-		crawler = new Crawler(corpusFolder);
+	public static void initializeKmeans() throws IOException{ 
+		crawler = new Crawler(docFolder);
 		docEntries = crawler.readDocEntriesAndComputeVectors(docFolder);
 	}
 
@@ -239,7 +239,7 @@ public class Main {
 	        System.out.println("Enter #iterations: "); 
 	        String iterString = in.nextLine().toString();
 	        Config.iterations = Integer.parseInt(iterString);
-	        
+	        initializeKmeans(); 
 	        KMeansRunner kMeans = new KMeansRunner(docEntries);
 	        kMeans.run();
 	        
