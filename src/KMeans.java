@@ -8,16 +8,18 @@ public class KMeans {
     private int clusterNo;
     private ArrayList<DocEntry> docEntries;
     private ArrayList<DocEntry> centroids;
-    private ArrayList<Integer> documentClusters;
-    private ArrayList<ArrayList<Integer>> clusters;
+    private ArrayList<ArrayList<DocEntry>> clusters;
+    // FIXME: remove
+    //private ArrayList<Integer> documentClusters;
 
     public KMeans(int iterations, int clusterNo, final ArrayList<DocEntry> docEntries) {
         this.iterations = iterations;
         this.clusterNo = clusterNo;
         this.docEntries = docEntries;
         this.centroids = new ArrayList<DocEntry>(clusterNo);
-        this.documentClusters = new ArrayList<Integer>();
-        this.clusters = new ArrayList<ArrayList<Integer>>();
+        // FIXME: remove
+        //this.documentClusters = new ArrayList<Integer>();
+        this.clusters = new ArrayList<ArrayList<DocEntry>>();
 
         initCentroids();
     }
@@ -43,10 +45,11 @@ public class KMeans {
         for (int i = 0; i < iterations; i++) {
             runOneIteration();
         }
-        computeClusters();
     }
 
     private void runOneIteration() {
+        clusters.clear();
+        
         for (DocEntry docEntry : docEntries) {
             for (int i = 0; i < centroids.size(); i++) {
                 
@@ -54,15 +57,16 @@ public class KMeans {
         }
     }
 
-    private void computeClusters() {
-    }
-
     public ArrayList<DocEntry> getCluster(int index) {
-        // TODO(uvictor): Clusterify.
-        return null;
+        return clusters.get(index);
     }
     
+    /**
+     * FIXME: remove
+     * @deprecated
+     */
     public int getDocumentCluster(int i) {
-        return documentClusters.get(i);
+        //return documentClusters.get(i);
+        return -1;
     }
 }
