@@ -7,7 +7,7 @@ public class KMeansRunner {
 
     ArrayList<Double> purityIndexAverage;
     ArrayList<Double> randIndexAverage;
-    
+
     public KMeansRunner(ArrayList<DocEntry> docEntries) {
         this.docEntries = docEntries;
 
@@ -38,19 +38,19 @@ public class KMeansRunner {
                 stats.append("Purity Index: " + purityCurrValue + "\n");
                 stats.append("Rand Index: " + randCurrValue + "\n");
             }
-            
+
             logger.log(Config.LOG_LEVEL, stats.toString());
             System.out.println(stats.toString());
         }
-        
+
         StringBuilder avgStats = new StringBuilder();
         avgStats.append("Average Log:\n");
-        
+
         for (int K = Config.infK; K < Config.supK; ++K) {
             avgStats.append("PurityIndex(" + K + "): "
                     + purityIndexAverage.get(K - Config.infK) / Config.N
                     + "\n");
-            
+
             avgStats.append("RandIndex(" + K + "): "
                     + randIndexAverage.get(K - Config.infK) / Config.N
                     + "\n");
