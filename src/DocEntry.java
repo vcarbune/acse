@@ -9,9 +9,13 @@ public class DocEntry {
     private String docId;
     private Boolean spam;
     private HashMap<String, Integer> wordCounts;
-    private HashMap<String, Double> wordWeights= null; // tf-idf weights
+    private HashMap<String, Double> wordWeights = null; // tf-idf weights
     private double vectorLength; // actually, this may not be needed
 
+    public DocEntry() {
+        this(null, null);
+    }
+    
     public DocEntry(String docId, Boolean spam) {
         this.docId = docId;
         this.spam = spam;
@@ -21,7 +25,7 @@ public class DocEntry {
     public String getDocId() {
         return docId;
     }
-    
+
     /**
      * @throws NullPointerException if we don't know yet if document is spam or not
      */
@@ -35,13 +39,12 @@ public class DocEntry {
 
     public void incCount(String word) {
         incCount(word, 1);
-	}
-    
+    }
+
     public void incCount(String word, int inc) {
-        if(wordCounts.get(word) == null) {
+        if (wordCounts.get(word) == null) {
             wordCounts.put(word, inc);
-        }
-        else{
+        } else {
             int count = wordCounts.get(word);
             wordCounts.put(word, count + inc);
         }
@@ -56,10 +59,31 @@ public class DocEntry {
     }
 
     /**
+     * TODO: For phase 2.
+     *
+     * Adds the word weights of the other DocEntry to this DocEntry.
+     *
+     * @param other DocEntry whose word weights we want to add
+     */
+    public void addWordWeights(DocEntry other) {
+    }
+
+    /**
+     * TODO: For phase 2.
+     *
+     * *Hard* copies the word weights from the other DocEntry to this DocEntry. Does NOT remove
+     * existing word weights in this DocEntry.
+     *
+     * @param other DocEntry whose word weights are copied
+     */
+    public void copyWordWeights(DocEntry other) {
+    }
+
+    /**
      * For phase 2.
      *
-     * Computes the map with the tf-idf weights for each word in the doc,
-     * using a map that contains the df values for each term.
+     * Computes the map with the tf-idf weights for each word in the doc, using a map that contains
+     * the df values for each term.
      *
      * @param docFrequencyMap df values for each term
      * @param numDocs N in the tf-idf formula
@@ -72,9 +96,9 @@ public class DocEntry {
         wordWeights = new HashMap<String, Double>();
         vectorLength = 0;
 
-        for (String term: wordCounts.keySet()) {
-            double tf_idf = (1 + Math.log10(wordCounts.get(term))) * 
-                    Math.log10(numDocs / (double) docFrequencyMap.get(term));
+        for (String term : wordCounts.keySet()) {
+            double tf_idf = (1 + Math.log10(wordCounts.get(term)))
+                    * Math.log10(numDocs / (double) docFrequencyMap.get(term));
             wordWeights.put(term, tf_idf);
             vectorLength += tf_idf * tf_idf;
         }
@@ -84,9 +108,9 @@ public class DocEntry {
 
     /**
      * For phase 2.
-     * 
-     * Computes the distance between 2 documents, 
-     * 
+     *
+     * Computes the distance between 2 documents,
+     *
      * @param other
      * @return
      */
@@ -96,7 +120,7 @@ public class DocEntry {
         Set<String> words = new HashSet<String>(wordCounts.keySet());
         words.addAll(other.wordCounts.keySet());
 
-        for (String word: words) {
+        for (String word : words) {
             double x1 = 0;
             double x2 = 0;
 
@@ -107,39 +131,39 @@ public class DocEntry {
                 x2 = other.wordWeights.get(word);
             }
 
-            dist += (x1-x2) * (x1-x2);
+            dist += (x1 - x2) * (x1 - x2);
         }
 
         dist = Math.sqrt(dist);
 
         return dist;
     }
+    // TODO: move to a test if still needed
+/*    public static void main(String[] args) {
 
-    public static void main(String[] args) {
+     // Testing computeWordWeights and getDistance
+     DocEntry doc = new DocEntry("doc", true);
+     doc.incCount("asd", 100);
+     doc.incCount("qwe", 10);
+     doc.incCount("zxc", 20);
 
-        // Testing computeWordWeights and getDistance
-        DocEntry doc = new DocEntry("doc", true);
-        doc.incCount("asd", 100);
-        doc.incCount("qwe", 10);
-        doc.incCount("zxc", 20);
+     DocEntry doc2 = new DocEntry("doc2", true);
+     doc2.incCount("asd", 10);
+     doc2.incCount("qwe", 100);
+     doc2.incCount("fgh", 1000);
 
-        DocEntry doc2 = new DocEntry("doc2", true);
-        doc2.incCount("asd", 10);
-        doc2.incCount("qwe", 100);
-        doc2.incCount("fgh", 1000);
-        
-        HashMap<String, Integer> dfMap = new HashMap<String, Integer>();
-        dfMap.put("asd", 10);
-        dfMap.put("qwe", 1);
-        dfMap.put("zxc", 10);
-        dfMap.put("fgh", 1);
-        
-        doc.computeWordWeights(dfMap, 100);
-        doc2.computeWordWeights(dfMap, 100);
-        
-        System.out.println(doc.wordWeights);
-        System.out.println(doc.vectorLength);
-        System.out.println(doc2.wordWeights);
-        System.out.println(doc.getDistance(doc2));
-    }
+     HashMap<String, Integer> dfMap = new HashMap<String, Integer>();
+     dfMap.put("asd", 10);
+     dfMap.put("qwe", 1);
+     dfMap.put("zxc", 10);
+     dfMap.put("fgh", 1);
+
+     doc.computeWordWeights(dfMap, 100);
+     doc2.computeWordWeights(dfMap, 100);
+
+     System.out.println(doc.wordWeights);
+     System.out.println(doc.vectorLength);
+     System.out.println(doc2.wordWeights);
+     System.out.println(doc.getDistance(doc2));
+     }*/
 }

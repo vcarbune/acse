@@ -8,14 +8,16 @@ public class KMeans {
     private int clusterNo;
     private DocSet docSet;
     private ArrayList<DocEntry> centroids;
-    private ArrayList<Integer> clusters;
+    private ArrayList<Integer> documentClusters;
+    private ArrayList<ArrayList<Integer>> clusters;
 
     public KMeans(int iterations, int clusterNo, final DocSet docSet) {
         this.iterations = iterations;
         this.clusterNo = clusterNo;
         this.docSet = docSet;
         this.centroids = new ArrayList<DocEntry>(clusterNo);
-        this.clusters = new ArrayList<Integer>();
+        this.documentClusters = new ArrayList<Integer>();
+        this.clusters = new ArrayList<ArrayList<Integer>>();
 
         initCentroids();
     }
@@ -29,9 +31,11 @@ public class KMeans {
             do {
                 current = (int) Math.floor(Math.random() * n);
             } while (indexes.contains(current));
-
             indexes.add(current);
-            centroids.add(docSet.getDocEntry(current));
+
+            DocEntry docEntry = new DocEntry();
+            docEntry.copyWordWeights(docSet.getDocEntry(current));
+            centroids.add(docEntry);
         }
     }
 
@@ -39,12 +43,17 @@ public class KMeans {
         for (int i = 0; i < iterations; i++) {
             runOneIteration();
         }
+        computeClusters();
     }
 
     private void runOneIteration() {
+        
     }
-    
+
+    private void computeClusters() {
+    }
+
     public int getDocumentCluster(int i) {
-        return clusters.get(i);
+        return documentClusters.get(i);
     }
 }
