@@ -39,7 +39,8 @@ public class Config {
     public static final String PARAM_KMEANS = "--kmeans";
     public static boolean enableKmeans = false;
     
-    public static int K=1; 
+    public static int infK;
+    public static int supK; 
     public static int iterations = 10; 
     public static int N = 10; 
     
