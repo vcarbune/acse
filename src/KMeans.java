@@ -57,6 +57,11 @@ public class KMeans {
     private void computeClusters() {
     }
 
+    public ArrayList<DocEntry> getCluster(int index) {
+        // TODO(uvictor): Clusterify.
+        return null;
+    }
+    
     public int getDocumentCluster(int i) {
         return documentClusters.get(i);
     }

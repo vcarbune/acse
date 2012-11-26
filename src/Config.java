@@ -44,5 +44,4 @@ public class Config {
     public static int iterations = 10; 
     public static int N = 10; 
     
-    
 }
