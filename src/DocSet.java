@@ -18,6 +18,10 @@ public class DocSet extends FrequencyMap {
     public Iterator<DocEntry> getDocEntriesIterator() {
         return docEntries.iterator();
     }
+    
+    public DocEntry getDocEntry(int i) {
+        return docEntries.get(i);
+    }
 
     public void addDoc(final DocEntry docEntry) {
         docEntries.add(docEntry);
@@ -51,5 +55,9 @@ public class DocSet extends FrequencyMap {
     
     public int getNumHamDocs() {
         return docEntries.size() - numSpamDocs;
+    }
+    
+    public int getNumTotalDocs() {
+        return docEntries.size();
     }
 }
