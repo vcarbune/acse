@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 public class DocEntry {
 
@@ -60,25 +61,19 @@ public class DocEntry {
     }
 
     /**
-     * TODO: For phase 2.
-     *
      * Adds the word weights of the other DocEntry to this DocEntry.
      *
      * @param other DocEntry whose word weights we want to add
      */
     public void addWordWeights(DocEntry other) {
-    }
+        for (String word : other.wordWeights.keySet()) {
+            Double weight = other.wordWeights.get(word);
+            if (wordWeights.get(word) != null) {
+                weight += wordWeights.get(word);
+            }
 
-    /**
-     * FIXME: remove For phase 2.
-     *
-     * *Hard* copies the word weights from the other DocEntry to this DocEntry. Does NOT remove
-     * existing word weights in this DocEntry.
-     *
-     * @deprecated Does NOT need to be implemented anymore
-     * @param other DocEntry whose word weights are copied
-     */
-    public void copyWordWeights(DocEntry other) {
+            wordWeights.put(word, weight);
+        }
     }
 
     /**
@@ -139,33 +134,4 @@ public class DocEntry {
 
         return dist;
     }
-    /* FIXME: remove
-     * TODO: move to a test if still needed
-     public static void main(String[] args) {
-
-     // Testing computeWordWeights and getDistance
-     DocEntry doc = new DocEntry("doc", true);
-     doc.incCount("asd", 100);
-     doc.incCount("qwe", 10);
-     doc.incCount("zxc", 20);
-
-     DocEntry doc2 = new DocEntry("doc2", true);
-     doc2.incCount("asd", 10);
-     doc2.incCount("qwe", 100);
-     doc2.incCount("fgh", 1000);
-
-     HashMap<String, Integer> dfMap = new HashMap<String, Integer>();
-     dfMap.put("asd", 10);
-     dfMap.put("qwe", 1);
-     dfMap.put("zxc", 10);
-     dfMap.put("fgh", 1);
-
-     doc.computeWordWeights(dfMap, 100);
-     doc2.computeWordWeights(dfMap, 100);
-
-     System.out.println(doc.wordWeights);
-     System.out.println(doc.vectorLength);
-     System.out.println(doc2.wordWeights);
-     System.out.println(doc.getDistance(doc2));
-     }*/
 }
