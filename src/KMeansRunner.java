@@ -56,16 +56,19 @@ public class KMeansRunner {
         }
 
         StringBuilder avgStats = new StringBuilder();
-        avgStats.append("Average Log:\n");
+        avgStats.append("Average Log\n");
 
         for (int K = Config.infK; K <= Config.supK; ++K) {
-            avgStats.append("PurityIndex\t(" + K + " clusters): "
+            avgStats.append("Clusters: " + K + "\n");
+            avgStats.append("\tPurityIndex:\t"
                     + purityIndexAverage.get(K - Config.infK) / Config.N
                     + "\n");
 
-            avgStats.append("RandIndex\t(" + K + " clusters): "
+            avgStats.append("\tRandIndex:\t" +
                     + randIndexAverage.get(K - Config.infK) / Config.N
                     + "\n");
+
+            avgStats.append("\n");
         }
         
         System.out.println(avgStats.toString());
