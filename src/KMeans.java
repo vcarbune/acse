@@ -9,6 +9,7 @@ public class KMeans {
     private int clusterNo;
     private ArrayList<DocEntry> docEntries;
     private ArrayList<DocEntry> centroids;
+    private ArrayList<Integer> clusterSizes;
     private ArrayList<ArrayList<DocEntry>> clusters;
     private ArrayList<Integer> documentClusters;
     private ArrayList<DocEntry> closestDocuments;
@@ -18,7 +19,9 @@ public class KMeans {
         this.clusterNo = clusterNo;
         this.docEntries = docEntries;
         this.centroids = new ArrayList<DocEntry>(clusterNo);
+        this.clusterSizes = new ArrayList<Integer>(clusterNo);
         this.closestDocuments = new ArrayList<DocEntry>(clusterNo);
+        
         this.documentClusters = new ArrayList<Integer>();
         this.clusters = new ArrayList<ArrayList<DocEntry>>();
 
@@ -84,11 +87,16 @@ public class KMeans {
         // Compute new centroids
         for (int k = 0; k < centroids.size(); k++) {
             centroids.set(k, new DocEntry());
+            clusterSizes.add(0);
         }
         for (int d = 0; d < docEntries.size(); d++) {
-         //  System.out.println(d);
-          // System.out.println(documentClusters.get(d));
-            centroids.get(documentClusters.get(d)).addWordWeights(docEntries.get(d));
+            Integer cluster = documentClusters.get(d);
+
+            centroids.get(cluster).addWordWeights(docEntries.get(d));
+            clusterSizes.set(cluster, clusterSizes.get(cluster) + 1);
+        }
+        for (int k = 0; k < centroids.size(); k++) {
+            centroids.get(k).divideWeights(clusterSizes.get(k));
         }
     }
 

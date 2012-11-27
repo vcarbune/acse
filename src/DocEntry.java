@@ -140,4 +140,10 @@ public class DocEntry {
     public String toString() {
         return docId;
     }
+
+    public void divideWeights(Integer size) {
+        for (String word : wordWeights.keySet()) {
+            wordWeights.put(word, wordWeights.get(word) / (double) size);
+        }
+    }
 }
