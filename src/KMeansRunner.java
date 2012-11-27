@@ -23,12 +23,13 @@ public class KMeansRunner {
     }
 
     public void run() {
-        for (int N = 0; N < Config.N; ++N) {
+        for (int K = Config.infK; K <= Config.supK; ++K) {
             // Log the results.
             StringBuilder stats = new StringBuilder();
-            stats.append("Run no. " + N + "\n");
-
-            for (int K = Config.infK; K <= Config.supK; ++K) {
+            stats.append("Clusters: " + K + "\n");
+            
+            for (int N = 0; N < Config.N; ++N) {
+                stats.append("Run no. " + N + "\n");
                 KMeans kMeansInstance = new KMeans(Config.iterations, K, docEntries);
                 kMeansInstance.runAllIterations();
 
