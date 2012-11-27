@@ -27,8 +27,6 @@ public class KMeansRunner {
             // Log the results.
             StringBuilder stats = new StringBuilder();
             stats.append("Run no. " + N + "\n");
-            
-         
 
             for (int K = Config.infK; K <= Config.supK; ++K) {
                 KMeans kMeansInstance = new KMeans(Config.iterations, K, docEntries);
