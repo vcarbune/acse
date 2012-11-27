@@ -7,6 +7,7 @@ public class KMeans {
 
     private int iterations;
     private int clusterNo;
+
     private ArrayList<DocEntry> docEntries;
     private ArrayList<DocEntry> centroids;
     private ArrayList<Integer> clusterSizes;
@@ -55,6 +56,7 @@ public class KMeans {
         }
         for (int i = 0; i < clusterNo; i++) {
             clusters.add(new ArrayList<DocEntry>());
+            clusterSizes.add(0);
         }
 
         // Actual run
@@ -87,7 +89,7 @@ public class KMeans {
         // Compute new centroids
         for (int k = 0; k < centroids.size(); k++) {
             centroids.set(k, new DocEntry());
-            clusterSizes.add(0);
+            clusterSizes.set(k, 0);
         }
         for (int d = 0; d < docEntries.size(); d++) {
             Integer cluster = documentClusters.get(d);
