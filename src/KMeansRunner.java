@@ -45,6 +45,11 @@ public class KMeansRunner {
                 stats.append(K + " clusters:\n");
                 stats.append("Purity Index: " + purityCurrValue + "\n");
                 stats.append("Rand Index: " + randCurrValue + "\n");
+
+                for (int cluster = 0; cluster < K; ++cluster) {
+                    stats.append("Label(" + cluster + "): "
+                            + kMeansInstance.getLabel(cluster) + "\n");
+                }
             }
 
             logger.log(Config.LOG_LEVEL, stats.toString());

@@ -134,4 +134,10 @@ public class DocEntry {
 
         return dist;
     }
+    /*
+     * Returns the String representation of the DocEntry instance.
+     */
+    public String toString() {
+        return docId;
+    }
 }

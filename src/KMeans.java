@@ -11,12 +11,14 @@ public class KMeans {
     private ArrayList<DocEntry> centroids;
     private ArrayList<ArrayList<DocEntry>> clusters;
     private ArrayList<Integer> documentClusters;
+    private ArrayList<DocEntry> closestDocuments;
 
     public KMeans(int iterations, int clusterNo, final ArrayList<DocEntry> docEntries) {
         this.iterations = iterations;
         this.clusterNo = clusterNo;
         this.docEntries = docEntries;
         this.centroids = new ArrayList<DocEntry>(clusterNo);
+        this.closestDocuments = new ArrayList<DocEntry>(clusterNo);
         this.documentClusters = new ArrayList<Integer>();
         this.clusters = new ArrayList<ArrayList<DocEntry>>();
 
@@ -26,6 +28,8 @@ public class KMeans {
     private void initCentroids() {
         int n = docEntries.size();
         HashSet<Integer> indexes = new HashSet<Integer>();
+        clusters.clear();
+        closestDocuments.clear();
 
         for (int k = 0; k < clusterNo; k++) {
             int current;
@@ -37,6 +41,7 @@ public class KMeans {
             DocEntry docEntry = new DocEntry();
             docEntry.addWordWeights(docEntries.get(current));
             centroids.add(docEntry);
+            closestDocuments.add(null);
         }
     }
 
@@ -89,10 +94,28 @@ public class KMeans {
 
     private void computeClusters() {
         for (int d = 0; d < docEntries.size(); d++) {
-            clusters.get(documentClusters.get(d)).add(docEntries.get(d));
+            Integer currentCluster = documentClusters.get(d);
+
+            DocEntry currentDocument = docEntries.get(d);
+            clusters.get(currentCluster).add(currentDocument);
+
+            DocEntry closestDoc = closestDocuments.get(currentCluster);
+            if (closestDoc == null) {
+                closestDocuments.set(currentCluster, currentDocument);
+                continue;
+            }
+
+            Double currentDistance = currentDocument.getDistance(centroids.get(currentCluster));
+            Double closestDistance = closestDoc.getDistance(centroids.get(currentCluster));
+
+            closestDocuments.set(currentCluster,
+                    currentDistance < closestDistance ? currentDocument : closestDoc);
         }
     }
 
+    public DocEntry getLabel(int index) {
+        return closestDocuments.get(index);
+    }
     public ArrayList<DocEntry> getCluster(int index) {
         return clusters.get(index);
     }
