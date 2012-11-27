@@ -181,6 +181,8 @@ public class KMeans {
                 } else if (clusterID != nextClusterID && currentSpam != otherSpam) {
                     TN++;
                 }
+                
+                index++;
             }
 
             next++;
