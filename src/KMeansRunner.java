@@ -53,7 +53,7 @@ public class KMeansRunner {
         StringBuilder avgStats = new StringBuilder();
         avgStats.append("Average Log:\n");
 
-        for (int K = Config.infK; K < Config.supK; ++K) {
+        for (int K = Config.infK; K <= Config.supK; ++K) {
             avgStats.append("PurityIndex(" + K + "): "
                     + purityIndexAverage.get(K - Config.infK) / Config.N
                     + "\n");
@@ -62,5 +62,7 @@ public class KMeansRunner {
                     + randIndexAverage.get(K - Config.infK) / Config.N
                     + "\n");
         }
+        
+        System.out.println(avgStats.toString());
     }
 }
