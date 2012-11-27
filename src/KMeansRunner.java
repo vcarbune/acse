@@ -65,5 +65,8 @@ public class KMeansRunner {
         }
         
         System.out.println(avgStats.toString());
+        
+        KmeansGraph graph = new KmeansGraph(); 
+        graph.createGraph(purityIndexAverage, randIndexAverage); 
     }
 }
