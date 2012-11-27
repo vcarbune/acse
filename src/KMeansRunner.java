@@ -26,10 +26,9 @@ public class KMeansRunner {
         for (int K = Config.infK; K <= Config.supK; ++K) {
             // Log the results.
             StringBuilder stats = new StringBuilder();
-            stats.append("Clusters: " + K + "\n");
             
             for (int N = 0; N < Config.N; ++N) {
-                stats.append("Run no. " + N + "\n");
+                stats.append("Clusters: " + K + " (run " + N + ")\n");
                 KMeans kMeansInstance = new KMeans(Config.iterations, K, docEntries);
                 kMeansInstance.runAllIterations();
 
@@ -42,11 +41,11 @@ public class KMeansRunner {
                 purityIndexAverage.set(K - Config.infK, purityCurrValue + puritySumValue);
                 randIndexAverage.set(K - Config.infK, randCurrValue + randSumValue);
 
-                stats.append("Purity Index: " + purityCurrValue + "\n");
-                stats.append("Rand Index: " + randCurrValue + "\n");
+                stats.append("\tPurity Index:\t" + purityCurrValue + "\n");
+                stats.append("\tRand Index:\t" + randCurrValue + "\n");
 
                 for (int cluster = 0; cluster < K; ++cluster) {
-                    stats.append("Label(" + cluster + "): "
+                    stats.append("\tLabel(" + cluster + "): "
                             + kMeansInstance.getLabel(cluster) + "\n");
                 }
             }
@@ -60,11 +59,11 @@ public class KMeansRunner {
         avgStats.append("Average Log:\n");
 
         for (int K = Config.infK; K <= Config.supK; ++K) {
-            avgStats.append("PurityIndex(" + K + " clusters): "
+            avgStats.append("PurityIndex\t(" + K + " clusters): "
                     + purityIndexAverage.get(K - Config.infK) / Config.N
                     + "\n");
 
-            avgStats.append("RandIndex(" + K + " clusters): "
+            avgStats.append("RandIndex\t(" + K + " clusters): "
                     + randIndexAverage.get(K - Config.infK) / Config.N
                     + "\n");
         }
