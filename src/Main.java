@@ -240,7 +240,8 @@ public class Main {
 	        Config.iterations = Integer.parseInt(iterString);
 	        initializeKmeans(); 
 	        KMeansRunner kMeans = new KMeansRunner(docEntries);
-	        kMeans.run();
+	        //kMeans.run();
+	        kMeans.runWithStatsPerRun();
 	        
 		}else{
 			
