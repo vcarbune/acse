@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -40,23 +41,26 @@ public class KmeansGraph {
         dataset.addSeries(seriesRand);
         
         final JFreeChart chart = ChartFactory.createXYLineChart(
-                "Kmeans: Purity And RandIndex",      // chart title
-                "K",                      // x axis label
-                "Rate",                      // y axis label
-                dataset,                  // data
+                "Kmeans: Purity And RandIndex", // chart title
+                "Number of clusters",           // x axis label
+                "Rate",                         // y axis label
+                dataset,                        // data
                 PlotOrientation.VERTICAL,
-                true,                     // include legend
-                true,                     // tooltips
-                false                     // urls
+                true,                           // include legend
+                true,                           // tooltips
+                false                           // urls
         );
 
         chart.setBackgroundPaint(Color.WHITE);
-
+        
         XYLineAndShapeRenderer renderer =
             new XYLineAndShapeRenderer(true, true);
         renderer.setBaseShapesVisible(true);
         renderer.setBaseShapesFilled(true);
         ((XYPlot)chart.getPlot()).setRenderer(renderer);
+        
+        // Integer values for X-axis
+        chart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         
         // label the points
         NumberFormat format = NumberFormat.getNumberInstance();

@@ -45,7 +45,7 @@ public class KMeansRunner {
                 stats.append("\tRand Index:\t" + randCurrValue + "\n");
 
                 for (int cluster = 0; cluster < K; ++cluster) {
-                    stats.append("\tLabel(" + cluster + "): "
+                    stats.append("\tLabel(" + cluster + "):\t"
                             + kMeansInstance.getLabel(cluster) + "\n");
                 }
             }
@@ -59,13 +59,21 @@ public class KMeansRunner {
         avgStats.append("Average Log\n");
 
         for (int K = Config.infK; K <= Config.supK; ++K) {
+            
+            int current = K - Config.infK;
+            
+            // Dividing (we also need the averages for the graph)
+            purityIndexAverage.set(current, purityIndexAverage.get(current) / Config.N);
+            randIndexAverage.set(current, randIndexAverage.get(current) / Config.N);
+            
+            
             avgStats.append("Clusters: " + K + "\n");
             avgStats.append("\tPurityIndex:\t"
-                    + purityIndexAverage.get(K - Config.infK) / Config.N
+                    + purityIndexAverage.get(current)
                     + "\n");
 
             avgStats.append("\tRandIndex:\t" +
-                    + randIndexAverage.get(K - Config.infK) / Config.N
+                    + randIndexAverage.get(current)
                     + "\n");
 
             avgStats.append("\n");

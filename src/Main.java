@@ -115,8 +115,8 @@ public class Main {
 				avgTPR += p.getTruePosRate();
 			}
 
-			avgTPR /= 8;
-			avgFPR /= 8;
+			avgTPR /= rateList.size();
+			avgFPR /= rateList.size();
 
 			graph.addPoint(new PointRate(avgTPR, avgFPR));
 		}
