@@ -215,6 +215,7 @@ public class Main {
 		}
 
 		initializeLogging();
+		KMeansRunner.logger = logger;
 
 		if (args.length >= 1) {
 			initializeFlags(args);

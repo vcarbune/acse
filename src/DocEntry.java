@@ -11,7 +11,7 @@ public class DocEntry {
     private Boolean spam;
     private HashMap<String, Integer> wordCounts;
     private HashMap<String, Double> wordWeights; // tf-idf weights
-    private double vectorLength; // actually, this may not be needed
+    //private double vectorLength; // actually, this may not be needed
 
     public DocEntry() {
         this(null, null);
@@ -90,16 +90,16 @@ public class DocEntry {
             throw new RuntimeException("The wordCounts map is empty!");
         }
 
-        vectorLength = 0;
+        //vectorLength = 0;
 
         for (String term : wordCounts.keySet()) {
             double tf_idf = (1 + Math.log10(wordCounts.get(term)))
                     * Math.log10(numDocs / (double) docFrequencyMap.get(term));
             wordWeights.put(term, tf_idf);
-            vectorLength += tf_idf * tf_idf;
+            //vectorLength += tf_idf * tf_idf;
         }
 
-        vectorLength = Math.sqrt(vectorLength);
+        //vectorLength = Math.sqrt(vectorLength);
     }
 
     /**

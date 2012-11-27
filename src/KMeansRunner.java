@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 public class KMeansRunner {
 
-    final static Logger logger = Logger.getLogger(KMeansRunner.class.getName());
+    public static Logger logger;
     ArrayList<DocEntry> docEntries;
     ArrayList<Double> purityIndexAverage;
     ArrayList<Double> randIndexAverage;
@@ -50,13 +50,13 @@ public class KMeansRunner {
                 }
             }
 
-            stats.append("\n");
+            stats.append("====================================================\n");
             logger.log(Config.LOG_LEVEL, stats.toString());
             System.out.println(stats.toString());
         }
 
         StringBuilder avgStats = new StringBuilder();
-        avgStats.append("Average Log\n");
+        avgStats.append("Average Log:\n");
 
         for (int K = Config.infK; K <= Config.supK; ++K) {
             
@@ -79,6 +79,7 @@ public class KMeansRunner {
             avgStats.append("\n");
         }
         
+        logger.log(Config.LOG_LEVEL, avgStats.toString());
         System.out.println(avgStats.toString());
         
         KmeansGraph graph = new KmeansGraph(); 
