@@ -69,6 +69,9 @@ public class ROCGraph {
 		XYItemLabelGenerator generator = new MyGenerator();
 		renderer.setBaseItemLabelGenerator(generator);
 		renderer.setBaseItemLabelsVisible(true);
+		
+		
+		chart.getXYPlot().getDomainAxis().setLowerBound(-0.05);
 
 
 		// Creating image file for the chart
